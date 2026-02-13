@@ -386,6 +386,8 @@ config.keys = {
     action = wezterm.action.ToggleFullScreen,
   },
 
+  { key = 'f', mods = 'CMD', action = wezterm.action.Search { Regex = '' } },
+
   -- Cmd+M: minimize window
   {
     key = 'm',
