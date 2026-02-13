@@ -10,6 +10,173 @@ if os.getenv('KAKU_STRICT_CONFIG') == '1' and wezterm.config_builder then
   config = wezterm.config_builder()
 end
 
+-- ===== Themes =====
+-- Phase 1: Use WezTerm's builtin `color_scheme` mechanism rather than
+-- maintaining a separate theme system.
+--
+-- `kaku_themes` is the curated set we expose to users.
+-- Keys are stable IDs (for mapping/persistence); values are WezTerm scheme names.
+local kaku_themes = {
+  -- Keep current custom theme as default dark
+  ['kaku-dark'] = 'Kaku Dark',
+
+  -- Dark
+  ['catppuccin-mocha'] = 'Catppuccin Mocha',
+  ['tokyo-night'] = 'Tokyo Night',
+  ['one-dark-pro'] = 'OneDark (Gogh)',
+  ['dracula-plus'] = 'Dracula+',
+
+  -- Light
+  ['catppuccin-latte'] = 'Catppuccin Latte',
+  ['one-light'] = 'One Light (Gogh)',
+  ['solarized-light'] = 'Solarized Light (Gogh)',
+  ['github-light'] = 'Github',
+}
+
+local function get_appearance_kind(window)
+  local appearance
+  if wezterm.gui and wezterm.gui.get_appearance then
+    appearance = wezterm.gui.get_appearance()
+  elseif window and window.get_appearance then
+    appearance = window:get_appearance()
+  end
+
+  if appearance and appearance:find('Dark') then
+    return 'Dark'
+  end
+  return 'Light'
+end
+
+local function kaku_default_theme_pair()
+  return {
+    dark = 'kaku-dark',
+    light = 'catppuccin-latte',
+  }
+end
+
+local function resolve_scheme_name(theme_id)
+  if type(theme_id) ~= 'string' or theme_id == '' then
+    return nil
+  end
+  return kaku_themes[theme_id]
+end
+
+local function pick_effective_scheme(window, overrides)
+  overrides = overrides or {}
+
+  local appearance_kind = get_appearance_kind(window)
+  local pair = kaku_default_theme_pair()
+
+  -- User override via config overrides.
+  -- Supported keys:
+  --   overrides.kaku_theme = '<theme-id>'
+  --   overrides.kaku_theme_dark = '<theme-id>'
+  --   overrides.kaku_theme_light = '<theme-id>'
+  --
+  -- (This is intentionally overrides-only for now so we can ship without
+  -- changing window/ crate or adding additional config plumbing.)
+  if type(overrides.kaku_theme) == 'string' then
+    return resolve_scheme_name(overrides.kaku_theme) or nil
+  end
+  if type(overrides.kaku_theme_dark) == 'string' then
+    if resolve_scheme_name(overrides.kaku_theme_dark) then
+      pair.dark = overrides.kaku_theme_dark
+    end
+  end
+  if type(overrides.kaku_theme_light) == 'string' then
+    if resolve_scheme_name(overrides.kaku_theme_light) then
+      pair.light = overrides.kaku_theme_light
+    end
+  end
+
+  if appearance_kind == 'Dark' then
+    return resolve_scheme_name(pair.dark)
+  end
+  return resolve_scheme_name(pair.light)
+end
+
+local function scheme_tab_bar_colors(scheme)
+  -- Prefer scheme.tab_bar if present; fall back to simple derived colors.
+  local bg = scheme.background or '#15141b'
+  local fg = scheme.foreground or '#edecee'
+  local inactive_fg = scheme.ansi and scheme.ansi[8] or '#6b6b6b'
+  local active_bg = scheme.selection_bg or (scheme.brights and scheme.brights[1]) or '#29263c'
+
+  return {
+    background = bg,
+    active_tab = {
+      bg_color = active_bg,
+      fg_color = fg,
+      intensity = 'Bold',
+      underline = 'None',
+      italic = false,
+      strikethrough = false,
+    },
+    inactive_tab = {
+      bg_color = bg,
+      fg_color = inactive_fg,
+      intensity = 'Normal',
+    },
+    inactive_tab_hover = {
+      bg_color = scheme.selection_bg or bg,
+      fg_color = fg,
+      italic = false,
+    },
+    new_tab = {
+      bg_color = bg,
+      fg_color = inactive_fg,
+    },
+    new_tab_hover = {
+      bg_color = scheme.selection_bg or bg,
+      fg_color = fg,
+    },
+  }
+end
+
+local function apply_theme_to_overrides(overrides, scheme_name)
+  local scheme = wezterm.color.get_builtin_schemes()[scheme_name]
+  if not scheme then
+    return overrides
+  end
+
+  -- Ensure builtins win for terminal palette via `color_scheme`, while we keep
+  -- kaku-specific surfaces (tab bar, split, titlebar) in sync with the scheme.
+  overrides.color_scheme = scheme_name
+
+  overrides.colors = overrides.colors or {}
+  overrides.colors.tab_bar = scheme.tab_bar or scheme_tab_bar_colors(scheme)
+  overrides.colors.split = scheme.split or (scheme.brights and scheme.brights[1]) or '#3d3a4f'
+
+  overrides.window_frame = overrides.window_frame or {}
+  local titlebar_bg = (scheme.tab_bar and scheme.tab_bar.background) or scheme.background
+  overrides.window_frame.active_titlebar_bg = titlebar_bg
+  overrides.window_frame.inactive_titlebar_bg = titlebar_bg
+
+  -- Also keep format-tab-title callback in sync (it uses hardcoded colors).
+  overrides.kaku_tab_title_fg_active = (scheme.tab_bar and scheme.tab_bar.active_tab and scheme.tab_bar.active_tab.fg_color)
+    or scheme.foreground
+    or '#edecee'
+  overrides.kaku_tab_title_fg_inactive = (scheme.tab_bar and scheme.tab_bar.inactive_tab and scheme.tab_bar.inactive_tab.fg_color)
+    or (scheme.ansi and scheme.ansi[8])
+    or '#6b6b6b'
+
+  return overrides
+end
+
+wezterm.on('window-config-reloaded', function(window)
+  local overrides = window:get_config_overrides() or {}
+  local desired = pick_effective_scheme(window, overrides)
+  if not desired then
+    return
+  end
+  if overrides.color_scheme == desired then
+    return
+  end
+
+  window:set_config_overrides(apply_theme_to_overrides(overrides, desired))
+end)
+
+
 
 
 local function basename(path)
@@ -116,7 +283,10 @@ wezterm.on('format-tab-title', function(tab, _, _, _, _, max_width)
   end
   text = wezterm.truncate_right(text, math.max(8, max_width - 2))
 
-  local fg = tab.is_active and '#edecee' or '#6b6b6b'
+  local overrides = tab.window and tab.window:get_config_overrides() or {}
+  local active_fg = overrides.kaku_tab_title_fg_active or '#edecee'
+  local inactive_fg = overrides.kaku_tab_title_fg_inactive or '#6b6b6b'
+  local fg = tab.is_active and active_fg or inactive_fg
   local intensity = tab.is_active and 'Bold' or 'Normal'
   return {
     { Attribute = { Intensity = intensity } },
@@ -214,6 +384,9 @@ config.window_frame = {
   inactive_titlebar_bg = '#15141b',
 }
 
+-- Default scheme; will be overridden dynamically via window-config-reloaded.
+config.color_scheme = 'Kaku Dark'
+
 config.window_close_confirmation = 'NeverPrompt'
 
 -- ===== Tab Bar =====
@@ -301,6 +474,24 @@ config.colors = {
       bg_color = '#1f1d28',
       fg_color = '#9b9b9b',
     },
+  },
+}
+
+-- Register custom Kaku default scheme so it can be used like a builtin.
+-- We keep the existing hardcoded palette under this scheme name.
+config.color_schemes = {
+  ['Kaku Dark'] = {
+    foreground = config.colors.foreground,
+    background = config.colors.background,
+    cursor_bg = config.colors.cursor_bg,
+    cursor_fg = config.colors.cursor_fg,
+    cursor_border = config.colors.cursor_border,
+    selection_bg = config.colors.selection_bg,
+    selection_fg = config.colors.selection_fg,
+    ansi = config.colors.ansi,
+    brights = config.colors.brights,
+    tab_bar = config.colors.tab_bar,
+    split = config.colors.split,
   },
 }
 
@@ -413,6 +604,40 @@ config.keys = {
     key = 'mapped:>',
     mods = 'CMD',
     action = wezterm.action.ReloadConfiguration,
+  },
+
+  -- Cmd+Shift+T: Theme selector
+  {
+    key = 't',
+    mods = 'CMD|SHIFT',
+    action = wezterm.action_callback(function(window, pane)
+      local overrides = window:get_config_overrides() or {}
+      local items = {}
+      for id, scheme in pairs(kaku_themes) do
+        table.insert(items, { label = scheme, id = id })
+      end
+      table.sort(items, function(a, b)
+        return a.label < b.label
+      end)
+
+      window:perform_action(
+        wezterm.action.InputSelector({
+          title = 'Choose Theme',
+          choices = items,
+          action = wezterm.action_callback(function(inner_window, _, choice_id)
+            if not choice_id then
+              return
+            end
+            overrides.kaku_theme = choice_id
+            local desired = pick_effective_scheme(inner_window, overrides)
+            if desired then
+              inner_window:set_config_overrides(apply_theme_to_overrides(overrides, desired))
+            end
+          end),
+        }),
+        pane
+      )
+    end),
   },
 
   -- Cmd+Equal/Minus/0: adjust font size
