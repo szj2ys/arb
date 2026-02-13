@@ -257,7 +257,9 @@ mod imp {
         // Old cask name "kaku" conflicts with another software in homebrew/cask.
         // Do not use it; prompt user to migrate instead.
         if is_brew_cask_installed(&brew_bin, "kaku")? {
-            println!("WARNING: Detected old Homebrew cask 'kaku' which conflicts with another software.");
+            println!(
+                "WARNING: Detected old Homebrew cask 'kaku' which conflicts with another software."
+            );
             println!("Please migrate to the new cask name manually:");
             println!();
             println!("  brew uninstall --cask kaku");
