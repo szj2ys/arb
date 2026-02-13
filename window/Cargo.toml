@@ -1,0 +1,58 @@
+[package]
+name = "window"
+version = "0.1.0"
+authors = ["Wez Furlong"]
+edition = "2018"
+repository = "https://github.com/tw93/Kaku"
+description = "Cross platform window setup and render"
+license = "MIT"
+build = "build.rs"
+
+[dev-dependencies]
+k9.workspace = true
+
+[build-dependencies]
+gl_generator.workspace = true
+
+[features]
+wayland = []
+
+[dependencies]
+async-channel.workspace = true
+async-io.workspace = true
+async-task.workspace = true
+async-trait.workspace = true
+anyhow.workspace = true
+bytes.workspace = true
+config.workspace = true
+downcast-rs.workspace = true
+thiserror.workspace = true
+bitflags.workspace = true
+euclid.workspace = true
+guillotiere.workspace = true
+lazy_static.workspace = true
+libloading.workspace = true
+line_drawing.workspace = true
+log.workspace = true
+metrics.workspace = true
+promise.workspace = true
+raw-window-handle.workspace = true
+resize.workspace = true
+serde = {workspace=true, features = ["rc", "derive"]}
+tiny-skia.workspace = true
+glium.workspace = true
+url.workspace = true
+wezterm-bidi.workspace = true
+wezterm-color-types.workspace = true
+wezterm-font.workspace = true
+wezterm-input-types.workspace = true
+
+[target.'cfg(target_os="macos")'.dependencies]
+cgl.workspace = true
+cocoa.workspace = true
+core-foundation.workspace = true
+core-graphics.workspace = true
+objc.workspace = true
+objc2-core-graphics.workspace = true
+plist.workspace = true
+shlex.workspace = true

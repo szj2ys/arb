@@ -1,0 +1,107 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "[vV]*"
+  workflow_dispatch:
+
+jobs:
+  Release:
+    name: Release
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    env:
+      HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Import signing certificate
+        if: env.KAKU_SIGNING_IDENTITY != ''
+        env:
+          KAKU_SIGNING_IDENTITY: ${{ secrets.KAKU_SIGNING_IDENTITY }}
+          KAKU_CERTIFICATE_P12: ${{ secrets.KAKU_CERTIFICATE_P12 }}
+          KAKU_CERTIFICATE_PASSWORD: ${{ secrets.KAKU_CERTIFICATE_PASSWORD }}
+        run: |
+          echo "Setting up signing certificate..."
+          # Create temporary keychain
+          KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
+          KEYCHAIN_PASSWORD=$(openssl rand -base64 16)
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          
+          # Import certificate
+          echo "$KAKU_CERTIFICATE_P12" | base64 --decode > "$RUNNER_TEMP/certificate.p12"
+          security import "$RUNNER_TEMP/certificate.p12" -P "$KAKU_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security list-keychain -d user -s "$KEYCHAIN_PATH"
+          
+          echo "Certificate imported successfully"
+
+      - name: Build Kaku
+        env:
+          KAKU_SIGNING_IDENTITY: ${{ secrets.KAKU_SIGNING_IDENTITY }}
+        run: |
+          PROFILE=release-opt BUILD_ARCH=universal ./scripts/build.sh
+
+      - name: Notarize Kaku
+        if: env.KAKU_NOTARIZE_PASSWORD != ''
+        env:
+          KAKU_NOTARIZE_APPLE_ID: ${{ secrets.KAKU_NOTARIZE_APPLE_ID }}
+          KAKU_NOTARIZE_TEAM_ID: ${{ secrets.KAKU_NOTARIZE_TEAM_ID }}
+          KAKU_NOTARIZE_PASSWORD: ${{ secrets.KAKU_NOTARIZE_PASSWORD }}
+        run: |
+          echo "Notarizing Kaku..."
+          ./scripts/notarize.sh
+
+      - name: Verify Notarization
+        if: env.KAKU_NOTARIZE_PASSWORD != ''
+        env:
+          KAKU_NOTARIZE_PASSWORD: ${{ secrets.KAKU_NOTARIZE_PASSWORD }}
+        run: |
+          echo "Verifying notarization status..."
+          spctl -a -vv dist/Kaku.app
+
+      - name: Upload to Release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: "dist/*.dmg,dist/kaku_for_update.zip,dist/kaku_for_update.zip.sha256"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          generateReleaseNotes: true
+
+      - name: Compute release metadata
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ "${GITHUB_REF_TYPE:-}" == "tag" ]]; then
+            version="${GITHUB_REF_NAME#V}"
+            version="${version#v}"
+          else
+            version="$(grep '^version =' kaku/Cargo.toml | head -n 1 | cut -d '"' -f2)"
+          fi
+
+          sha256="$(shasum -a 256 dist/Kaku.dmg | awk '{print $1}')"
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "sha256=$sha256" >> "$GITHUB_OUTPUT"
+
+      - name: Dispatch tap bump
+        if: ${{ env.HOMEBREW_TAP_TOKEN != '' }}
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ env.HOMEBREW_TAP_TOKEN }}
+          repository: tw93/homebrew-tap
+          event-type: kaku_release_published
+          client-payload: |
+            {"version":"${{ steps.meta.outputs.version }}","sha256":"${{ steps.meta.outputs.sha256 }}"}
