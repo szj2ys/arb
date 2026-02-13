@@ -2,11 +2,18 @@ use anyhow::{anyhow, bail, Context};
 use clap::Parser;
 
 #[derive(Debug, Parser, Clone, Default)]
-pub struct UpdateCommand {}
+pub struct UpdateCommand {
+    /// Apply a previously downloaded update and restart Kaku.
+    ///
+    /// By default, `kaku update` will only download and stage the update
+    /// so that you can apply it later without interrupting your current session.
+    #[arg(long)]
+    apply: bool,
+}
 
 impl UpdateCommand {
     pub fn run(&self) -> anyhow::Result<()> {
-        imp::run()
+        imp::run(self)
     }
 }
 
@@ -14,9 +21,16 @@ impl UpdateCommand {
 mod imp {
     use anyhow::bail;
 
-    pub fn run() -> anyhow::Result<()> {
+    pub fn run(_cmd: &super::UpdateCommand) -> anyhow::Result<()> {
         bail!("`kaku update` is currently supported on macOS only")
     }
+}
+
+/// Internal helper, exposed so we can test cleanup logic without invoking
+/// the full update flow.
+#[cfg(target_os = "macos")]
+pub fn cleanup_old_update_dirs_for_tests(update_root: &std::path::Path) -> anyhow::Result<()> {
+    imp::cleanup_old_update_dirs_impl(update_root)
 }
 
 #[cfg(target_os = "macos")]
@@ -28,7 +42,7 @@ mod imp {
     use std::io::Write;
     use std::path::{Component, Path, PathBuf};
     use std::process::{Command, Stdio};
-    use std::time::{SystemTime, UNIX_EPOCH};
+    use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
     const RELEASE_API_URL: &str = "https://api.github.com/repos/tw93/Kaku/releases/latest";
     const LATEST_ZIP_URL: &str =
@@ -39,6 +53,10 @@ mod imp {
     const UPDATE_ZIP_NAME: &str = "kaku_for_update.zip";
     const UPDATE_SHA_NAME: &str = "kaku_for_update.zip.sha256";
     const BREW_CASK_NAME: &str = "tw93/tap/kakuterm";
+
+    const PENDING_DIR_REL: &str = "updates/pending";
+    const PENDING_MARKER_NAME: &str = "pending-update.json";
+    const OLD_UPDATE_TTL: Duration = Duration::from_secs(60 * 60 * 24 * 7);
 
     #[derive(Debug, Deserialize)]
     struct GitHubRelease {
@@ -62,13 +80,23 @@ mod imp {
         Brew(BrewInfo),
     }
 
-    pub fn run() -> anyhow::Result<()> {
+    pub fn run(cmd: &UpdateCommand) -> anyhow::Result<()> {
         match resolve_update_provider()? {
             UpdateProvider::Brew(info) => {
                 println!("Detected Homebrew-managed installation. Using brew upgrade...");
                 return run_brew_upgrade(&info);
             }
             UpdateProvider::Direct => {}
+        }
+
+        cleanup_old_update_dirs().context("cleanup old update directories")?;
+
+        let pending_dir = pending_dir();
+        config::create_user_owned_dirs(&pending_dir).context("create pending updates directory")?;
+        let marker_path = pending_marker_path_in(&pending_dir);
+
+        if cmd.apply {
+            return apply_pending_update(&marker_path);
         }
 
         let current_version = config::wezterm_version().to_string();
@@ -126,15 +154,38 @@ mod imp {
         let update_root = config::DATA_DIR.join("updates");
         config::create_user_owned_dirs(&update_root).context("create updates directory")?;
 
-        let tag = release
+        let update_label = release
             .as_ref()
-            .map(|r| sanitize_tag(&r.tag_name))
-            .unwrap_or_else(|| "latest".to_string());
-        let now = now_unix_seconds();
-        let work_dir = update_root.join(format!("{}-{}", tag, now));
-        config::create_user_owned_dirs(&work_dir).context("create update work directory")?;
+            .map(|r| r.tag_name.as_str())
+            .unwrap_or("latest");
+        let normalized_label = sanitize_tag(update_label);
 
-        let zip_path = work_dir.join(UPDATE_ZIP_NAME);
+        if let Ok(existing) = read_pending_marker(&marker_path) {
+            if existing.tag == normalized_label {
+                println!(
+                    "Update v{} is already staged. Restart Kaku or run `kaku update --apply` to upgrade.",
+                    format_version_for_display(&existing.tag)
+                );
+                println!("Staged at: {}", existing.new_app_path.display());
+                return Ok(());
+            }
+
+            println!(
+                "Found staged update v{}. Replacing with v{}...",
+                format_version_for_display(&existing.tag),
+                format_version_for_display(&normalized_label)
+            );
+            cleanup_pending_update(&marker_path).ok();
+        }
+
+        // Stage the update into a stable location so it can be applied later.
+        let staging_dir = pending_dir.join(&normalized_label);
+        if staging_dir.exists() {
+            let _ = fs::remove_dir_all(&staging_dir);
+        }
+        config::create_user_owned_dirs(&staging_dir).context("create update staging directory")?;
+
+        let zip_path = staging_dir.join(UPDATE_ZIP_NAME);
         println!("Downloading {} ...", UPDATE_ZIP_NAME);
         curl_download_to_file(zip_url, &zip_path, &current_version)
             .context("failed to download update package")?;
@@ -155,7 +206,7 @@ mod imp {
             }
         }
 
-        let extracted_dir = work_dir.join("extracted");
+        let extracted_dir = staging_dir.join("extracted");
         config::create_user_owned_dirs(&extracted_dir).context("create extraction directory")?;
 
         run_status(
@@ -180,30 +231,193 @@ mod imp {
                     current_version_display,
                     format_version_for_display(&new_version)
                 );
-                let _ = fs::remove_dir_all(&work_dir);
+                let _ = fs::remove_dir_all(&staging_dir);
                 return Ok(());
             }
+        }
+
+        let marker = PendingUpdateMarker {
+            tag: normalized_label.clone(),
+            staging_dir: staging_dir.clone(),
+            new_app_path: new_app_path.clone(),
+            created_at: now_unix_seconds(),
+        };
+        write_pending_marker(&marker_path, &marker).context("write pending update marker")?;
+
+        println!();
+        println!(
+            "New version v{} is ready. Restart Kaku or run `kaku update --apply` to upgrade.",
+            format_version_for_display(update_label)
+        );
+        println!("Staged at: {}", marker.new_app_path.display());
+        Ok(())
+    }
+
+    #[derive(Debug, Deserialize, serde::Serialize)]
+    struct PendingUpdateMarker {
+        tag: String,
+        staging_dir: PathBuf,
+        new_app_path: PathBuf,
+        created_at: u64,
+    }
+
+    fn pending_dir() -> PathBuf {
+        config::DATA_DIR.join(PENDING_DIR_REL)
+    }
+
+    fn pending_marker_path_in(pending_dir: &Path) -> PathBuf {
+        pending_dir.join(PENDING_MARKER_NAME)
+    }
+
+    fn read_pending_marker(path: &Path) -> anyhow::Result<PendingUpdateMarker> {
+        let raw = fs::read_to_string(path).with_context(|| {
+            format!(
+                "read pending update marker {}",
+                path.as_os_str().to_string_lossy()
+            )
+        })?;
+        serde_json::from_str(&raw).context("parse pending update marker")
+    }
+
+    fn write_pending_marker(path: &Path, marker: &PendingUpdateMarker) -> anyhow::Result<()> {
+        let data = serde_json::to_vec_pretty(marker).context("serialize pending update marker")?;
+
+        let mut tmp = path.to_path_buf();
+        tmp.set_extension("json.tmp");
+        fs::write(&tmp, data).with_context(|| {
+            format!(
+                "write pending update marker temp file {}",
+                tmp.as_os_str().to_string_lossy()
+            )
+        })?;
+        fs::rename(&tmp, path).with_context(|| {
+            format!(
+                "commit pending update marker {}",
+                path.as_os_str().to_string_lossy()
+            )
+        })?;
+        Ok(())
+    }
+
+    fn apply_pending_update(marker_path: &Path) -> anyhow::Result<()> {
+        let marker = read_pending_marker(marker_path).context("read pending update marker")?;
+
+        if !marker.new_app_path.exists() {
+            cleanup_pending_update(marker_path).ok();
+            bail!(
+                "pending update is missing staged app at {}",
+                marker.new_app_path.display()
+            );
         }
 
         let target_app = resolve_target_app_path().context("resolve installed Kaku.app path")?;
         ensure_can_write_target(&target_app)?;
 
+        let update_root = config::DATA_DIR.join("updates");
+        config::create_user_owned_dirs(&update_root).context("create updates directory")?;
+
+        let now = now_unix_seconds();
         let helper_script = update_root.join(format!("apply-update-{}.sh", now));
         write_helper_script(&helper_script).context("write update helper script")?;
 
-        spawn_update_helper(&helper_script, &target_app, &new_app_path, &work_dir)
-            .context("spawn update helper")?;
+        spawn_update_helper(
+            &helper_script,
+            &target_app,
+            &marker.new_app_path,
+            &marker.staging_dir,
+        )
+        .context("spawn update helper")?;
 
-        let update_label = release
-            .as_ref()
-            .map(|r| r.tag_name.as_str())
-            .unwrap_or("latest");
         println!(
-            "Update to {} has started in background.",
-            format_version_for_display(update_label)
+            "Applying staged update v{} in background...",
+            format_version_for_display(&marker.tag)
         );
-        println!("Kaku will quit and relaunch automatically when replacement is complete.");
+
+        // Best-effort: remove marker so future `kaku update` won't think it's still pending.
+        // The helper script will also clean up the staging directory.
+        let _ = fs::remove_file(marker_path);
         Ok(())
+    }
+
+    fn cleanup_pending_update(marker_path: &Path) -> anyhow::Result<()> {
+        let marker = match read_pending_marker(marker_path) {
+            Ok(m) => m,
+            Err(_) => {
+                let _ = fs::remove_file(marker_path);
+                return Ok(());
+            }
+        };
+
+        let _ = fs::remove_file(marker_path);
+        let _ = fs::remove_dir_all(&marker.staging_dir);
+        Ok(())
+    }
+
+    fn cleanup_old_update_dirs() -> anyhow::Result<()> {
+        let update_root = config::DATA_DIR.join("updates");
+        cleanup_old_update_dirs_impl(&update_root)
+    }
+
+    pub(super) fn cleanup_old_update_dirs_impl(update_root: &Path) -> anyhow::Result<()> {
+        if !update_root.exists() {
+            return Ok(());
+        }
+
+        let now = SystemTime::now();
+        let entries = match fs::read_dir(update_root) {
+            Ok(e) => e,
+            Err(err) => {
+                return Err(err).with_context(|| {
+                    format!(
+                        "read updates directory {}",
+                        update_root.as_os_str().to_string_lossy()
+                    )
+                })
+            }
+        };
+
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if !path.is_dir() {
+                continue;
+            }
+            if path.file_name().and_then(|n| n.to_str()) == Some("pending") {
+                continue;
+            }
+
+            // Prefer deterministic cleanup based on directory name suffix `-<unix_seconds>`
+            // (which matches how work dirs were historically created). Fall back to mtime.
+            if let Some(age_secs) = estimate_update_dir_age_secs(&path) {
+                if age_secs > OLD_UPDATE_TTL.as_secs() {
+                    let _ = fs::remove_dir_all(&path);
+                }
+                continue;
+            }
+
+            let Ok(meta) = entry.metadata() else {
+                continue;
+            };
+            let Ok(modified) = meta.modified() else {
+                continue;
+            };
+
+            if now
+                .duration_since(modified)
+                .map(|age| age > OLD_UPDATE_TTL)
+                .unwrap_or(false)
+            {
+                let _ = fs::remove_dir_all(&path);
+            }
+        }
+
+        Ok(())
+    }
+
+    fn estimate_update_dir_age_secs(path: &Path) -> Option<u64> {
+        let name = path.file_name()?.to_string_lossy();
+        let ts = name.rsplit('-').next()?.parse::<u64>().ok()?;
+        let now = now_unix_seconds();
+        now.checked_sub(ts)
     }
 
     fn resolve_update_provider() -> anyhow::Result<UpdateProvider> {
@@ -257,7 +471,9 @@ mod imp {
         // Old cask name "kaku" conflicts with another software in homebrew/cask.
         // Do not use it; prompt user to migrate instead.
         if is_brew_cask_installed(&brew_bin, "kaku")? {
-            println!("WARNING: Detected old Homebrew cask 'kaku' which conflicts with another software.");
+            println!(
+                "WARNING: Detected old Homebrew cask 'kaku' which conflicts with another software."
+            );
             println!("Please migrate to the new cask name manually:");
             println!();
             println!("  brew uninstall --cask kaku");

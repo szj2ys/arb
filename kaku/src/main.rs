@@ -21,7 +21,7 @@ mod cli;
 mod config_cmd;
 mod init;
 mod reset;
-mod update;
+pub mod update;
 
 #[derive(Debug, Parser)]
 #[command(
@@ -132,7 +132,7 @@ enum SubCommand {
 
     #[command(
         name = "update",
-        about = "Download and install the latest Kaku release automatically"
+        about = "Download the latest Kaku release (use --apply to install)"
     )]
     Update(update::UpdateCommand),
 
