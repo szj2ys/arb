@@ -27,4 +27,4 @@ implementation of the UBA which is:
 
 Copyright © 1991-2022 Unicode, Inc. All rights reserved.
 
-See [LICENSE.md](LICENSE.md) for the full text of the license.
+See the repository root `LICENSE` for the full text of the license.
