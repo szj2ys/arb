@@ -44,7 +44,7 @@ use raw_window_handle::{
 };
 use std::any::Any;
 use std::cell::{Cell, RefCell};
-use std::ffi::{CStr, c_void};
+use std::ffi::{c_void, CStr};
 use std::path::PathBuf;
 use std::ptr::NonNull;
 use std::rc::Rc;
@@ -52,7 +52,7 @@ use std::str::FromStr;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Instant;
 use wezterm_font::FontConfiguration;
-use wezterm_input_types::{IntegratedTitleButtonStyle, KeyboardLedStatus, is_ascii_control};
+use wezterm_input_types::{is_ascii_control, IntegratedTitleButtonStyle, KeyboardLedStatus};
 
 static APP_TERMINATING: AtomicBool = AtomicBool::new(false);
 
@@ -439,6 +439,65 @@ thread_local! {
     static LAST_CLOSED_WINDOW_POSITION: RefCell<Option<ScreenPoint>> = RefCell::new(None);
     // Sync drag flag: set by request_drag_move(), checked by mouse_down to execute performWindowDragWithEvent:
     static PENDING_DRAG_MOVE: Cell<bool> = Cell::new(false);
+}
+
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+enum TitlebarDoubleClickAction {
+    Maximize,
+    Minimize,
+}
+
+fn titlebar_double_click_action() -> TitlebarDoubleClickAction {
+    unsafe {
+        let user_defaults: id = msg_send![class!(NSUserDefaults), standardUserDefaults];
+        if user_defaults == nil {
+            return TitlebarDoubleClickAction::Maximize;
+        }
+
+        let key = nsstring("AppleActionOnDoubleClick");
+        let value: id = msg_send![user_defaults, stringForKey: key];
+        if value != nil && nsstring_to_str(value) == "Minimize" {
+            return TitlebarDoubleClickAction::Minimize;
+        }
+
+        // Most commonly "Maximize", but treat unknown values as maximize.
+        TitlebarDoubleClickAction::Maximize
+    }
+}
+
+fn is_titlebar_double_click(view: id, window: id, nsevent: id) -> bool {
+    unsafe {
+        if view == nil || window == nil || nsevent == nil {
+            return false;
+        }
+
+        if nsevent.clickCount() != 2 {
+            return false;
+        }
+
+        // Fullscreen and zoom are different behaviors; avoid interfering
+        // with native fullscreen interactions.
+        let style_mask = NSWindow::styleMask(window);
+        if style_mask.contains(NSWindowStyleMask::NSFullScreenWindowMask) {
+            return false;
+        }
+
+        // locationInWindow is in the base coordinate system (origin at bottom-left).
+        // NSView::convertPoint_fromView_ converts into our view coordinate system,
+        // and `is_flipped` makes that origin top-left.
+        let point = NSView::convertPoint_fromView_(view, nsevent.locationInWindow(), nil);
+        // Determine titlebar height by subtracting content height from frame height.
+        let frame = NSWindow::frame(window);
+        let content = NSWindow::contentRectForFrameRect_(window, frame);
+        let titlebar_height = (frame.size.height - content.size.height).max(0.0);
+        if titlebar_height <= 0.0 {
+            return false;
+        }
+
+        // In flipped coords, y=0 is top. A click in the top titlebar_height
+        // region is treated as a titlebar double click.
+        point.y >= 0.0 && point.y <= titlebar_height
+    }
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -2116,7 +2175,11 @@ impl WindowView {
     extern "C" fn has_marked_text(this: &mut Object, _sel: Sel) -> BOOL {
         if let Some(myself) = Self::get_this(this) {
             let inner = myself.inner.borrow();
-            if inner.ime_text.is_empty() { NO } else { YES }
+            if inner.ime_text.is_empty() {
+                NO
+            } else {
+                YES
+            }
         } else {
             NO
         }
@@ -2524,6 +2587,30 @@ impl WindowView {
     extern "C" fn mouse_down(this: &mut Object, _sel: Sel, nsevent: id) {
         // Clear stale flag to prevent false drag triggers from last abnormal exit
         PENDING_DRAG_MOVE.with(|flag| flag.set(false));
+
+        unsafe {
+            let view: id = this as id;
+            let window: id = msg_send![view, window];
+
+            if is_titlebar_double_click(view, window, nsevent) {
+                // Record zoom time to prevent font flickering during animation
+                if let Some(this) = Self::get_this(this) {
+                    this.inner.borrow_mut().last_zoom_time = Some(Instant::now());
+                }
+
+                match titlebar_double_click_action() {
+                    TitlebarDoubleClickAction::Minimize => {
+                        // Equivalent to the system preference "Minimize" behavior.
+                        let () = msg_send![window, performMiniaturize: nil];
+                    }
+                    TitlebarDoubleClickAction::Maximize => {
+                        NSWindow::zoom_(window, nil);
+                    }
+                }
+                return;
+            }
+        }
+
         Self::mouse_common(this, nsevent, MouseEventKind::Press(MousePress::Left));
         // Execute drag synchronously: app layer may call request_drag_move() in mouse_common to set flag
         let pending_drag = PENDING_DRAG_MOVE.with(|flag| flag.replace(false));
@@ -3162,8 +3249,11 @@ impl WindowView {
             // smooth font scaling updates as the window animates, preventing
             // the text from appearing too large/small during the transition.
             // Zoom animation typically takes ~0.2s, use 0.3s as buffer.
-            let in_zoom_transition = inner.last_zoom_time.map_or(false, |t| t.elapsed().as_secs_f32() < 0.3);
-            let live_resizing = inner.live_resizing || in_fullscreen_transition || in_zoom_transition;
+            let in_zoom_transition = inner
+                .last_zoom_time
+                .map_or(false, |t| t.elapsed().as_secs_f32() < 0.3);
+            let live_resizing =
+                inner.live_resizing || in_fullscreen_transition || in_zoom_transition;
 
             // Note: isZoomed can falsely return YES in situations such as
             // the current screen changing. We cannot detect that case here.
