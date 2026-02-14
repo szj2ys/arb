@@ -593,7 +593,7 @@ impl TabBarState {
         });
 
         while right_status_line.len() > status_space_available {
-            right_status_line.remove_cell(0, SEQ_ZERO);
+            right_status_line.remove_cell(right_status_line.len().saturating_sub(1), SEQ_ZERO);
         }
 
         line.append_line(right_status_line, SEQ_ZERO);

@@ -57,6 +57,16 @@ impl crate::TermWindow {
 
     pub fn build_fancy_tab_bar(&self, palette: &ColorPalette) -> anyhow::Result<ComputedElement> {
         let tab_bar_height = self.tab_bar_pixel_height()?;
+        let tab_bar_position = self.config.effective_tab_bar_position();
+        let is_vertical = matches!(
+            tab_bar_position,
+            config::TabBarPosition::Left | config::TabBarPosition::Right
+        );
+        let tab_bar_width = if is_vertical {
+            self.config.vertical_tab_bar_width as f32
+        } else {
+            self.dimensions.pixel_width as f32
+        };
         let font = self.fonts.title_font()?;
         let metrics = RenderMetrics::with_font_metrics(&font.metrics());
         let items = self.tab_bar.items();
@@ -303,9 +313,13 @@ impl crate::TermWindow {
                 _ => 0.,
             })
             .sum();
-        let max_tab_width = ((self.dimensions.pixel_width as f32 / num_tabs)
-            - (1.5 * metrics.cell_size.width as f32))
-            .max(0.);
+        let max_tab_width = if is_vertical {
+            // Fixed width list; allow enough room for padding/buttons.
+            (tab_bar_width - (1.5 * metrics.cell_size.width as f32)).max(0.)
+        } else {
+            ((self.dimensions.pixel_width as f32 / num_tabs) - (1.5 * metrics.cell_size.width as f32))
+                .max(0.)
+        };
 
         // Reserve space for the native titlebar buttons
         if self
@@ -351,9 +365,19 @@ impl crate::TermWindow {
                             ElementContent::Children(kids)
                         }
                     };
+                    if is_vertical {
+                        // Force each tab to be its own block so that it stacks.
+                        elem.display = DisplayType::Block;
+                    }
                     left_eles.push(elem);
                 }
-                _ => left_eles.push(item_to_elem(item)),
+                _ => {
+                    let mut elem = item_to_elem(item);
+                    if is_vertical {
+                        elem.display = DisplayType::Block;
+                    }
+                    left_eles.push(elem)
+                }
             }
         }
 
@@ -402,19 +426,25 @@ impl crate::TermWindow {
                 })
                 .zindex(1),
         );
-        children.push(
-            Element::new(&font, ElementContent::Children(right_eles))
-                .colors(bar_colors.clone())
-                .float(Float::Right),
-        );
+        if !is_vertical {
+            children.push(
+                Element::new(&font, ElementContent::Children(right_eles))
+                    .colors(bar_colors.clone())
+                    .float(Float::Right),
+            );
+        }
 
         let content = ElementContent::Children(children);
 
         let tabs = Element::new(&font, content)
             .display(DisplayType::Block)
             .item_type(UIItemType::TabBar(TabBarItem::None))
-            .min_width(Some(Dimension::Pixels(self.dimensions.pixel_width as f32)))
-            .min_height(Some(Dimension::Pixels(tab_bar_height)))
+            .min_width(Some(Dimension::Pixels(tab_bar_width)))
+            .min_height(Some(Dimension::Pixels(if is_vertical {
+                self.dimensions.pixel_height as f32
+            } else {
+                tab_bar_height
+            })))
             .vertical_align(VerticalAlign::Bottom)
             .colors(bar_colors);
 
@@ -429,14 +459,19 @@ impl crate::TermWindow {
                 },
                 width: DimensionContext {
                     dpi: self.dimensions.dpi as f32,
-                    pixel_max: self.dimensions.pixel_width as f32,
+                    pixel_max: tab_bar_width,
                     pixel_cell: metrics.cell_size.width as f32,
                 },
                 bounds: euclid::rect(
-                    border.left.get() as f32,
                     0.,
-                    self.dimensions.pixel_width as f32 - (border.left + border.right).get() as f32,
-                    tab_bar_height,
+                    0.,
+                    tab_bar_width,
+                    if is_vertical {
+                        self.dimensions.pixel_height as f32
+                            - (border.top + border.bottom).get() as f32
+                    } else {
+                        tab_bar_height
+                    },
                 ),
                 metrics: &metrics,
                 gl_state: self.render_state.as_ref().unwrap(),
@@ -445,15 +480,27 @@ impl crate::TermWindow {
             &tabs,
         )?;
 
-        computed.translate(euclid::vec2(
-            0.,
-            if self.config.tab_bar_at_bottom {
-                self.dimensions.pixel_height as f32
-                    - (computed.bounds.height() + border.bottom.get() as f32)
-            } else {
-                border.top.get() as f32
-            },
-        ));
+        let translate = if is_vertical {
+            let x = match tab_bar_position {
+                config::TabBarPosition::Right => {
+                    self.dimensions.pixel_width as f32
+                        - (computed.bounds.width() + border.right.get() as f32)
+                }
+                _ => border.left.get() as f32,
+            };
+            euclid::vec2(x, border.top.get() as f32)
+        } else {
+            euclid::vec2(
+                0.,
+                if self.config.tab_bar_at_bottom {
+                    self.dimensions.pixel_height as f32
+                        - (computed.bounds.height() + border.bottom.get() as f32)
+                } else {
+                    border.top.get() as f32
+                },
+            )
+        };
+        computed.translate(translate);
 
         Ok(computed)
     }

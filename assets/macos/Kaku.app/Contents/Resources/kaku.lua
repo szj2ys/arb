@@ -278,6 +278,16 @@ wezterm.on('format-tab-title', function(tab, _, _, _, _, max_width)
   if text == '' then
     text = tab.active_pane.title
   end
+
+  -- Preserve default tab index behavior when enabled.
+  if config.show_tab_index_in_tab_bar then
+    local idx = tab.tab_index
+    if not config.tab_and_split_indices_are_zero_based then
+      idx = idx + 1
+    end
+    text = tostring(idx) .. ': ' .. text
+  end
+
   if tab.active_pane.is_zoomed then
     text = text .. ' [Z]'
   end
@@ -322,6 +332,17 @@ wezterm.on('update-right-status', function(window)
     { Foreground = { Color = '#6b6b6b' } },
     { Text = ' ' .. text .. ' ' },
   }))
+end)
+
+wezterm.on('rename-tab-complete', function(window, pane, line)
+  if not line or line == '' then
+    return
+  end
+  -- Update current tab title; the GUI triggers this on double-click.
+  -- The exact API is provided by the host application.
+  pcall(function()
+    window:active_tab():set_title(line)
+  end)
 end)
 
 -- ===== Font =====
@@ -391,10 +412,10 @@ config.window_close_confirmation = 'NeverPrompt'
 
 -- ===== Tab Bar =====
 config.enable_tab_bar = true
-config.tab_bar_at_bottom = true
-config.use_fancy_tab_bar = false
+config.tab_bar_position = 'Left'
+config.use_fancy_tab_bar = true
 config.tab_max_width = 32
-config.hide_tab_bar_if_only_one_tab = true
+config.hide_tab_bar_if_only_one_tab = false
 config.show_tab_index_in_tab_bar = true
 config.show_new_tab_button_in_tab_bar = false
 

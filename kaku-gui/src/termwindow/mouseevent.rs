@@ -69,6 +69,17 @@ impl super::TermWindow {
 
         let border = self.get_os_border();
 
+        let tab_bar_pixel_width = if self.show_tab_bar
+            && matches!(
+                self.config.effective_tab_bar_position(),
+                config::TabBarPosition::Left | config::TabBarPosition::Right
+            )
+        {
+            self.config.vertical_tab_bar_width as isize
+        } else {
+            0
+        };
+
         let first_line_offset = if self.show_tab_bar && !self.config.tab_bar_at_bottom {
             self.tab_bar_pixel_height().unwrap_or(0.) as isize
         } else {
@@ -77,6 +88,8 @@ impl super::TermWindow {
 
         let (padding_left, padding_top) = self.padding_left_top();
         let terminal_origin_y = first_line_offset + padding_top as isize;
+        let terminal_origin_x = (padding_left + border.left.get() as f32) as isize
+            + tab_bar_pixel_width;
 
         let y = (event
             .coords
@@ -89,7 +102,7 @@ impl super::TermWindow {
         let x = (event
             .coords
             .x
-            .sub((padding_left + border.left.get() as f32) as isize)
+            .sub(terminal_origin_x)
             .max(0) as f32)
             / self.render_metrics.cell_size.width as f32;
         let x = if !pane.is_mouse_grabbed() {
@@ -113,7 +126,7 @@ impl super::TermWindow {
         let mut x_pixel_offset = event
             .coords
             .x
-            .sub((padding_left + border.left.get() as f32) as isize);
+            .sub(terminal_origin_x);
         if x > 0 {
             x_pixel_offset = x_pixel_offset.max(0) % self.render_metrics.cell_size.width;
         }
@@ -599,7 +612,9 @@ impl super::TermWindow {
         match event.kind {
             WMEK::Press(MousePress::Left) => match item {
                 TabBarItem::Tab { tab_idx, active } => {
-                    if !active {
+                    if self.last_mouse_click.as_ref().map(|c| c.streak) == Some(2) {
+                        self.start_rename_tab(tab_idx);
+                    } else if !active {
                         self.activate_tab(tab_idx as isize).ok();
                     }
                 }
