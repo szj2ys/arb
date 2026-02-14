@@ -585,6 +585,26 @@ pub struct TermWindow {
 }
 
 impl TermWindow {
+    pub fn start_rename_tab(&mut self, tab_idx: usize) {
+        let mux = Mux::get();
+        let window = match mux.get_window(self.mux_window_id) {
+            Some(window) => window,
+            None => return,
+        };
+        let tab = match window.get_by_idx(tab_idx) {
+            Some(tab) => tab,
+            None => return,
+        };
+        let title = tab.get_title();
+
+        self.show_prompt_input_line(&PromptInputLine {
+            action: Box::new(KeyAssignment::EmitEvent("rename-tab-complete".to_string())),
+            initial_value: Some(title),
+            description: "Rename tab".to_string(),
+            prompt: "Tab title: ".to_string(),
+        });
+    }
+
     fn load_os_parameters(&mut self) {
         if let Some(ref window) = self.window {
             self.os_parameters = match window.get_os_parameters(&self.config, self.window_state) {
@@ -2109,6 +2129,21 @@ impl TermWindow {
 
         let border = self.get_os_border();
         let tab_bar_height = self.tab_bar_pixel_height().unwrap_or(0.);
+        let (padding_left, _padding_top) = self.padding_left_top();
+        let tab_bar_width = if self.show_tab_bar
+            && matches!(
+                self.config.effective_tab_bar_position(),
+                config::TabBarPosition::Left | config::TabBarPosition::Right
+            )
+        {
+            self.config.vertical_tab_bar_width as usize
+        } else {
+            0
+        };
+        let tab_bar_cols = tab_bar_width / self.render_metrics.cell_size.width as usize;
+        let padding_cols = (padding_left as usize) / self.render_metrics.cell_size.width as usize;
+        let border_cols = border.left.get() as usize / self.render_metrics.cell_size.width as usize;
+        let tab_bar_total_cols = tab_bar_cols + padding_cols + border_cols;
         let tab_bar_y = if self.config.tab_bar_at_bottom {
             ((self.dimensions.pixel_height as f32) - (tab_bar_height + border.bottom.get() as f32))
                 .max(0.)
@@ -2120,14 +2155,27 @@ impl TermWindow {
 
         let hovering_in_tab_bar = match &self.current_mouse_event {
             Some(event) => {
-                let mouse_y = event.coords.y as f32;
-                mouse_y >= tab_bar_y as f32 && mouse_y < tab_bar_y as f32 + tab_bar_height
+                match self.config.effective_tab_bar_position() {
+                    config::TabBarPosition::Left | config::TabBarPosition::Right => {
+                        let mouse_x = event.coords.x as f32;
+                        if self.config.effective_tab_bar_position() == config::TabBarPosition::Left {
+                            mouse_x < tab_bar_width as f32
+                        } else {
+                            mouse_x >= (self.dimensions.pixel_width as f32 - tab_bar_width as f32)
+                        }
+                    }
+                    _ => {
+                        let mouse_y = event.coords.y as f32;
+                        mouse_y >= tab_bar_y as f32 && mouse_y < tab_bar_y as f32 + tab_bar_height
+                    }
+                }
             }
             None => false,
         };
 
         let new_tab_bar = TabBarState::new(
-            self.dimensions.pixel_width / self.render_metrics.cell_size.width as usize,
+            (self.dimensions.pixel_width / self.render_metrics.cell_size.width as usize)
+                .saturating_sub(tab_bar_total_cols),
             if hovering_in_tab_bar {
                 Some(self.last_mouse_coords.0)
             } else {

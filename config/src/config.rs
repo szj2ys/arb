@@ -48,6 +48,20 @@ use wezterm_input_types::{
 };
 use wezterm_term::TerminalSize;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, FromDynamic, ToDynamic)]
+pub enum TabBarPosition {
+    Top,
+    Bottom,
+    Left,
+    Right,
+}
+
+impl Default for TabBarPosition {
+    fn default() -> Self {
+        Self::Left
+    }
+}
+
 #[derive(Debug, Clone, FromDynamic, ToDynamic, ConfigMeta)]
 pub struct Config {
     /// The font size, measured in points
@@ -473,8 +487,23 @@ pub struct Config {
     #[dynamic(default = "default_true")]
     pub use_fancy_tab_bar: bool,
 
+    /// Deprecated; use `tab_bar_position`.
+    ///
+    /// Backwards compatible behavior:
+    /// - if `tab_bar_at_bottom = true` and `tab_bar_position` is not set,
+    ///   then we map to `TabBarPosition::Bottom`.
+    ///
+    /// Note that we intentionally cannot detect if the user explicitly set
+    /// `tab_bar_at_bottom = false`; that case will behave like the default.
     #[dynamic(default)]
     pub tab_bar_at_bottom: bool,
+
+    #[dynamic(default)]
+    pub tab_bar_position: TabBarPosition,
+
+    /// Pixel width for a vertical tab bar (Left/Right).
+    #[dynamic(default = "default_vertical_tab_bar_width")]
+    pub vertical_tab_bar_width: usize,
 
     #[dynamic(default = "default_true")]
     pub mouse_wheel_scrolls_tabs: bool,
@@ -922,6 +951,14 @@ impl Default for Config {
 }
 
 impl Config {
+    pub fn effective_tab_bar_position(&self) -> TabBarPosition {
+        if self.tab_bar_position == TabBarPosition::Left && self.tab_bar_at_bottom {
+            TabBarPosition::Bottom
+        } else {
+            self.tab_bar_position
+        }
+    }
+
     pub fn load() -> LoadedConfig {
         Self::load_with_overrides(&wezterm_dynamic::Value::default())
     }
@@ -1648,6 +1685,40 @@ impl Config {
     }
 }
 
+#[cfg(test)]
+mod test {
+    use super::*;
+    use std::sync::atomic::Ordering;
+
+    #[test]
+    fn should_parse_tab_bar_position_from_lua_config() -> anyhow::Result<()> {
+        CONFIG_SKIP.store(false, Ordering::Relaxed);
+
+        let dir = tempfile::tempdir()?;
+        let path = dir.path().join("kaku.lua");
+        std::fs::write(
+            &path,
+            r#"
+local wezterm = require 'wezterm'
+local config = {}
+
+config.tab_bar_position = 'Left'
+
+return config
+"#,
+        )?;
+
+        *CONFIG_FILE_OVERRIDE.lock().unwrap() = Some(path);
+        let loaded = Config::load();
+        *CONFIG_FILE_OVERRIDE.lock().unwrap() = None;
+
+        let cfg = loaded.config?;
+        assert_eq!(cfg.effective_tab_bar_position(), TabBarPosition::Left);
+
+        Ok(())
+    }
+}
+
 fn default_check_for_updates() -> bool {
     cfg!(not(feature = "distro-defaults"))
 }
@@ -1921,6 +1992,10 @@ fn default_enq_answerback() -> String {
 
 fn default_tab_max_width() -> usize {
     16
+}
+
+fn default_vertical_tab_bar_width() -> usize {
+    200
 }
 
 fn default_update_interval() -> u64 {

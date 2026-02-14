@@ -75,6 +75,18 @@ impl crate::TermWindow {
         };
 
         let border = self.get_os_border();
+        let tab_bar_pixel_width = if self.show_tab_bar
+            && matches!(
+                self.config.effective_tab_bar_position(),
+                config::TabBarPosition::Left | config::TabBarPosition::Right
+            )
+        {
+            self.config.vertical_tab_bar_width as f32
+        } else {
+            0.0
+        };
+
+        let left_pixel_x = tab_bar_pixel_width + padding_left + border.left.get() as f32;
         let top_pixel_y = top_bar_height + padding_top + border.top.get() as f32;
 
         let cursor = pos.pane.get_cursor_position();
@@ -115,11 +127,11 @@ impl crate::TermWindow {
             let (x, width_delta) = if pos.left == 0 {
                 (
                     0.,
-                    padding_left + border.left.get() as f32 + (cell_width * split_col_gutter / 2.0),
+                    left_pixel_x + (cell_width * split_col_gutter / 2.0),
                 )
             } else {
                 (
-                    padding_left + border.left.get() as f32 - (cell_width * split_col_gutter / 2.0)
+                    left_pixel_x - (cell_width * split_col_gutter / 2.0)
                         + (pos.left as f32 * cell_width),
                     cell_width * split_col_gutter,
                 )
