@@ -2169,10 +2169,10 @@ pub const BIDI_CLASS: &'static [(char, char, BidiClass)] = &[
     ('\u{1e7e8}', '\u{1e7eb}', BidiClass::LeftToRight), // Lo   [4] ETHIOPIC SYLLABLE GURAGE HHWA..ETHIOPIC SYLLABLE HHWE
     ('\u{1e7ed}', '\u{1e7ee}', BidiClass::LeftToRight), // Lo   [2] ETHIOPIC SYLLABLE GURAGE MWI..ETHIOPIC SYLLABLE GURAGE MWEE
     ('\u{1e7f0}', '\u{1e7fe}', BidiClass::LeftToRight), // Lo  [15] ETHIOPIC SYLLABLE GURAGE QWI..ETHIOPIC SYLLABLE GURAGE PWEE
-    ('\u{1e800}', '\u{1e8c4}', BidiClass::RightToLeft), // Lo [197] MENDE KIKAKUI SYLLABLE M001 KI..MENDE KIKAKUI SYLLABLE M060 NYON
+    ('\u{1e800}', '\u{1e8c4}', BidiClass::RightToLeft), // Lo [197] MENDE KIARBI SYLLABLE M001 KI..MENDE KIARBI SYLLABLE M060 NYON
     ('\u{1e8c5}', '\u{1e8c6}', BidiClass::RightToLeft), // Cn   [2] <reserved-1E8C5>..<reserved-1E8C6>
-    ('\u{1e8c7}', '\u{1e8cf}', BidiClass::RightToLeft), // No   [9] MENDE KIKAKUI DIGIT ONE..MENDE KIKAKUI DIGIT NINE
-    ('\u{1e8d0}', '\u{1e8d6}', BidiClass::NonspacingMark), // Mn   [7] MENDE KIKAKUI COMBINING NUMBER TEENS..MENDE KIKAKUI COMBINING NUMBER MILLIONS
+    ('\u{1e8c7}', '\u{1e8cf}', BidiClass::RightToLeft), // No   [9] MENDE KIARBI DIGIT ONE..MENDE KIARBI DIGIT NINE
+    ('\u{1e8d0}', '\u{1e8d6}', BidiClass::NonspacingMark), // Mn   [7] MENDE KIARBI COMBINING NUMBER TEENS..MENDE KIARBI COMBINING NUMBER MILLIONS
     ('\u{1e8d7}', '\u{1e8ff}', BidiClass::RightToLeft), // Cn  [41] <reserved-1E8D7>..<reserved-1E8FF>
     ('\u{1e900}', '\u{1e943}', BidiClass::RightToLeft), // L&  [68] ADLAM CAPITAL LETTER ALIF..ADLAM SMALL LETTER SHA
     ('\u{1e944}', '\u{1e94a}', BidiClass::NonspacingMark), // Mn   [7] ADLAM ALIF LENGTHENER..ADLAM NUKTA

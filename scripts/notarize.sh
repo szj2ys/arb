@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Notarization script for Kaku macOS app
+# Notarization script for Arb macOS app
 # Usage: ./scripts/notarize.sh [--staple-only]
 #
 # Prerequisites:
 # 1. App must be signed with Developer ID
 # 2. Set environment variables (or use macOS Keychain):
-#    - KAKU_NOTARIZE_APPLE_ID: Your Apple ID email
-#    - KAKU_NOTARIZE_TEAM_ID: Your Team ID (10 characters)
-#    - KAKU_NOTARIZE_PASSWORD: App-specific password (not your Apple ID password)
+#    - ARB_NOTARIZE_APPLE_ID: Your Apple ID email
+#    - ARB_NOTARIZE_TEAM_ID: Your Team ID (10 characters)
+#    - ARB_NOTARIZE_PASSWORD: App-specific password (not your Apple ID password)
 #
 # To generate app-specific password:
 # https://appleid.apple.com/account/manage -> Sign-In and Security -> App-Specific Passwords
@@ -17,7 +17,7 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO_ROOT"
 
-APP_NAME="Kaku"
+APP_NAME="Arb"
 APP_BUNDLE="dist/${APP_NAME}.app"
 DMG_PATH="dist/${APP_NAME}.dmg"
 
@@ -36,7 +36,7 @@ fi
 
 # Verify signing
 if ! codesign -v "$APP_BUNDLE" 2>/dev/null; then
-	echo "Error: App is not signed. Run build with KAKU_SIGNING_IDENTITY set."
+	echo "Error: App is not signed. Run build with ARB_SIGNING_IDENTITY set."
 	exit 1
 fi
 
@@ -44,18 +44,18 @@ echo "App: $APP_BUNDLE"
 echo "DMG: $DMG_PATH"
 
 # Get credentials from environment or Keychain
-APPLE_ID="${KAKU_NOTARIZE_APPLE_ID:-}"
-TEAM_ID="${KAKU_NOTARIZE_TEAM_ID:-}"
-PASSWORD="${KAKU_NOTARIZE_PASSWORD:-}"
+APPLE_ID="${ARB_NOTARIZE_APPLE_ID:-}"
+TEAM_ID="${ARB_NOTARIZE_TEAM_ID:-}"
+PASSWORD="${ARB_NOTARIZE_PASSWORD:-}"
 
 # If not set via env, try to read from Keychain
 if [[ -z "$APPLE_ID" ]]; then
 	echo "Checking Keychain for notarization credentials..."
-	APPLE_ID=$(security find-generic-password -s "kaku-notarize-apple-id" -w 2>/dev/null || true)
+	APPLE_ID=$(security find-generic-password -s "arb-notarize-apple-id" -w 2>/dev/null || true)
 fi
 
 if [[ -z "$PASSWORD" ]]; then
-	PASSWORD=$(security find-generic-password -s "kaku-notarize-password" -w 2>/dev/null || true)
+	PASSWORD=$(security find-generic-password -s "arb-notarize-password" -w 2>/dev/null || true)
 fi
 
 if [[ -z "$TEAM_ID" ]]; then
@@ -71,13 +71,13 @@ if [[ -z "$APPLE_ID" || -z "$PASSWORD" || -z "$TEAM_ID" ]]; then
 	echo "Error: Notarization credentials not found."
 	echo ""
 	echo "Please set environment variables:"
-	echo "  export KAKU_NOTARIZE_APPLE_ID='your-apple-id@example.com'"
-	echo "  export KAKU_NOTARIZE_TEAM_ID='YOURTEAMID'"
-	echo "  export KAKU_NOTARIZE_PASSWORD='xxxx-xxxx-xxxx-xxxx'"
+	echo "  export ARB_NOTARIZE_APPLE_ID='your-apple-id@example.com'"
+	echo "  export ARB_NOTARIZE_TEAM_ID='YOURTEAMID'"
+	echo "  export ARB_NOTARIZE_PASSWORD='xxxx-xxxx-xxxx-xxxx'"
 	echo ""
 	echo "Or store in Keychain:"
-	echo "  security add-generic-password -s 'kaku-notarize-apple-id' -a 'kaku' -w 'your-apple-id@example.com'"
-	echo "  security add-generic-password -s 'kaku-notarize-password' -a 'kaku' -w 'your-app-specific-password'"
+	echo "  security add-generic-password -s 'arb-notarize-apple-id' -a 'arb' -w 'your-apple-id@example.com'"
+	echo "  security add-generic-password -s 'arb-notarize-password' -a 'arb' -w 'your-app-specific-password'"
 	echo ""
 	echo "To generate app-specific password: https://appleid.apple.com/account/manage"
 	exit 1

@@ -12,3 +12,4 @@ freetype.workspace = true
 
 [build-dependencies]
 cc.workspace = true
+pkg-config = "0.3"

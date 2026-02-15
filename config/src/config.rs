@@ -1052,7 +1052,7 @@ impl Config {
 
         let mut paths = vec![];
         for dir in CONFIG_DIRS.iter() {
-            paths.push(PathPossibility::optional(dir.join("kaku.lua")))
+            paths.push(PathPossibility::optional(dir.join("arb.lua")))
         }
 
         if cfg!(windows) {
@@ -1066,7 +1066,7 @@ impl Config {
             // dir as the executable that will take precedence.
             if let Ok(exe_name) = std::env::current_exe() {
                 if let Some(exe_dir) = exe_name.parent() {
-                    paths.insert(0, PathPossibility::optional(exe_dir.join("kaku.lua")));
+                    paths.insert(0, PathPossibility::optional(exe_dir.join("arb.lua")));
                 }
             }
         }
@@ -1075,7 +1075,7 @@ impl Config {
             if let Ok(exe_name) = std::env::current_exe() {
                 if let Some(contents_dir) = exe_name.parent().and_then(|p| p.parent()) {
                     paths.push(PathPossibility::optional(
-                        contents_dir.join("Resources").join("kaku.lua"),
+                        contents_dir.join("Resources").join("arb.lua"),
                     ));
                 }
             }
@@ -1105,11 +1105,11 @@ impl Config {
             }
         }
 
-        // We didn't find (or were asked to skip) a kaku.lua file, so
+        // We didn't find (or were asked to skip) a arb.lua file, so
         // update the environment to make it simpler to understand this
         // state.
-        std::env::remove_var("KAKU_CONFIG_FILE");
-        std::env::remove_var("KAKU_CONFIG_DIR");
+        std::env::remove_var("ARB_CONFIG_FILE");
+        std::env::remove_var("ARB_CONFIG_DIR");
 
         match Self::try_default() {
             Err(err) => LoadedConfig {
@@ -1174,7 +1174,7 @@ impl Config {
                         anyhow::anyhow!(
                             "Config error: You may have forgotten to define the config variable.\n\
                              \n\
-                             In kaku.lua, you need to create the config table first:\n\
+                             In arb.lua, you need to create the config table first:\n\
                              \n\
                              local wezterm = require 'wezterm'\n\
                              local config = {{}}  -- or wezterm.config_builder()\n\
@@ -1201,9 +1201,9 @@ impl Config {
                 })?;
                 cfg.check_consistency()?;
 
-                std::env::set_var("KAKU_CONFIG_FILE", p);
+                std::env::set_var("ARB_CONFIG_FILE", p);
                 if let Some(dir) = p.parent() {
-                    std::env::set_var("KAKU_CONFIG_DIR", dir);
+                    std::env::set_var("ARB_CONFIG_DIR", dir);
                 }
                 Ok(cfg)
             });
@@ -1680,7 +1680,7 @@ impl Config {
         cmd.env("COLORTERM", "truecolor");
         // TERM_PROGRAM and TERM_PROGRAM_VERSION are an emerging
         // de-facto standard for identifying the terminal.
-        cmd.env("TERM_PROGRAM", "Kaku");
+        cmd.env("TERM_PROGRAM", "Arb");
         cmd.env("TERM_PROGRAM_VERSION", crate::wezterm_version());
     }
 }
@@ -1695,7 +1695,7 @@ mod test {
         CONFIG_SKIP.store(false, Ordering::Relaxed);
 
         let dir = tempfile::tempdir()?;
-        let path = dir.path().join("kaku.lua");
+        let path = dir.path().join("arb.lua");
         std::fs::write(
             &path,
             r#"
@@ -1854,26 +1854,26 @@ fn default_font_size() -> f64 {
 
 pub(crate) fn compute_cache_dir() -> anyhow::Result<PathBuf> {
     if let Some(runtime) = dirs_next::cache_dir() {
-        return Ok(runtime.join("kaku"));
+        return Ok(runtime.join("arb"));
     }
 
-    Ok(crate::HOME_DIR.join(".local/share/kaku"))
+    Ok(crate::HOME_DIR.join(".local/share/arb"))
 }
 
 pub(crate) fn compute_data_dir() -> anyhow::Result<PathBuf> {
     if let Some(runtime) = dirs_next::data_dir() {
-        return Ok(runtime.join("kaku"));
+        return Ok(runtime.join("arb"));
     }
 
-    Ok(crate::HOME_DIR.join(".local/share/kaku"))
+    Ok(crate::HOME_DIR.join(".local/share/arb"))
 }
 
 pub(crate) fn compute_runtime_dir() -> anyhow::Result<PathBuf> {
     if let Some(runtime) = dirs_next::runtime_dir() {
-        return Ok(runtime.join("kaku"));
+        return Ok(runtime.join("arb"));
     }
 
-    Ok(crate::HOME_DIR.join(".local/share/kaku"))
+    Ok(crate::HOME_DIR.join(".local/share/arb"))
 }
 
 pub fn pki_dir() -> anyhow::Result<PathBuf> {

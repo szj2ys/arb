@@ -510,12 +510,12 @@ fn config_dir_file(name: &str) -> PathBuf {
     config::CONFIG_DIRS
         .first()
         .cloned()
-        .unwrap_or_else(|| config::HOME_DIR.join(".config").join("kaku"))
+        .unwrap_or_else(|| config::HOME_DIR.join(".config").join("arb"))
         .join(name)
 }
 
 fn persisted_window_size_file() -> PathBuf {
-    config_dir_file(".kaku_window_geometry")
+    config_dir_file(".arb_window_geometry")
 }
 
 fn window_position(window: *mut Object) -> Option<ScreenPoint> {
@@ -2039,8 +2039,8 @@ impl Inner {
     }
 }
 
-const VIEW_CLS_NAME: &str = "KakuWindowView";
-const WINDOW_CLS_NAME: &str = "KakuWindow";
+const VIEW_CLS_NAME: &str = "ArbWindowView";
+const WINDOW_CLS_NAME: &str = "ArbWindow";
 const TITLEBAR_VIEW_NAME: &str = "NSTitlebarContainerView";
 
 struct WindowView {
@@ -2501,15 +2501,11 @@ impl WindowView {
         NO
     }
 
-    extern "C" fn kaku_perform_key_assignment(
-        this: &mut Object,
-        _sel: Sel,
-        menu_item: *mut Object,
-    ) {
+    extern "C" fn arb_perform_key_assignment(this: &mut Object, _sel: Sel, menu_item: *mut Object) {
         let menu_item = MenuItem::with_menu_item(menu_item);
-        // Safe because kakuPerformKeyAssignment: is only used with KeyAssignment
+        // Safe because arbPerformKeyAssignment: is only used with KeyAssignment
         let action = menu_item.get_represented_item();
-        log::debug!("kaku_perform_key_assignment {action:?}",);
+        log::debug!("arb_perform_key_assignment {action:?}",);
         match action {
             Some(RepresentedItem::KeyAssignment(action)) => {
                 if let Some(this) = Self::get_this(this) {
@@ -3520,8 +3516,8 @@ impl WindowView {
             );
 
             cls.add_method(
-                sel!(kakuPerformKeyAssignment:),
-                Self::kaku_perform_key_assignment as extern "C" fn(&mut Object, Sel, *mut Object),
+                sel!(arbPerformKeyAssignment:),
+                Self::arb_perform_key_assignment as extern "C" fn(&mut Object, Sel, *mut Object),
             );
 
             cls.add_method(

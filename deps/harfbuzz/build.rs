@@ -4,8 +4,25 @@ use std::path::{Path, PathBuf};
 fn harfbuzz() {
     use std::fs;
 
-    if !Path::new("harfbuzz/.git").exists() {
-        git_submodule_update();
+    println!("cargo:rerun-if-env-changed=PKG_CONFIG_PATH");
+    println!("cargo:rerun-if-env-changed=PKG_CONFIG_LIBDIR");
+    println!("cargo:rerun-if-env-changed=PKG_CONFIG_SYSROOT_DIR");
+
+    if !Path::new("harfbuzz/src/harfbuzz.cc").exists() {
+        // Fall back to the system harfbuzz library when the submodule isn't present.
+        // We still need to advertise link deps for downstream crates.
+        if let Ok(lib) = pkg_config::Config::new().probe("harfbuzz") {
+            for path in lib.link_paths {
+                println!("cargo:rustc-link-search=native={}", path.display());
+            }
+            for name in lib.libs {
+                println!("cargo:rustc-link-lib={}", name);
+            }
+        } else {
+            // Last resort: hope it is in the default search path.
+            println!("cargo:rustc-link-lib=harfbuzz");
+        }
+        return;
     }
 
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1] - 2026-02-15
+
+### Changes
+- Rename project identifiers from kaku to arb.
+- Improve build robustness when vendored submodules are missing (use system freetype/harfbuzz via pkg-config).
+- Fix macOS app bundle naming/resources and packaging.
+
 ## [0.3.0] - 2026-02-14
 
 ### Features

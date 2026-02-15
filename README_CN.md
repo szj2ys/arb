@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <img src="assets/kaku.jpeg" alt="arb 截图" width="1000" />
+  <img src="assets/arb.jpeg" alt="arb 截图" width="1000" />
   <br/>
   arb 专注于开箱即用的体验。
 </p>
@@ -66,8 +66,8 @@ arb 内置了一套精选的 CLI 工具，预配置好即可投入使用：
 
 arb 通过标准 Lua 脚本完全可配置。配置文件按以下优先级加载：
 
-1. **内置配置**: `arb.app/Contents/Resources/kaku.lua` 处理默认设置。
-2. **用户覆盖**: 创建 `~/.config/kaku/kaku.lua` 并返回你的配置表。
+1. **内置配置**: `arb.app/Contents/Resources/arb.lua` 处理默认设置。
+2. **用户覆盖**: 创建 `~/.config/arb/arb.lua` 并返回你的配置表。
 
 ## 为什么做 arb？
 

@@ -15,7 +15,7 @@ use objc::*;
 use std::cell::RefCell;
 use std::time::{Duration, Instant};
 
-const CLS_NAME: &str = "KakuAppDelegate";
+const CLS_NAME: &str = "ArbAppDelegate";
 
 thread_local! {
     static LAST_OPEN_UNTITLED_SPAWN: RefCell<Option<Instant>> = RefCell::new(None);
@@ -35,8 +35,8 @@ extern "C" fn application_should_terminate(
             WindowCloseConfirmation::AlwaysPrompt => {
                 let alert: id = msg_send![class!(NSAlert), alloc];
                 let alert: id = msg_send![alert, init];
-                let message_text = nsstring("Terminate Kaku?");
-                let info_text = nsstring("Detach and close all panes and terminate Kaku?");
+                let message_text = nsstring("Terminate Arb?");
+                let info_text = nsstring("Detach and close all panes and terminate Arb?");
                 let cancel = nsstring("Cancel");
                 let ok = nsstring("Ok");
 
@@ -141,11 +141,11 @@ extern "C" fn application_open_untitled_file(
     NO
 }
 
-extern "C" fn kaku_perform_key_assignment(_self: &mut Object, _sel: Sel, menu_item: *mut Object) {
+extern "C" fn arb_perform_key_assignment(_self: &mut Object, _sel: Sel, menu_item: *mut Object) {
     let menu_item = crate::os::macos::menu::MenuItem::with_menu_item(menu_item);
-    // Safe because kakuPerformKeyAssignment: is only used with KeyAssignment
+    // Safe because arbPerformKeyAssignment: is only used with KeyAssignment
     let action = menu_item.get_represented_item();
-    log::debug!("kaku_perform_key_assignment {action:?}",);
+    log::debug!("arb_perform_key_assignment {action:?}",);
     match action {
         Some(RepresentedItem::KeyAssignment(action)) => {
             if let Some(conn) = Connection::get() {
@@ -159,7 +159,7 @@ extern "C" fn kaku_perform_key_assignment(_self: &mut Object, _sel: Sel, menu_it
 extern "C" fn show_settings_window(_self: &mut Object, _sel: Sel, _sender: *mut Object) {
     if let Some(conn) = Connection::get() {
         conn.dispatch_app_event(ApplicationEvent::PerformKeyAssignment(
-            KeyAssignment::EmitEvent("open-kaku-config".to_string()),
+            KeyAssignment::EmitEvent("open-arb-config".to_string()),
         ));
     }
 }
@@ -189,7 +189,7 @@ extern "C" fn application_dock_menu(
 ) -> *mut Object {
     let dock_menu = Menu::new_with_title("");
     let new_window_item =
-        MenuItem::new_with("New Window", Some(sel!(kakuPerformKeyAssignment:)), "");
+        MenuItem::new_with("New Window", Some(sel!(arbPerformKeyAssignment:)), "");
     new_window_item
         .set_represented_item(RepresentedItem::KeyAssignment(KeyAssignment::SpawnWindow));
     dock_menu.add_item(&new_window_item);
@@ -232,8 +232,8 @@ fn get_class() -> &'static Class {
                     as extern "C" fn(&mut Object, Sel, *mut Object) -> *mut Object,
             );
             cls.add_method(
-                sel!(kakuPerformKeyAssignment:),
-                kaku_perform_key_assignment as extern "C" fn(&mut Object, Sel, *mut Object),
+                sel!(arbPerformKeyAssignment:),
+                arb_perform_key_assignment as extern "C" fn(&mut Object, Sel, *mut Object),
             );
             // macOS may route "Settings..." through one of these standard selectors
             // instead of our custom menu-item selector.

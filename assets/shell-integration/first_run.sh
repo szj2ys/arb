@@ -1,14 +1,14 @@
 #!/bin/bash
-# Kaku First Run Experience
-# This script is launched automatically on the first run of Kaku.
+# Arb First Run Experience
+# This script is launched automatically on the first run of Arb.
 
 set -euo pipefail
 
 # Always persist config version at script exit to avoid repeated onboarding loops
 # when optional setup steps fail on user machines.
 persist_config_version() {
-	mkdir -p "$HOME/.config/kaku"
-	echo "6" >"$HOME/.config/kaku/.kaku_config_version"
+	mkdir -p "$HOME/.config/arb"
+	echo "6" >"$HOME/.config/arb/.arb_config_version"
 }
 trap persist_config_version EXIT
 
@@ -16,10 +16,10 @@ trap persist_config_version EXIT
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if [[ -f "$SCRIPT_DIR/setup_zsh.sh" ]]; then
 	RESOURCES_DIR="$SCRIPT_DIR"
-elif [[ -f "/Applications/Kaku.app/Contents/Resources/setup_zsh.sh" ]]; then
-	RESOURCES_DIR="/Applications/Kaku.app/Contents/Resources"
-elif [[ -f "$HOME/Applications/Kaku.app/Contents/Resources/setup_zsh.sh" ]]; then
-	RESOURCES_DIR="$HOME/Applications/Kaku.app/Contents/Resources"
+elif [[ -f "/Applications/Arb.app/Contents/Resources/setup_zsh.sh" ]]; then
+	RESOURCES_DIR="/Applications/Arb.app/Contents/Resources"
+elif [[ -f "$HOME/Applications/Arb.app/Contents/Resources/setup_zsh.sh" ]]; then
+	RESOURCES_DIR="$HOME/Applications/Arb.app/Contents/Resources"
 else
 	# Fallback for dev environment
 	RESOURCES_DIR="$SCRIPT_DIR"
@@ -75,10 +75,10 @@ echo " |  < / _\` || |/ /| | | |"
 echo " | . \ (_| ||   < | |_| |"
 echo " |_|\_\__,_||_|\_\ \__,_|"
 echo -e "\033[0m"
-echo "Welcome to Kaku!"
+echo "Welcome to Arb!"
 echo "A fast, out-of-the-box terminal built for AI coding."
 echo "--------------------------------------------------------"
-echo "Would you like to install Kaku's enhanced shell features?"
+echo "Would you like to install Arb's enhanced shell features?"
 echo "This includes:"
 echo "  - Starship Prompt"
 echo "  - z - Smart Directory Jumper"
@@ -97,13 +97,13 @@ if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
 	INSTALL_SHELL=true
 fi
 
-# Kaku Theme Prompt
+# Arb Theme Prompt
 echo "--------------------------------------------------------"
-echo "Would you like to use the Kaku Theme?"
+echo "Would you like to use the Arb Theme?"
 echo "A modern, high-contrast dark theme optimized for AI coding."
 echo "Perfect for Claude, Codex, and late-night hacking."
 echo "--------------------------------------------------------"
-read -p "Apply Kaku Theme? [Y/n] " -n 1 -r
+read -p "Apply Arb Theme? [Y/n] " -n 1 -r
 echo ""
 
 INSTALL_THEME=false
@@ -142,13 +142,13 @@ else
 	echo "$SETUP_SCRIPT"
 fi
 
-mkdir -p "$HOME/.config/kaku"
+mkdir -p "$HOME/.config/arb"
 
-resolve_kaku_cli() {
+resolve_arb_cli() {
 	local candidates=(
-		"$RESOURCES_DIR/../MacOS/kaku"
-		"/Applications/Kaku.app/Contents/MacOS/kaku"
-		"$HOME/Applications/Kaku.app/Contents/MacOS/kaku"
+		"$RESOURCES_DIR/../MacOS/arb"
+		"/Applications/Arb.app/Contents/MacOS/arb"
+		"$HOME/Applications/Arb.app/Contents/MacOS/arb"
 	)
 
 	local candidate
@@ -159,8 +159,8 @@ resolve_kaku_cli() {
 		fi
 	done
 
-	if command -v kaku >/dev/null 2>&1; then
-		command -v kaku
+	if command -v arb >/dev/null 2>&1; then
+		command -v arb
 		return 0
 	fi
 
@@ -168,26 +168,26 @@ resolve_kaku_cli() {
 }
 
 ensure_user_config_via_cli() {
-	local kaku_lua_dest="$HOME/.config/kaku/kaku.lua"
-	if [[ -f "$kaku_lua_dest" ]]; then
-		echo "Keeping existing user config: $kaku_lua_dest"
+	local arb_lua_dest="$HOME/.config/arb/arb.lua"
+	if [[ -f "$arb_lua_dest" ]]; then
+		echo "Keeping existing user config: $arb_lua_dest"
 		return 0
 	fi
 
-	local kaku_bin
-	if ! kaku_bin="$(resolve_kaku_cli)"; then
-		echo "Warning: kaku CLI not found, skipped config initialization."
+	local arb_bin
+	if ! arb_bin="$(resolve_arb_cli)"; then
+		echo "Warning: arb CLI not found, skipped config initialization."
 		return 0
 	fi
 
-	if "$kaku_bin" config --ensure-only >/dev/null 2>&1; then
-		echo "Created minimal user config: $kaku_lua_dest"
+	if "$arb_bin" config --ensure-only >/dev/null 2>&1; then
+		echo "Created minimal user config: $arb_lua_dest"
 	else
-		echo "Warning: failed to initialize user config via '$kaku_bin config --ensure-only'."
+		echo "Warning: failed to initialize user config via '$arb_bin config --ensure-only'."
 	fi
 }
 
-# Process Kaku Theme
+# Process Arb Theme
 if [[ "$INSTALL_THEME" == "true" ]]; then
 	ensure_user_config_via_cli
 fi
@@ -205,7 +205,7 @@ if [[ "$INSTALL_DELTA" == "true" ]]; then
 	fi
 fi
 
-echo -e "\n\033[1;32m❤️ Kaku environment is ready! Enjoy coding.\033[0m"
+echo -e "\n\033[1;32m❤️ Arb environment is ready! Enjoy coding.\033[0m"
 
 # `exec` replaces the shell process and skips EXIT trap handlers.
 # Persist explicitly here so successful first-run/upgrade paths are recorded.

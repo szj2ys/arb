@@ -1,11 +1,11 @@
-# Contributing to Kaku
+# Contributing to Arb
 
 ## Setup
 
 ```bash
 # Clone the repository
-git clone https://github.com/tw93/Kaku.git
-cd Kaku
+git clone https://github.com/tw93/Arb.git
+cd Arb
 
 # Install required tools (cargo-nextest, nightly rustfmt)
 make install-tools
@@ -22,9 +22,9 @@ make install-hooks
 | `make fmt-check` | Check formatting without modifying files |
 | `make check` | Compile check, catch type/syntax errors |
 | `make test` | Run unit tests |
-| `make dev` | Fast local debug: build `kaku-gui` and run from `target/debug` |
+| `make dev` | Fast local debug: build `arb-gui` and run from `target/debug` |
 | `make build` | Compile binaries (no app bundle) |
-| `make app` | Build debug app bundle → `dist/Kaku.app` |
+| `make app` | Build debug app bundle → `dist/Arb.app` |
 
 **Recommended workflow:**
 
@@ -46,7 +46,7 @@ RUST_LOG=debug make dev
 ```bash
 # Build application and DMG (release, universal binary)
 ./scripts/build.sh
-# Outputs: dist/Kaku.app and dist/Kaku.dmg
+# Outputs: dist/Arb.app and dist/Arb.dmg
 
 # Build for current architecture only (faster, for local testing)
 ./scripts/build.sh --native-arch

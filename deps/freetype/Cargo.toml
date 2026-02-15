@@ -12,3 +12,5 @@ fixed.workspace = true
 
 [build-dependencies]
 cc.workspace = true
+libz-sys = "1.1.22"
+pkg-config = "0.3"

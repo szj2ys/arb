@@ -2,12 +2,12 @@
 members = [
   "crates/bidi",
   "deps/cairo",
-  "kaku",
+  "arb",
   "crates/wezterm-blob-leases",
   "crates/wezterm-cell",
   "crates/wezterm-escape-parser",
   "crates/wezterm-dynamic",
-  "kaku-gui",
+  "arb-gui",
   "crates/wezterm-open-url",
   "crates/wezterm-ssh",
   "crates/wezterm-surface",
@@ -141,6 +141,7 @@ libc = "0.2"
 libflate = "2"
 libloading = "0.8"
 libssh-rs = "0.3.6"
+libz-sys = "1.1.22"
 line_drawing = "0.8"
 log = "0.4"
 logging = { path = "lua-api-crates/logging" }

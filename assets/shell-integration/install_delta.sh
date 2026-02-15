@@ -1,5 +1,5 @@
 #!/bin/bash
-# Kaku - Delta Installation Script
+# Arb - Delta Installation Script
 # Installs and configures delta for beautiful git diffs
 
 set -euo pipefail
@@ -16,20 +16,20 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RESOURCES_DIR="${RESOURCES_DIR:-$SCRIPT_DIR}"
 
 # Paths
-USER_CONFIG_DIR="$HOME/.config/kaku/zsh"
+USER_CONFIG_DIR="$HOME/.config/arb/zsh"
 USER_BIN_DIR="$USER_CONFIG_DIR/bin"
 VENDOR_DELTA="$RESOURCES_DIR/../vendor/delta"
 
 # Check if running in app bundle
 if [[ ! -f "$VENDOR_DELTA" ]]; then
-    VENDOR_DELTA="/Applications/Kaku.app/Contents/Resources/vendor/delta"
+    VENDOR_DELTA="/Applications/Arb.app/Contents/Resources/vendor/delta"
 fi
 
 echo -e "${BOLD}Delta Installation${NC}"
 echo -e "${NC}Git diff beautifier for better code review${NC}"
 echo ""
 
-# Check if delta is already installed in Kaku user bin.
+# Check if delta is already installed in Arb user bin.
 # Even if already installed, still continue to apply git config defaults.
 if command -v delta &> /dev/null && [[ "$(command -v delta)" == "$USER_BIN_DIR/delta" ]]; then
     echo -e "${GREEN}✓${NC} Delta binary already installed"
@@ -74,8 +74,8 @@ set_git_config_if_missing "delta.side-by-side" "true"
 set_git_config_if_missing "delta.line-fill-method" "spaces"
 echo -e "${GREEN}done ✅${NC}"
 
-# Set Kaku-aligned style defaults without overriding existing values.
-echo -n "  Applying Kaku style defaults (missing keys only)... "
+# Set Arb-aligned style defaults without overriding existing values.
+echo -n "  Applying Arb style defaults (missing keys only)... "
 set_git_config_if_missing "delta.syntax-theme" "Coldark-Dark"
 set_git_config_if_missing "delta.file-style" "omit"
 set_git_config_if_missing "delta.file-decoration-style" "omit"

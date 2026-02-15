@@ -15,7 +15,7 @@ fi
 
 # Format: DisplayName:AppNameForOpen:ProcessNameForPgrep
 declare -a TERMINALS=(
-	"Kaku:Kaku:kaku-gui"
+	"Arb:Arb:arb-gui"
 	"Ghostty:Ghostty:ghostty"
 	"Alacritty:Alacritty:alacritty"
 )
@@ -76,7 +76,7 @@ export WAIT_TIMEOUT_SEC
 export -f quit_app wait_first_window cold_start_once
 
 printf 'Cleaning running terminals...\n'
-pkill -9 kaku-gui 2>/dev/null || true
+pkill -9 arb-gui 2>/dev/null || true
 pkill -9 ghostty 2>/dev/null || true
 pkill -9 alacritty 2>/dev/null || true
 sleep 1

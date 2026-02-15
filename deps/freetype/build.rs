@@ -10,45 +10,53 @@ fn new_build() -> cc::Build {
 }
 
 fn zlib() {
-    if !Path::new("zlib/.git").exists() {
-        git_submodule_update();
-    }
+    // This repo historically used a zlib git submodule. In some environments
+    // (eg: source archives or shallow exports) the submodule contents are not
+    // present and `git submodule update` is unavailable.
+    //
+    // Prefer using a system-provided zlib via the `libz-sys` crate, which is
+    // already present in the workspace dependencies.
+    //
+    // If the submodule is present we compile it; otherwise, we compile nothing
+    // and rely on downstream crates to link to zlib.
+    if Path::new("zlib/inflate.c").exists() {
+        let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
 
-    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
-
-    let mut cfg = new_build();
-    let build_dir = out_dir.join("zlib-build");
-    fs::create_dir_all(&build_dir).unwrap();
-    cfg.out_dir(&build_dir);
-    cfg.file("zlib/adler32.c")
-        .file("zlib/compress.c")
-        .file("zlib/crc32.c")
-        .file("zlib/deflate.c")
-        .file("zlib/gzclose.c")
-        .file("zlib/gzlib.c")
-        .file("zlib/gzread.c")
-        .file("zlib/gzwrite.c")
-        .file("zlib/inflate.c")
-        .file("zlib/infback.c")
-        .file("zlib/inftrees.c")
-        .file("zlib/inffast.c")
-        .file("zlib/trees.c")
-        .file("zlib/uncompr.c")
-        .file("zlib/zutil.c");
-    cfg.include("zlib");
-    cfg.define("HAVE_SYS_TYPES_H", None);
-    cfg.define("HAVE_STDINT_H", None);
-    cfg.define("HAVE_STDDEF_H", None);
-    let target = env::var("TARGET").unwrap();
-    if !target.contains("windows") {
-        cfg.define("_LARGEFILE64_SOURCE", Some("1"));
+        let mut cfg = new_build();
+        let build_dir = out_dir.join("zlib-build");
+        fs::create_dir_all(&build_dir).unwrap();
+        cfg.out_dir(&build_dir);
+        cfg.file("zlib/adler32.c")
+            .file("zlib/compress.c")
+            .file("zlib/crc32.c")
+            .file("zlib/deflate.c")
+            .file("zlib/gzclose.c")
+            .file("zlib/gzlib.c")
+            .file("zlib/gzread.c")
+            .file("zlib/gzwrite.c")
+            .file("zlib/inflate.c")
+            .file("zlib/infback.c")
+            .file("zlib/inftrees.c")
+            .file("zlib/inffast.c")
+            .file("zlib/trees.c")
+            .file("zlib/uncompr.c")
+            .file("zlib/zutil.c");
+        cfg.include("zlib");
+        cfg.define("HAVE_SYS_TYPES_H", None);
+        cfg.define("HAVE_STDINT_H", None);
+        cfg.define("HAVE_STDDEF_H", None);
+        let target = env::var("TARGET").unwrap();
+        if !target.contains("windows") {
+            cfg.define("_LARGEFILE64_SOURCE", Some("1"));
+        }
+        cfg.compile("z");
     }
-    cfg.compile("z");
 }
 
 fn libpng() {
-    if !Path::new("libpng/.git").exists() {
-        git_submodule_update();
+    if !Path::new("libpng/png.c").exists() {
+        // Fall back to system libpng when submodule isn't present.
+        return;
     }
 
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
@@ -110,8 +118,22 @@ fn libpng() {
 }
 
 fn freetype() {
-    if !Path::new("freetype2/.git").exists() {
-        git_submodule_update();
+    if !Path::new("freetype2/src/base/ftbase.c").exists() {
+        // Fall back to system freetype when submodule isn't present.
+        if let Ok(lib) = pkg_config::Config::new().probe("freetype2") {
+            for path in lib.link_paths {
+                println!("cargo:rustc-link-search=native={}", path.display());
+            }
+            for name in lib.libs {
+                println!("cargo:rustc-link-lib={}", name);
+            }
+        } else {
+            // Last resort: hope it is in the default search path.
+            println!("cargo:rustc-link-lib=freetype");
+        }
+        println!("cargo:include=");
+        println!("cargo:lib=");
+        return;
     }
 
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());

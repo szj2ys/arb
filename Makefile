@@ -3,6 +3,7 @@
 all: build
 
 RUST_LOG ?= info
+PROFILE ?= debug
 
 test:
 	cargo nextest run
@@ -16,20 +17,20 @@ check:
 	cargo check -p wezterm-ssh
 
 app:
-	PROFILE=debug ./scripts/build.sh --app-only
+	PROFILE=$(PROFILE) ./scripts/build.sh --app-only
 
 dev:
-	cargo build $(BUILD_OPTS) -p kaku-gui
-	RUST_LOG=$(RUST_LOG) ./target/debug/kaku-gui
+	cargo build $(BUILD_OPTS) -p arb-gui
+	RUST_LOG=$(RUST_LOG) ./target/debug/arb-gui
 
 build:
-	cargo build $(BUILD_OPTS) -p kaku -p kaku-gui -p wezterm-mux-server-impl
+	cargo build $(BUILD_OPTS) -p arb -p arb-gui -p wezterm-mux-server-impl
 
 fmt:
-	cargo +nightly fmt -p kaku -p kaku-gui -p mux -p wezterm-term -p termwiz -p config -p wezterm-font
+	cargo +nightly fmt -p arb -p arb-gui -p mux -p wezterm-term -p termwiz -p config -p wezterm-font
 
 fmt-check:
-	cargo +nightly fmt -p kaku -p kaku-gui -p mux -p wezterm-term -p termwiz -p config -p wezterm-font -- --check
+	cargo +nightly fmt -p arb -p arb-gui -p mux -p wezterm-term -p termwiz -p config -p wezterm-font -- --check
 	@echo "Format check passed."
 
 install-tools:

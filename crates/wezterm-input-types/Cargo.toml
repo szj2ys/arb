@@ -3,7 +3,7 @@ name = "wezterm-input-types"
 version = "0.1.0"
 authors = ["Wez Furlong <wez@wezfurlong.org>"]
 edition = "2021"
-repository = "https://github.com/tw93/Kaku"
+repository = "https://github.com/tw93/Arb"
 description = "config serialization for wezterm via dynamic json-like data values"
 license = "MIT"
 

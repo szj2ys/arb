@@ -1,5 +1,5 @@
 #!/bin/bash
-# Kaku config version check
+# Arb config version check
 
 set -euo pipefail
 
@@ -9,7 +9,7 @@ BOLD='\033[1m'
 NC='\033[0m'
 
 CURRENT_CONFIG_VERSION=6
-VERSION_FILE="$HOME/.config/kaku/.kaku_config_version"
+VERSION_FILE="$HOME/.config/arb/.arb_config_version"
 
 detect_login_shell() {
 	if [[ -n "${SHELL:-}" && -x "${SHELL:-}" ]]; then
@@ -48,8 +48,8 @@ detect_login_shell() {
 }
 
 # Determine resource dir
-if [[ -d "/Applications/Kaku.app/Contents/Resources" ]]; then
-	RESOURCE_DIR="/Applications/Kaku.app/Contents/Resources"
+if [[ -d "/Applications/Arb.app/Contents/Resources" ]]; then
+	RESOURCE_DIR="/Applications/Arb.app/Contents/Resources"
 else
 	RESOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 fi
@@ -65,7 +65,7 @@ if [[ $user_version -eq 0 || $user_version -ge $CURRENT_CONFIG_VERSION ]]; then
 fi
 
 echo ""
-echo -e "${BOLD}Kaku config update available!${NC} v$user_version -> v$CURRENT_CONFIG_VERSION"
+echo -e "${BOLD}Arb config update available!${NC} v$user_version -> v$CURRENT_CONFIG_VERSION"
 echo ""
 
 # Show what's new
@@ -89,7 +89,7 @@ fi
 if [[ $user_version -lt 5 ]]; then
 	echo "  • Refined diff header display to avoid duplicate file hints"
 	echo "  • Updated Delta default theme and label readability"
-	echo "  • Better protection for user custom kaku.lua during onboarding"
+	echo "  • Better protection for user custom arb.lua during onboarding"
 fi
 if [[ $user_version -lt 6 ]]; then
 	echo "  • Added zsh-completions to default shell setup"

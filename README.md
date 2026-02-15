@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <img src="assets/kaku.jpeg" alt="arb Screenshot" width="1000" />
+  <img src="assets/arb.jpeg" alt="arb Screenshot" width="1000" />
   <br/>
   arb is designed for an out-of-the-box experience.
 </p>
@@ -67,14 +67,14 @@ arb comes with a carefully curated suite of CLI tools, pre-configured for immedi
 
 arb is fully configurable via standard Lua scripts.
 
-On macOS, bundled defaults in `arb.app/Contents/Resources/kaku.lua` are fallback only, so user config is loaded first.
+On macOS, bundled defaults in `arb.app/Contents/Resources/arb.lua` are fallback only, so user config is loaded first.
 
-Use a single user config path: `~/.config/kaku/kaku.lua`.
+Use a single user config path: `~/.config/arb/arb.lua`.
 
 ### Updates & Reset
 
-- Check/apply update from CLI: `kaku update`
-- Remove arb-managed shell defaults and integration: `kaku reset` (or non-interactive `kaku reset --yes`)
+- Check/apply update from CLI: `arb update`
+- Remove arb-managed shell defaults and integration: `arb reset` (or non-interactive `arb reset --yes`)
 - GUI auto-update check uses numeric version comparison (for example `0.1.10` is correctly newer than `0.1.9`).
 
 ## Why arb?

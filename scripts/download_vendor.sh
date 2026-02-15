@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# This script downloads external dependencies for bundling into the Kaku App.
+# This script downloads external dependencies for bundling into the Arb App.
 # It should be run before packaging.
 
 VENDOR_DIR="$(cd "$(dirname "$0")/../assets/vendor" && pwd)"

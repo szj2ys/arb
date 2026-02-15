@@ -2,17 +2,17 @@ fn main() {
     println!("cargo:rerun-if-changed=build.rs");
 
     let manifest_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap();
-    let kaku_toml_path = std::path::Path::new(&manifest_dir)
+    let arb_toml_path = std::path::Path::new(&manifest_dir)
         .join("..")
         .join("..")
-        .join("kaku")
+        .join("arb")
         .join("Cargo.toml");
 
     let mut ci_tag = String::from("0.1.0-unknown");
 
-    if kaku_toml_path.exists() {
-        println!("cargo:rerun-if-changed={}", kaku_toml_path.display());
-        if let Ok(contents) = std::fs::read_to_string(&kaku_toml_path) {
+    if arb_toml_path.exists() {
+        println!("cargo:rerun-if-changed={}", arb_toml_path.display());
+        if let Ok(contents) = std::fs::read_to_string(&arb_toml_path) {
             if let Some(line) = contents
                 .lines()
                 .find(|line| line.trim().starts_with("version ="))

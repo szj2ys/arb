@@ -1,6 +1,6 @@
 #!/bin/bash
-# Kaku Zsh Setup Script
-# This script configures a "batteries-included" Zsh environment using Kaku's bundled resources.
+# Arb Zsh Setup Script
+# This script configures a "batteries-included" Zsh environment using Arb's bundled resources.
 # It is designed to be safe: it backs up existing configurations and can be re-run.
 
 set -euo pipefail
@@ -25,17 +25,17 @@ NC='\033[0m'
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Thin entrypoint: delegate to `kaku init` whenever possible.
+# Thin entrypoint: delegate to `arb init` whenever possible.
 # The rust command owns wrapper installation and orchestration.
-if [[ "${KAKU_INIT_INTERNAL:-0}" != "1" ]]; then
-	if [[ -n "${KAKU_BIN:-}" && -x "${KAKU_BIN}" ]]; then
-		exec "${KAKU_BIN}" init "$@"
+if [[ "${ARB_INIT_INTERNAL:-0}" != "1" ]]; then
+	if [[ -n "${ARB_BIN:-}" && -x "${ARB_BIN}" ]]; then
+		exec "${ARB_BIN}" init "$@"
 	fi
 
 	for candidate in \
-		"$SCRIPT_DIR/../MacOS/kaku" \
-		"/Applications/Kaku.app/Contents/MacOS/kaku" \
-		"$HOME/Applications/Kaku.app/Contents/MacOS/kaku"; do
+		"$SCRIPT_DIR/../MacOS/arb" \
+		"/Applications/Arb.app/Contents/MacOS/arb" \
+		"$HOME/Applications/Arb.app/Contents/MacOS/arb"; do
 		if [[ -x "$candidate" ]]; then
 			exec "$candidate" init "$@"
 		fi
@@ -49,21 +49,21 @@ if [[ -d "$SCRIPT_DIR/vendor" ]]; then
 	RESOURCES_DIR="$SCRIPT_DIR"
 elif [[ -d "$SCRIPT_DIR/../vendor" ]]; then
 	RESOURCES_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-elif [[ -d "/Applications/Kaku.app/Contents/Resources/vendor" ]]; then
-	RESOURCES_DIR="/Applications/Kaku.app/Contents/Resources"
-elif [[ -d "$HOME/Applications/Kaku.app/Contents/Resources/vendor" ]]; then
-	RESOURCES_DIR="$HOME/Applications/Kaku.app/Contents/Resources"
+elif [[ -d "/Applications/Arb.app/Contents/Resources/vendor" ]]; then
+	RESOURCES_DIR="/Applications/Arb.app/Contents/Resources"
+elif [[ -d "$HOME/Applications/Arb.app/Contents/Resources/vendor" ]]; then
+	RESOURCES_DIR="$HOME/Applications/Arb.app/Contents/Resources"
 else
-	echo -e "${YELLOW}Error: Could not locate Kaku resources (vendor directory missing).${NC}"
+	echo -e "${YELLOW}Error: Could not locate Arb resources (vendor directory missing).${NC}"
 	exit 1
 fi
 
 VENDOR_DIR="$RESOURCES_DIR/vendor"
-USER_CONFIG_DIR="$HOME/.config/kaku/zsh"
-KAKU_INIT_FILE="$USER_CONFIG_DIR/kaku.zsh"
+USER_CONFIG_DIR="$HOME/.config/arb/zsh"
+ARB_INIT_FILE="$USER_CONFIG_DIR/arb.zsh"
 STARSHIP_CONFIG="$HOME/.config/starship.toml"
 ZSHRC="${ZDOTDIR:-$HOME}/.zshrc"
-BACKUP_SUFFIX=".kaku-backup-$(date +%s)"
+BACKUP_SUFFIX=".arb-backup-$(date +%s)"
 
 # Ensure vendor resources exist
 if [[ ! -d "$VENDOR_DIR" ]]; then
@@ -71,7 +71,7 @@ if [[ ! -d "$VENDOR_DIR" ]]; then
 	exit 1
 fi
 
-echo -e "${BOLD}Setting up Kaku Shell Environment${NC}"
+echo -e "${BOLD}Setting up Arb Shell Environment${NC}"
 
 # 1. Prepare User Config Directory
 mkdir -p "$USER_CONFIG_DIR"
@@ -85,7 +85,7 @@ if [[ -f "$VENDOR_DIR/starship" ]]; then
 	chmod +x "$USER_CONFIG_DIR/bin/starship"
 else
 	echo -e "${YELLOW}Warning: Starship binary not found in $VENDOR_DIR${NC}"
-	echo -e "${YELLOW}         Prompt will not be available until you reinstall Kaku.${NC}"
+	echo -e "${YELLOW}         Prompt will not be available until you reinstall Arb.${NC}"
 fi
 
 # Validate required plugin directories up front.
@@ -103,7 +103,7 @@ cp -R "$VENDOR_DIR/zsh-z" "$USER_CONFIG_DIR/plugins/"
 cp -R "$VENDOR_DIR/zsh-autosuggestions" "$USER_CONFIG_DIR/plugins/"
 cp -R "$VENDOR_DIR/zsh-syntax-highlighting" "$USER_CONFIG_DIR/plugins/"
 cp -R "$VENDOR_DIR/zsh-completions" "$USER_CONFIG_DIR/plugins/"
-echo -e "  ${GREEN}✓${NC} ${BOLD}Tools${NC}       Installed Starship & Zsh plugins ${NC}(~/.config/kaku/zsh)${NC}"
+echo -e "  ${GREEN}✓${NC} ${BOLD}Tools${NC}       Installed Starship & Zsh plugins ${NC}(~/.config/arb/zsh)${NC}"
 
 # Copy Starship Config (if not exists)
 if [[ ! -f "$STARSHIP_CONFIG" ]]; then
@@ -114,20 +114,20 @@ if [[ ! -f "$STARSHIP_CONFIG" ]]; then
 	fi
 fi
 
-# 3. Create/Update Kaku Init File (managed by Kaku)
-cat <<EOF >"$KAKU_INIT_FILE"
-# Kaku Zsh Integration - DO NOT EDIT MANUALLY
-# This file is managed by Kaku.app. Any changes may be overwritten.
+# 3. Create/Update Arb Init File (managed by Arb)
+cat <<EOF >"$ARB_INIT_FILE"
+# Arb Zsh Integration - DO NOT EDIT MANUALLY
+# This file is managed by Arb.app. Any changes may be overwritten.
 
-export KAKU_ZSH_DIR="\$HOME/.config/kaku/zsh"
+export ARB_ZSH_DIR="\$HOME/.config/arb/zsh"
 
 # Add bundled binaries to PATH
-export PATH="\$KAKU_ZSH_DIR/bin:\$PATH"
+export PATH="\$ARB_ZSH_DIR/bin:\$PATH"
 
 # Initialize Starship (Cross-shell prompt)
 # Check file existence to avoid "no such file" errors in some zsh configurations
-if [[ -x "\$KAKU_ZSH_DIR/bin/starship" ]]; then
-    eval "\$("\$KAKU_ZSH_DIR/bin/starship" init zsh)"
+if [[ -x "\$ARB_ZSH_DIR/bin/starship" ]]; then
+    eval "\$("\$ARB_ZSH_DIR/bin/starship" init zsh)"
 elif command -v starship &> /dev/null; then
     # Fallback to system starship if available
     eval "\$(starship init zsh)"
@@ -200,8 +200,8 @@ alias glgp='git log --stat -p'
 # Load Plugins (Performance Optimized)
 
 # Load zsh-completions into fpath before compinit
-if [[ -d "\$KAKU_ZSH_DIR/plugins/zsh-completions/src" ]]; then
-    fpath=("\$KAKU_ZSH_DIR/plugins/zsh-completions/src" \$fpath)
+if [[ -d "\$ARB_ZSH_DIR/plugins/zsh-completions/src" ]]; then
+    fpath=("\$ARB_ZSH_DIR/plugins/zsh-completions/src" \$fpath)
 fi
 
 # Optimized compinit: Use cache and only rebuild when needed (~30ms saved)
@@ -215,17 +215,17 @@ else
 fi
 
 # Load zsh-z (smart directory jumping) - Fast, no delay needed
-if [[ -f "\$KAKU_ZSH_DIR/plugins/zsh-z/zsh-z.plugin.zsh" ]]; then
-    # Default to smart case matching so `z kaku` prefers `Kaku` over lowercase
+if [[ -f "\$ARB_ZSH_DIR/plugins/zsh-z/zsh-z.plugin.zsh" ]]; then
+    # Default to smart case matching so `z arb` prefers `Arb` over lowercase
     # path entries. Users can still override this in their own shell config.
     : "\${ZSHZ_CASE:=smart}"
     export ZSHZ_CASE
-    source "\$KAKU_ZSH_DIR/plugins/zsh-z/zsh-z.plugin.zsh"
+    source "\$ARB_ZSH_DIR/plugins/zsh-z/zsh-z.plugin.zsh"
 fi
 
 # Load zsh-autosuggestions - Async, minimal impact
-if [[ -f "\$KAKU_ZSH_DIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
-    source "\$KAKU_ZSH_DIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+if [[ -f "\$ARB_ZSH_DIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+    source "\$ARB_ZSH_DIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
     # Smart Tab: accept inline autosuggestion if present, otherwise run completion.
     # Avoids running completion immediately after accepting a suggestion, which can
@@ -233,29 +233,29 @@ if [[ -f "\$KAKU_ZSH_DIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]
     # Keep this widget out of autosuggestions rebinding, otherwise POSTDISPLAY is
     # cleared before our condition check and Tab always falls back to completion.
     typeset -ga ZSH_AUTOSUGGEST_IGNORE_WIDGETS
-    ZSH_AUTOSUGGEST_IGNORE_WIDGETS+=(kaku_tab_accept_or_complete)
-    kaku_tab_accept_or_complete() {
+    ZSH_AUTOSUGGEST_IGNORE_WIDGETS+=(arb_tab_accept_or_complete)
+    arb_tab_accept_or_complete() {
         if [[ -n "\$POSTDISPLAY" ]]; then
             zle autosuggest-accept
         else
             zle expand-or-complete
         fi
     }
-    zle -N kaku_tab_accept_or_complete
-    bindkey -M emacs '^I' kaku_tab_accept_or_complete
-    bindkey -M main '^I' kaku_tab_accept_or_complete
-    bindkey -M viins '^I' kaku_tab_accept_or_complete
+    zle -N arb_tab_accept_or_complete
+    bindkey -M emacs '^I' arb_tab_accept_or_complete
+    bindkey -M main '^I' arb_tab_accept_or_complete
+    bindkey -M viins '^I' arb_tab_accept_or_complete
 fi
 
 # Defer zsh-syntax-highlighting to first prompt (~40ms saved at startup)
 # This plugin must be loaded LAST, and we delay it for faster shell startup
-if [[ -f "\$KAKU_ZSH_DIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+if [[ -f "\$ARB_ZSH_DIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
     # Simplified highlighters for better performance (removed brackets, pattern, cursor)
     export ZSH_HIGHLIGHT_HIGHLIGHTERS=(main)
 
     # Defer loading until first prompt display
     zsh_syntax_highlighting_defer() {
-        source "\$KAKU_ZSH_DIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+        source "\$ARB_ZSH_DIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
         # Remove this hook after first run
         precmd_functions=("\${precmd_functions[@]:#zsh_syntax_highlighting_defer}")
@@ -266,16 +266,16 @@ if [[ -f "\$KAKU_ZSH_DIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting
 fi
 EOF
 
-echo -e "  ${GREEN}✓${NC} ${BOLD}Script${NC}      Generated kaku.zsh init script"
+echo -e "  ${GREEN}✓${NC} ${BOLD}Script${NC}      Generated arb.zsh init script"
 
 # 4. Configure .zshrc
-SOURCE_LINE="[[ -f \"\$HOME/.config/kaku/zsh/kaku.zsh\" ]] && source \"\$HOME/.config/kaku/zsh/kaku.zsh\" # Kaku Shell Integration"
+SOURCE_LINE="[[ -f \"\$HOME/.config/arb/zsh/arb.zsh\" ]] && source \"\$HOME/.config/arb/zsh/arb.zsh\" # Arb Shell Integration"
 
 # Check if the source line already exists
-if grep -q "kaku/zsh/kaku.zsh" "$ZSHRC" 2>/dev/null; then
+if grep -q "arb/zsh/arb.zsh" "$ZSHRC" 2>/dev/null; then
 	echo -e "  ${GREEN}✓${NC} ${BOLD}Integrate${NC}   Already linked in .zshrc"
 else
-	# Backup existing .zshrc only if it doesn't have Kaku logic yet
+	# Backup existing .zshrc only if it doesn't have Arb logic yet
 	if [[ -f "$ZSHRC" ]]; then
 		cp "$ZSHRC" "$ZSHRC$BACKUP_SUFFIX"
 	fi
