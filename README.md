@@ -27,7 +27,7 @@
 ## Quick Start
 
 1. Download the latest DMG release and drag to Applications.
-2. Or install with Homebrew (tap omitted here by design): `brew install <tap>/arb`
+2. Or install with Homebrew: `brew install szj2ys/arb/arb`
 3. Open arb. The app is notarized by Apple, so it opens without security warnings
 4. On first launch, arb will automatically set up your shell environment
 
