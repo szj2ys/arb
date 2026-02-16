@@ -27,7 +27,10 @@
 ## 快速开始
 
 1. 下载最新 DMG 并拖入 Applications。
-2. 或使用 Homebrew 安装（这里刻意不写具体 tap）：`brew install <tap>/arb`
+2. 或使用 Homebrew 安装：
+   ```bash
+   brew install szj2ys/arb/arb
+   ```
 3. 打开 arb。应用已通过 Apple 公证，无需安全设置即可直接打开
 4. 首次启动时，arb 会自动配置你的 Shell 环境
 
