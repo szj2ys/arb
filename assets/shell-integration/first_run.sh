@@ -68,12 +68,11 @@ clear
 
 # Display Welcome Message
 echo -e "\033[1;35m"
-echo "  _  __      _          "
-echo " | |/ /     | |         "
-echo " | ' / __ _ | | __ _   _ "
-echo " |  < / _\` || |/ /| | | |"
-echo " | . \ (_| ||   < | |_| |"
-echo " |_|\_\__,_||_|\_\ \__,_|"
+echo "     _         _     "
+echo "    / \   _ __| |__  "
+echo "   / _ \ | '__| '_ \ "
+echo "  / ___ \| |  | |_) |"
+echo " /_/   \_\_|  |_.__/ "
 echo -e "\033[0m"
 echo "Welcome to Arb!"
 echo "A fast, out-of-the-box terminal built for AI coding."

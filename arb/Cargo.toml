@@ -1,6 +1,6 @@
 [package]
 name = "arb"
-version = "0.3.1"
+version = "0.3.2"
 authors = ["Tw93 <hitw93@gmail.com>"]
 edition = "2018"
 publish = false

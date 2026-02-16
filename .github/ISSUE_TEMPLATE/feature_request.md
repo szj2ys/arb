@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Suggest an idea or improvement for Kaku
+about: Suggest an idea or improvement for Arb
 title: '[FEATURE] '
 labels: enhancement
 assignees: ''

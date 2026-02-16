@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.2] - 2026-02-16
+
+### Fixes
+- fix: statically link harfbuzz/freetype to eliminate Homebrew dylib dependency
+- fix: add vendored submodules (harfbuzz, freetype2, libpng, zlib) for portable builds
+- fix: CI/release workflows now checkout submodules for successful cross-arch builds
+- fix: rename remaining Kaku references to Arb in issue templates and first_run.sh
+
 ## [0.3.1] - 2026-02-15
 
 ### Changes

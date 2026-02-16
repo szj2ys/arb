@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Report a bug or issue with Kaku
+about: Report a bug or issue with Arb
 title: '[BUG] '
 labels: bug
 assignees: ''
@@ -12,7 +12,7 @@ A clear and concise description of what the bug is. We suggest using English for
 
 ## Steps to reproduce
 
-1. Open Kaku and...
+1. Open Arb and...
 2. ...
 3. See error
 
@@ -30,10 +30,10 @@ If applicable, add screenshots or screen recordings to help explain the problem.
 
 ## Configuration
 
-If relevant, paste your `~/.config/kaku/kaku.lua` content here:
+If relevant, paste your `~/.config/arb/arb.lua` content here:
 
 <details>
-<summary>kaku.lua</summary>
+<summary>arb.lua</summary>
 
 ```lua
 -- Paste your config here
@@ -43,14 +43,14 @@ If relevant, paste your `~/.config/kaku/kaku.lua` content here:
 
 ## Debug Overlay
 
-Please open **Help → Show Debug Overlay** in the menu bar and paste the header info shown at the top (version, GPU, Lua version, etc.):
+Please open **Help > Show Debug Overlay** in the menu bar and paste the header info shown at the top (version, GPU, Lua version, etc.):
 
 <details>
 <summary>Debug Overlay output</summary>
 
 ```text
 Paste the header lines here, e.g.:
-Kaku version: 0.1.1 aarch64-apple-darwin
+Arb version: 0.3.1 aarch64-apple-darwin
 Window Environment: ...
 Lua Version: Lua 5.4
 OpenGL: ...
