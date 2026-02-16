@@ -4,12 +4,14 @@
 add_newline = false
 command_timeout = 10000
 
-format = """$directory$git_branch$git_status$character"""
+format = """$directory $git_branch$git_status$character"""
 
 [directory]
-truncate_to_repo = true
 truncation_length = 3
+truncate_to_repo = false
+home_symbol = "~"
 style = "bold cyan"
+format = "[$path]($style)"
 
 [git_branch]
 symbol = ""
