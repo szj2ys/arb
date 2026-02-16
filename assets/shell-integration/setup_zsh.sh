@@ -61,7 +61,6 @@ fi
 VENDOR_DIR="$RESOURCES_DIR/vendor"
 USER_CONFIG_DIR="$HOME/.config/arb/zsh"
 ARB_INIT_FILE="$USER_CONFIG_DIR/arb.zsh"
-STARSHIP_CONFIG="$HOME/.config/starship.toml"
 ZSHRC="${ZDOTDIR:-$HOME}/.zshrc"
 BACKUP_SUFFIX=".arb-backup-$(date +%s)"
 
@@ -105,13 +104,11 @@ cp -R "$VENDOR_DIR/zsh-syntax-highlighting" "$USER_CONFIG_DIR/plugins/"
 cp -R "$VENDOR_DIR/zsh-completions" "$USER_CONFIG_DIR/plugins/"
 echo -e "  ${GREEN}✓${NC} ${BOLD}Tools${NC}       Installed Starship & Zsh plugins ${NC}(~/.config/arb/zsh)${NC}"
 
-# Copy Starship Config (if not exists)
-if [[ ! -f "$STARSHIP_CONFIG" ]]; then
-	if [[ -f "$VENDOR_DIR/starship.toml" ]]; then
-		mkdir -p "$(dirname "$STARSHIP_CONFIG")"
-		cp "$VENDOR_DIR/starship.toml" "$STARSHIP_CONFIG"
-		echo -e "  ${GREEN}✓${NC} ${BOLD}Config${NC}      Initialized starship.toml ${NC}(~/.config/starship.toml)${NC}"
-	fi
+# Copy Starship Config to arb's own directory (does not override user's ~/.config/starship.toml)
+ARB_STARSHIP_CONFIG="$USER_CONFIG_DIR/starship.toml"
+if [[ -f "$VENDOR_DIR/starship.toml" ]]; then
+	cp "$VENDOR_DIR/starship.toml" "$ARB_STARSHIP_CONFIG"
+	echo -e "  ${GREEN}✓${NC} ${BOLD}Config${NC}      Installed starship.toml ${NC}(~/.config/arb/zsh/starship.toml)${NC}"
 fi
 
 # 3. Create/Update Arb Init File (managed by Arb)
@@ -125,7 +122,10 @@ export ARB_ZSH_DIR="\$HOME/.config/arb/zsh"
 export PATH="\$ARB_ZSH_DIR/bin:\$PATH"
 
 # Initialize Starship (Cross-shell prompt)
-# Check file existence to avoid "no such file" errors in some zsh configurations
+# Use arb's own starship config to avoid width issues with Powerline/Nerd Font symbols
+if [[ -f "\$ARB_ZSH_DIR/starship.toml" ]]; then
+    export STARSHIP_CONFIG="\$ARB_ZSH_DIR/starship.toml"
+fi
 if [[ -x "\$ARB_ZSH_DIR/bin/starship" ]]; then
     eval "\$("\$ARB_ZSH_DIR/bin/starship" init zsh)"
 elif command -v starship &> /dev/null; then

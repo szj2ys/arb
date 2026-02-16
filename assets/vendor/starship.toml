@@ -1,16 +1,28 @@
-# ~/.config/starship.toml
+# Arb Starship Configuration
+# Minimal prompt designed for JetBrains Mono (no Nerd Font / Powerline symbols)
 
 add_newline = false
 command_timeout = 10000
 
+format = """$directory$git_branch$git_status$character"""
+
 [directory]
-truncate_to_repo=true
-truncation_length=2
+truncate_to_repo = true
+truncation_length = 3
+style = "bold cyan"
+
+[git_branch]
+symbol = ""
+format = "[$branch]($style) "
+style = "bold purple"
+
+[git_status]
+format = '([$all_status$ahead_behind]($style) )'
+style = "bold yellow"
 
 [character]
-success_symbol = ""
-error_symbol = ""
-format = "$symbol"
+success_symbol = "[>](bold green)"
+error_symbol = "[>](bold red)"
 
 [line_break]
 disabled = true
@@ -19,4 +31,16 @@ disabled = true
 disabled = true
 
 [lua]
+disabled = true
+
+[python]
+disabled = true
+
+[rust]
+disabled = true
+
+[golang]
+disabled = true
+
+[docker_context]
 disabled = true
