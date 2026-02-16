@@ -293,7 +293,12 @@ wezterm.on('format-tab-title', function(tab, _, _, _, _, max_width)
   end
   text = wezterm.truncate_right(text, math.max(8, max_width - 2))
 
-  local overrides = tab.window and tab.window:get_config_overrides() or {}
+  local overrides = {}
+  pcall(function()
+    if tab.window then
+      overrides = tab.window:get_config_overrides() or {}
+    end
+  end)
   local active_fg = overrides.arb_tab_title_fg_active or '#edecee'
   local inactive_fg = overrides.arb_tab_title_fg_inactive or '#6b6b6b'
   local fg = tab.is_active and active_fg or inactive_fg
