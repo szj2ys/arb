@@ -103,7 +103,7 @@ jobs:
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ env.HOMEBREW_TAP_TOKEN }}
-          repository: tw93/homebrew-tap
+          repository: szj2ys/homebrew-arb
           event-type: arb_release_published
           client-payload: |
             {"version":"${{ steps.meta.outputs.version }}","sha256":"${{ steps.meta.outputs.sha256 }}"}
