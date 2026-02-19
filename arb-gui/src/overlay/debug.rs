@@ -193,8 +193,8 @@ pub fn show_debug_overlay(
         term.render(&changes)
     }
 
-    let version = config::wezterm_version();
-    let triple = config::wezterm_target_triple();
+    let version = config::arb_version();
+    let triple = config::arb_target_triple();
 
     term.render(&[Change::Text(format!(
         "Debug Overlay\r\n\

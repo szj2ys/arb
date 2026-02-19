@@ -64,11 +64,19 @@ impl Header {
         env.insert("TERM".to_string(), config.term.to_string());
         env.insert(
             "WEZTERM_VERSION".to_string(),
-            config::wezterm_version().to_string(),
+            config::arb_version().to_string(),
+        );
+        env.insert(
+            "ARB_VERSION".to_string(),
+            config::arb_version().to_string(),
         );
         env.insert(
             "WEZTERM_TARGET_TRIPLE".to_string(),
-            config::wezterm_target_triple().to_string(),
+            config::arb_target_triple().to_string(),
+        );
+        env.insert(
+            "ARB_TARGET_TRIPLE".to_string(),
+            config::arb_target_triple().to_string(),
         );
         if let Ok(shell) = std::env::var("SHELL") {
             env.insert("SHELL".to_string(), shell);
@@ -373,7 +381,7 @@ impl RecordCommand {
             ),
             None => {
                 tempfile::Builder::new()
-                    .prefix("wezterm-recording-")
+                    .prefix("arb-recording-")
                     // We use a .txt suffix for convenice when uploading to GH
                     .suffix(".cast.txt")
                     .tempfile()?

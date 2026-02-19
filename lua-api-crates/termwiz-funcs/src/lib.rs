@@ -255,7 +255,7 @@ lazy_static::lazy_static! {
                 .colorterm(None)
                 .colorterm_bce(None)
                 .term_program(Some("Arb".into()))
-                .term_program_version(Some(config::wezterm_version().into())),
+                .term_program_version(Some(config::arb_version().into())),
         )
         .expect("cannot fail to make internal Capabilities")
     };

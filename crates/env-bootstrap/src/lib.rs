@@ -6,8 +6,10 @@ pub fn set_wezterm_executable() {
     if let Ok(exe) = std::env::current_exe() {
         if let Some(dir) = exe.parent() {
             std::env::set_var("WEZTERM_EXECUTABLE_DIR", dir);
+            std::env::set_var("ARB_EXECUTABLE_DIR", dir);
         }
-        std::env::set_var("WEZTERM_EXECUTABLE", exe);
+        std::env::set_var("WEZTERM_EXECUTABLE", &exe);
+        std::env::set_var("ARB_EXECUTABLE", &exe);
     }
 }
 
@@ -208,8 +210,8 @@ fn register_lua_modules() {
 
 pub fn bootstrap() {
     config::assign_version_info(
-        wezterm_version::wezterm_version(),
-        wezterm_version::wezterm_target_triple(),
+        wezterm_version::arb_version(),
+        wezterm_version::arb_target_triple(),
     );
     setup_logger();
     register_panic_hook();

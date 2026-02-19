@@ -215,7 +215,7 @@ impl TmuxDomainState {
             size,
             std::sync::Arc::new(config::TermConfig::new()),
             "WezTerm",
-            config::wezterm_version(),
+            config::arb_version(),
             Box::new(writer.clone()),
         );
 

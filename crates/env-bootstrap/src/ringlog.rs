@@ -316,7 +316,7 @@ fn setup_pretty() -> (LevelFilter, Logger) {
         filters.filter_module(module, level);
     }
 
-    if let Ok(s) = std::env::var("WEZTERM_LOG") {
+    if let Ok(s) = std::env::var("ARB_LOG").or_else(|_| std::env::var("WEZTERM_LOG")) {
         filters.parse(&s);
     } else {
         filters.filter_level(LevelFilter::Info);
