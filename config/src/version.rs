@@ -20,15 +20,6 @@ pub fn arb_target_triple() -> &'static str {
         .unwrap_or(&"someone forgot to call assign_version_info")
 }
 
-#[deprecated(note = "Use arb_version() instead")]
-pub fn wezterm_version() -> &'static str {
-    arb_version()
-}
-
-#[deprecated(note = "Use arb_target_triple() instead")]
-pub fn wezterm_target_triple() -> &'static str {
-    arb_target_triple()
-}
 
 pub fn running_under_wsl() -> bool {
     #[cfg(unix)]

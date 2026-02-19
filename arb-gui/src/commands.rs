@@ -444,7 +444,7 @@ impl CommandDef {
                         menu.assign_as_app_menu();
 
                         let about_item = MenuItem::new_with(
-                            &format!("Arb V{}", config::wezterm_version()),
+                            &format!("Arb V{}", config::arb_version()),
                             Some(arb_perform_key_assignment_sel),
                             "",
                         );
