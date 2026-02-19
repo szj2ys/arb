@@ -41,7 +41,7 @@ fn get_github_release_info(uri: &str) -> anyhow::Result<Release> {
 }
 
 pub fn get_latest_release_info() -> anyhow::Result<Release> {
-    get_github_release_info("https://api.github.com/repos/tw93/Arb/releases/latest")
+    get_github_release_info("https://api.github.com/repos/szj2ys/arb/releases/latest")
 }
 
 fn is_newer(latest: &str, current: &str) -> bool {
@@ -137,7 +137,7 @@ fn update_checker() {
                         current
                     );
 
-                    let url = "https://github.com/tw93/Arb/releases".to_string();
+                    let url = "https://github.com/szj2ys/arb/releases".to_string();
 
                     if force_ui || socks.is_empty() || socks[0] == my_sock {
                         persistent_toast_notification_with_click_to_open_url(

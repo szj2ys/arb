@@ -4,7 +4,7 @@ use config::{GuiPosition, SshParameters};
 use std::ffi::OsString;
 use std::path::PathBuf;
 
-pub const DEFAULT_WINDOW_CLASS: &str = "fun.tw93.arb";
+pub const DEFAULT_WINDOW_CLASS: &str = "fun.szj2ys.arb";
 
 /// Helper for parsing config overrides
 pub fn name_equals_value(arg: &str) -> Result<(String, String), String> {

@@ -1708,7 +1708,7 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
             icon: Some("md_pipe_disconnected"),
         },
         OpenUri(uri) => match uri.as_ref() {
-            "https://github.com/tw93/Arb" => CommandDef {
+            "https://github.com/szj2ys/arb" => CommandDef {
                 brief: "Documentation".into(),
                 doc: "Visit the Arb documentation website".into(),
                 keys: vec![],
@@ -1716,7 +1716,7 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
                 menubar: &["Help"],
                 icon: Some("md_help"),
             },
-            "https://github.com/tw93/Arb/discussions/" => CommandDef {
+            "https://github.com/szj2ys/arb/discussions/" => CommandDef {
                 brief: "Discuss on GitHub".into(),
                 doc: "Visit Arb's GitHub discussion".into(),
                 keys: vec![],
@@ -1724,7 +1724,7 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
                 menubar: &["Help"],
                 icon: Some("oct_comment_discussion"),
             },
-            "https://github.com/tw93/Arb/issues/" => CommandDef {
+            "https://github.com/szj2ys/arb/issues/" => CommandDef {
                 brief: "Search or report issue on GitHub".into(),
                 doc: "Visit Arb's GitHub issues".into(),
                 keys: vec![],
@@ -2174,8 +2174,8 @@ fn compute_default_actions() -> Vec<KeyAssignment> {
         ShowLauncher,
         ShowTabNavigator,
         // ----------------- Help
-        OpenUri("https://github.com/tw93/Arb".to_string()),
-        OpenUri("https://github.com/tw93/Arb/issues/".to_string()),
+        OpenUri("https://github.com/szj2ys/arb".to_string()),
+        OpenUri("https://github.com/szj2ys/arb/issues/".to_string()),
         ShowDebugOverlay,
         // ----------------- Misc
         OpenLinkAtMouseCursor,

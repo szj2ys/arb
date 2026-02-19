@@ -4,7 +4,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/tw93/Arb.git
+git clone https://github.com/szj2ys/arb.git
 cd Arb
 
 # Install required tools (cargo-nextest, nightly rustfmt)
