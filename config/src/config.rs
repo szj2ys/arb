@@ -2262,7 +2262,7 @@ impl FromDynamic for BoldBrightening {
 
 #[derive(Debug, FromDynamic, ToDynamic, Clone, Copy, PartialEq, Eq, Default)]
 pub enum ImePreeditRendering {
-    /// IME preedit is rendered by WezTerm itself
+    /// IME preedit is rendered by Arb itself
     #[default]
     Builtin,
     /// IME preedit is rendered by system

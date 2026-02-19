@@ -63,13 +63,8 @@ impl Header {
         let mut env = HashMap::new();
         env.insert("TERM".to_string(), config.term.to_string());
         env.insert(
-            "WEZTERM_VERSION".to_string(),
+            "ARB_VERSION".to_string(),
             config::arb_version().to_string(),
-        );
-        env.insert("ARB_VERSION".to_string(), config::arb_version().to_string());
-        env.insert(
-            "ARB_TARGET_TRIPLE".to_string(),
-            config::arb_target_triple().to_string(),
         );
         env.insert(
             "ARB_TARGET_TRIPLE".to_string(),

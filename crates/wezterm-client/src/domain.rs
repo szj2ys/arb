@@ -846,7 +846,7 @@ impl Domain for ClientDomain {
             result.tab_id,
             result.pane_id,
             size,
-            "wezterm",
+            "arb",
         ));
         let tab = Arc::new(Tab::new(&size));
         tab.assign_pane(&pane);
@@ -908,7 +908,7 @@ impl Domain for ClientDomain {
             result.tab_id,
             result.pane_id,
             result.size,
-            "wezterm",
+            "arb",
         ));
 
         let pane_index = match tab
