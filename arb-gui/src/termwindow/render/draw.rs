@@ -1,7 +1,7 @@
-use crate::termwindow::webgpu::ShaderUniform;
-use crate::termwindow::RenderFrame;
 #[cfg(feature = "opengl")]
 use crate::colorease::ColorEaseUniform;
+use crate::termwindow::webgpu::ShaderUniform;
+use crate::termwindow::RenderFrame;
 #[cfg(feature = "opengl")]
 use crate::uniforms::UniformBuilder;
 #[cfg(feature = "opengl")]
