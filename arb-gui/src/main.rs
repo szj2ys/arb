@@ -47,6 +47,7 @@ mod stats;
 mod tabbar;
 mod termwindow;
 mod unicode_names;
+#[cfg(feature = "opengl")]
 mod uniforms;
 mod update;
 mod utilsprites;

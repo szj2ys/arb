@@ -1,19 +1,28 @@
-use crate::colorease::ColorEaseUniform;
 use crate::termwindow::webgpu::ShaderUniform;
 use crate::termwindow::RenderFrame;
+#[cfg(feature = "opengl")]
+use crate::colorease::ColorEaseUniform;
+#[cfg(feature = "opengl")]
 use crate::uniforms::UniformBuilder;
+#[cfg(feature = "opengl")]
 use ::window::glium;
+#[cfg(feature = "opengl")]
 use ::window::glium::uniforms::{
     MagnifySamplerFilter, MinifySamplerFilter, Sampler, SamplerWrapFunction,
 };
+#[cfg(feature = "opengl")]
 use ::window::glium::{BlendingFunction, LinearBlendingFactor, Surface};
+#[cfg(feature = "opengl")]
 use config::FreeTypeLoadTarget;
 
 impl crate::TermWindow {
     pub fn call_draw(&mut self, frame: &mut RenderFrame) -> anyhow::Result<()> {
         match frame {
+            #[cfg(feature = "opengl")]
             RenderFrame::Glium(ref mut frame) => self.call_draw_glium(frame),
             RenderFrame::WebGpu => self.call_draw_webgpu(),
+            #[cfg(not(feature = "opengl"))]
+            RenderFrame::_Phantom(_) => unreachable!(),
         }
     }
 
@@ -149,6 +158,7 @@ impl crate::TermWindow {
         Ok(())
     }
 
+    #[cfg(feature = "opengl")]
     fn call_draw_glium(&mut self, frame: &mut glium::Frame) -> anyhow::Result<()> {
         use window::glium::texture::SrgbTexture2d;
 

@@ -1,3 +1,4 @@
+#[cfg(feature = "opengl")]
 use crate::uniforms::{UniformBuilder, UniformStruct};
 use config::EasingFunction;
 use std::time::{Duration, Instant};
@@ -114,6 +115,7 @@ impl ColorEase {
     }
 }
 
+#[cfg(feature = "opengl")]
 pub struct ColorEaseUniform {
     pub in_function: [f32; 4],
     pub out_function: [f32; 4],
@@ -121,6 +123,7 @@ pub struct ColorEaseUniform {
     pub out_duration_ms: u32,
 }
 
+#[cfg(feature = "opengl")]
 impl From<ColorEase> for ColorEaseUniform {
     fn from(ease: ColorEase) -> ColorEaseUniform {
         Self {
@@ -132,6 +135,7 @@ impl From<ColorEase> for ColorEaseUniform {
     }
 }
 
+#[cfg(feature = "opengl")]
 impl<'a> UniformStruct<'a> for ColorEaseUniform {
     fn add_fields(&'a self, struct_name: &str, builder: &mut UniformBuilder<'a>) {
         builder.add_struct_field(struct_name, "in_function", &self.in_function);

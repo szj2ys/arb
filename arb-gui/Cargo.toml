@@ -10,7 +10,8 @@ publish = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-default = ["vendored-fonts", "wayland"]
+default = ["vendored-fonts", "wayland", "opengl"]
+opengl = ["window/opengl"]
 wayland = ["window/wayland"]
 distro-defaults = ["config/distro-defaults"]
 vendor-nerd-font-symbols-font = ["wezterm-font/vendor-nerd-font-symbols"]

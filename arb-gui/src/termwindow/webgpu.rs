@@ -106,8 +106,11 @@ impl Texture2d for WebGpuTexture {
         );
     }
 
-    fn read(&self, _rect: Rect, _im: &mut dyn BitmapImage) {
-        unimplemented!();
+    fn read(&self, _rect: Rect, im: &mut dyn BitmapImage) {
+        log::warn!("WebGPU texture read-back not implemented");
+        // Fill output image with zeros (black pixels) as a safe no-op
+        let data = im.pixel_data_slice_mut();
+        data.fill(0);
     }
 
     fn width(&self) -> usize {

@@ -579,6 +579,7 @@ pub struct TermWindow {
 
     connection_name: String,
 
+    #[cfg(feature = "opengl")]
     gl: Option<Rc<glium::backend::Context>>,
     webgpu: Option<Rc<WebGpuState>>,
     config_subscription: Option<config::ConfigSubscription>,
@@ -830,6 +831,7 @@ impl TermWindow {
             fps: 0.,
             config_subscription: None,
             os_parameters: None,
+            #[cfg(feature = "opengl")]
             gl: None,
             webgpu: None,
             window: None,
@@ -990,6 +992,7 @@ impl TermWindow {
             }
         });
 
+        #[cfg(feature = "opengl")]
         let gl = match config.front_end {
             FrontEndSelection::WebGpu => None,
             _ => Some(window.enable_opengl().await?),
@@ -1020,6 +1023,7 @@ impl TermWindow {
                 );
             }
 
+            #[cfg(feature = "opengl")]
             if let Some(gl) = gl {
                 myself.gl.replace(Rc::clone(&gl));
                 myself.created(RenderContext::Glium(Rc::clone(&gl)))?;
@@ -1114,6 +1118,7 @@ impl TermWindow {
                     if self.webgpu.is_some() {
                         self.do_paint_webgpu()?;
                     } else {
+                        #[cfg(feature = "opengl")]
                         self.do_paint(window);
                     }
                 }
@@ -1154,7 +1159,10 @@ impl TermWindow {
                 } else if self.webgpu.is_some() {
                     self.do_paint_webgpu()
                 } else {
-                    Ok(self.do_paint(window))
+                    #[cfg(feature = "opengl")]
+                    { Ok(self.do_paint(window)) }
+                    #[cfg(not(feature = "opengl"))]
+                    { Ok(true) }
                 }
             }
             WindowEvent::Notification(item) => {
@@ -1208,6 +1216,7 @@ impl TermWindow {
         }
     }
 
+    #[cfg(feature = "opengl")]
     fn do_paint(&mut self, window: &Window) -> bool {
         let gl = match self.gl.as_ref() {
             Some(gl) => gl,
