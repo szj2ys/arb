@@ -6,6 +6,9 @@
 set -e
 
 CONFIG_DIR="$HOME/.config/arb"
+# .arb_config_version stores an integer version number (currently 6).
+# Removing it triggers the first-run experience on next Arb launch.
+# See assets/shell-integration/first_run.sh for the full version schema.
 FLAG_FILE="$CONFIG_DIR/.arb_config_version"
 
 echo "Resetting Arb First Run..."
