@@ -1,6 +1,15 @@
 #!/bin/bash
 # Arb First Run Experience
 # This script is launched automatically on the first run of Arb.
+#
+# .arb_config_version schema:
+# 1-5: Legacy versions (pre-open-source)
+# 6:   Current — Starship + zsh plugins + Delta + Arb theme (2025-02)
+#
+# Bump this number when first_run.sh adds NEW components that existing
+# users should be prompted to install on their next launch.
+# The arb.lua gui-startup handler re-runs this script when the stored
+# version is below the current value.
 
 set -euo pipefail
 
@@ -77,51 +86,51 @@ echo -e "\033[0m"
 echo "Welcome to Arb!"
 echo "A fast, out-of-the-box terminal built for AI coding."
 echo "--------------------------------------------------------"
-echo "Would you like to install Arb's enhanced shell features?"
-echo "This includes:"
-echo "  - Starship Prompt"
-echo "  - z - Smart Directory Jumper"
-echo "  - zsh-completions - Rich Tab Completions"
-echo "  - Zsh Syntax Highlighting"
-echo "  - Zsh Autosuggestions"
+echo "Arb will install the following recommended components:"
+echo ""
+echo "  1. Enhanced Shell Features"
+echo "     Starship Prompt, z, zsh-completions,"
+echo "     Syntax Highlighting, Autosuggestions"
+echo ""
+echo "  2. Arb Theme"
+echo "     Modern, high-contrast dark theme"
+echo ""
+echo "  3. Delta"
+echo "     Beautiful git diffs with syntax highlighting"
 echo "--------------------------------------------------------"
 echo ""
 
-# Interactive Prompt
-read -p "Install enhanced shell features? [Y/n] " -n 1 -r
+# Single prompt for the happy path
+read -p "Install all recommended? [Y/n] " -n 1 -r
 echo ""
 
-INSTALL_SHELL=false
-if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
-	INSTALL_SHELL=true
-fi
+INSTALL_SHELL=true
+INSTALL_THEME=true
+INSTALL_DELTA=true
 
-# Arb Theme Prompt
-echo "--------------------------------------------------------"
-echo "Would you like to use the Arb Theme?"
-echo "A modern, high-contrast dark theme optimized for AI coding."
-echo "Perfect for Claude, Codex, and late-night hacking."
-echo "--------------------------------------------------------"
-read -p "Apply Arb Theme? [Y/n] " -n 1 -r
-echo ""
+if [[ $REPLY =~ ^[Nn]$ ]]; then
+	# Individual opt-out prompts
+	echo ""
+	read -p "Install enhanced shell features? [Y/n] " -n 1 -r
+	echo ""
+	INSTALL_SHELL=false
+	if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
+		INSTALL_SHELL=true
+	fi
 
-INSTALL_THEME=false
-if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
-	INSTALL_THEME=true
-fi
+	read -p "Apply Arb Theme? [Y/n] " -n 1 -r
+	echo ""
+	INSTALL_THEME=false
+	if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
+		INSTALL_THEME=true
+	fi
 
-# Delta (Git Diff Beautifier) Prompt
-echo "--------------------------------------------------------"
-echo "Would you like to install Delta?"
-echo "Beautiful git diffs with syntax highlighting."
-echo "Perfect for code review and AI-assisted development."
-echo "--------------------------------------------------------"
-read -p "Install Delta? [Y/n] " -n 1 -r
-echo ""
-
-INSTALL_DELTA=false
-if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
-	INSTALL_DELTA=true
+	read -p "Install Delta? [Y/n] " -n 1 -r
+	echo ""
+	INSTALL_DELTA=false
+	if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
+		INSTALL_DELTA=true
+	fi
 fi
 
 # Process Shell Features

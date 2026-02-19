@@ -968,6 +968,9 @@ config.swallow_mouse_click_on_pane_focus = true
 config.swallow_mouse_click_on_window_focus = true
 
 -- ===== First Run Experience & Config Version Check =====
+-- Config version gate: re-run first_run.sh when the stored version
+-- (.arb_config_version) is below CURRENT_CONFIG_VERSION. This allows
+-- shipping new shell components to existing users on upgrade.
 wezterm.on('gui-startup', function(cmd)
   local home = os.getenv("HOME")
   local current_version = 6  -- Update this when config changes
