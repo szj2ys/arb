@@ -782,30 +782,74 @@ fn should_show_main_menu(opts: &Opt) -> bool {
         && std::io::stdout().is_terminal()
 }
 
+fn is_shell_integration_initialized() -> bool {
+    config::HOME_DIR
+        .join(".config")
+        .join("arb")
+        .join("zsh")
+        .join("arb.zsh")
+        .exists()
+}
+
 fn select_main_menu_command() -> anyhow::Result<SubCommand> {
     const PURPLE_BOLD: &str = "\x1b[1;35m";
     const BLUE: &str = "\x1b[34m";
     const GRAY: &str = "\x1b[90m";
+    const GREEN: &str = "\x1b[32m";
+    const YELLOW: &str = "\x1b[33m";
+    const BOLD: &str = "\x1b[1m";
     const RESET: &str = "\x1b[0m";
 
+    let shell_ready = is_shell_integration_initialized();
+
+    // --- ASCII art + branding ---
     println!();
     println!("{PURPLE_BOLD}      _         _      {RESET}");
     println!("{PURPLE_BOLD}     / \\   _ __| |__   {RESET}");
     println!("{PURPLE_BOLD}    / _ \\ | '__| '_ \\  {RESET}");
     println!("{PURPLE_BOLD}   / ___ \\| |  | |_) | {RESET}");
     println!("{PURPLE_BOLD}  /_/   \\_\\_|  |_.__/  {RESET}");
-    println!("  {BLUE}https://github.com/tw93/Arb{RESET}");
+    println!(
+        "  {BLUE}https://github.com/tw93/Arb{RESET}  {GRAY}v{}{RESET}",
+        config::arb_version()
+    );
     println!("  {GRAY}A fast, out-of-the-box terminal built for AI coding.{RESET}");
     println!();
-    println!("  1. config   Open ~/.config/arb/arb.lua");
-    println!("  2. update   Check and install latest version");
-    println!("  3. init     Initialize shell integration");
-    println!("  4. reset    Remove Arb shell integration and managed defaults");
+
+    // --- Status section ---
+    if shell_ready {
+        println!("  {GREEN}\u{2714}{RESET}  Shell integration {GREEN}initialized{RESET}");
+    } else {
+        println!("  {YELLOW}\u{26a0}{RESET}  Shell integration {YELLOW}not initialized{RESET}");
+        println!("     {GRAY}Run 'arb init' to get started with shell integration{RESET}");
+    }
+
+    // --- Separator ---
+    println!();
+    println!("  {GRAY}------------------------------------------------------{RESET}");
+    println!();
+
+    // --- Menu options ---
+    if !shell_ready {
+        println!(
+            "  {BOLD}0. Quick Setup{RESET}  Initialize shell integration {GREEN}(recommended){RESET}"
+        );
+    }
+    println!("  1. config     Open ~/.config/arb/arb.lua");
+    println!("  2. update     Check and install latest version");
+    println!("  3. init       Initialize shell integration");
+    println!("  4. reset      Remove Arb shell integration and managed defaults");
     println!("  q. quit");
     println!();
 
+    let prompt = if shell_ready {
+        "Select option [1-4/q]: "
+    } else {
+        "Select option [0-4/q]: "
+    };
+
     loop {
-        print!("Select option [1-4/q]: ");
+        print!("{prompt}");
         std::io::stdout().flush().context("flush stdout")?;
 
         let mut input = String::new();
@@ -814,13 +858,20 @@ fn select_main_menu_command() -> anyhow::Result<SubCommand> {
             .context("read menu input")?;
 
         match input.trim().to_ascii_lowercase().as_str() {
+            "0" if !shell_ready => {
+                return Ok(SubCommand::Init(init::InitCommand::default()));
+            }
             "1" | "config" => return Ok(SubCommand::Config(config_cmd::ConfigCommand::default())),
             "2" | "update" => return Ok(SubCommand::Update(update::UpdateCommand::default())),
             "3" | "init" => return Ok(SubCommand::Init(init::InitCommand::default())),
             "4" | "reset" => return Ok(SubCommand::Reset(reset::ResetCommand::default())),
             "q" | "quit" | "exit" => std::process::exit(0),
             _ => {
-                println!("Invalid option. Enter 1, 2, 3, 4, or q.");
+                if shell_ready {
+                    println!("Invalid option. Enter 1, 2, 3, 4, or q.");
+                } else {
+                    println!("Invalid option. Enter 0, 1, 2, 3, 4, or q.");
+                }
             }
         }
     }
