@@ -8,16 +8,26 @@ pub fn assign_version_info(version: &'static str, triple: &'static str) {
     TRIPLE.set(triple).unwrap();
 }
 
-pub fn wezterm_version() -> &'static str {
+pub fn arb_version() -> &'static str {
     VERSION
         .get()
         .unwrap_or(&"someone forgot to call assign_version_info")
 }
 
-pub fn wezterm_target_triple() -> &'static str {
+pub fn arb_target_triple() -> &'static str {
     TRIPLE
         .get()
         .unwrap_or(&"someone forgot to call assign_version_info")
+}
+
+#[deprecated(note = "Use arb_version() instead")]
+pub fn wezterm_version() -> &'static str {
+    arb_version()
+}
+
+#[deprecated(note = "Use arb_target_triple() instead")]
+pub fn wezterm_target_triple() -> &'static str {
+    arb_target_triple()
 }
 
 pub fn running_under_wsl() -> bool {

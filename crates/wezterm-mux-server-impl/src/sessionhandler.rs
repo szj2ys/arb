@@ -857,7 +857,7 @@ impl SessionHandler {
                     Ok(executable_path) => {
                         send_response(Ok(Pdu::GetCodecVersionResponse(GetCodecVersionResponse {
                             codec_vers: CODEC_VERSION,
-                            version_string: config::wezterm_version().to_owned(),
+                            version_string: config::arb_version().to_owned(),
                             executable_path,
                             config_file_path: std::env::var_os("WEZTERM_CONFIG_FILE")
                                 .map(Into::into),

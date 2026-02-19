@@ -35,7 +35,7 @@ fn ns_error_to_string(err: *mut NSError) -> String {
 
 define_class!(
     #[unsafe(super = NSObject)]
-    #[name = "WezTermNotifDelegate"]
+    #[name = "ArbNotifDelegate"]
     #[derive(Debug)]
     struct NotifDelegate;
 

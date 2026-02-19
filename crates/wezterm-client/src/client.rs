@@ -63,13 +63,13 @@ pub struct Client {
 
 #[derive(Error, Debug, Clone, PartialEq, Eq)]
 #[error(
-    "Please install the same version of wezterm on both the client and server!\n\
+    "Please install the same version of arb on both the client and server!\n\
      The server version is {} (codec version {}),\n\
      which is not compatible with our version \n\
      {} (codec version {}).",
     version,
     codec_vers,
-    config::wezterm_version(),
+    config::arb_version(),
     CODEC_VERSION
 )]
 pub struct IncompatibleVersionError {
@@ -1073,7 +1073,7 @@ impl Client {
                     }
 
                     let mut ui = ConnectionUI::new();
-                    ui.title("wezterm: Reconnecting...");
+                    ui.title("Arb: Reconnecting...");
 
                     loop {
                         ui.sleep_with_reason(

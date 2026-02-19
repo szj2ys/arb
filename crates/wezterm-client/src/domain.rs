@@ -942,7 +942,7 @@ impl Domain for ClientDomain {
             window_id,
             ..Default::default()
         });
-        ui.title("wezterm: Connecting...");
+        ui.title("Arb: Connecting...");
 
         ui.async_run_and_log_error({
             let ui = ui.clone();

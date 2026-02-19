@@ -703,7 +703,7 @@ impl TermWindow {
                 log::debug!(
                     "OpenGL initialized! {} Arb version: {}",
                     render_info,
-                    config::wezterm_version(),
+                    config::arb_version(),
                 );
                 self.render_state.replace(render_state);
             }
