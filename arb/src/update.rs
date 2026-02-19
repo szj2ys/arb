@@ -1002,4 +1002,128 @@ log "done"
         }
         Some(out)
     }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+        use std::cmp::Ordering;
+
+        // --- parse_version_numbers tests ---
+
+        #[test]
+        fn parse_version_numbers_strips_v_prefix() {
+            assert_eq!(parse_version_numbers("v0.3.2"), Some(vec![0, 3, 2]));
+        }
+
+        #[test]
+        fn parse_version_numbers_returns_none_for_non_version() {
+            assert_eq!(parse_version_numbers("not-a-version"), None);
+        }
+
+        #[test]
+        fn parse_version_numbers_single_numeric_segment() {
+            // A bare date-style string like "20230101" parses as a single segment.
+            assert_eq!(parse_version_numbers("20230101"), Some(vec![20230101]));
+        }
+
+        #[test]
+        fn parse_version_numbers_uppercase_v_prefix() {
+            assert_eq!(parse_version_numbers("V1.2.3"), Some(vec![1, 2, 3]));
+        }
+
+        #[test]
+        fn parse_version_numbers_with_prerelease_suffix() {
+            // "0.3.2-beta" -> digits before the dash are captured per segment
+            assert_eq!(parse_version_numbers("0.3.2-beta"), Some(vec![0, 3, 2]));
+        }
+
+        // --- compare_versions tests ---
+
+        #[test]
+        fn compare_versions_equal() {
+            assert_eq!(compare_versions("0.3.2", "0.3.2"), Some(Ordering::Equal));
+        }
+
+        #[test]
+        fn compare_versions_greater_numeric_not_lexicographic() {
+            // 10 > 9 numerically, but "10" < "9" lexicographically
+            assert_eq!(compare_versions("0.3.10", "0.3.9"), Some(Ordering::Greater));
+        }
+
+        #[test]
+        fn compare_versions_less() {
+            assert_eq!(compare_versions("0.3.1", "0.3.2"), Some(Ordering::Less));
+        }
+
+        #[test]
+        fn compare_versions_none_for_garbage() {
+            assert_eq!(compare_versions("foo", "bar"), None);
+        }
+
+        // --- is_newer_version tests ---
+
+        #[test]
+        fn is_newer_version_returns_true_when_latest_is_newer() {
+            assert!(is_newer_version("0.4.0", "0.3.2"));
+        }
+
+        #[test]
+        fn is_newer_version_returns_false_when_versions_equal() {
+            assert!(!is_newer_version("0.3.2", "0.3.2"));
+        }
+
+        #[test]
+        fn is_newer_version_returns_false_when_latest_is_older() {
+            assert!(!is_newer_version("0.3.1", "0.3.2"));
+        }
+
+        #[test]
+        fn is_newer_version_handles_v_prefix() {
+            assert!(is_newer_version("v0.4.0", "0.3.2"));
+        }
+
+        #[test]
+        fn is_newer_version_major_bump_beats_high_minor() {
+            assert!(is_newer_version("1.0.0", "0.99.99"));
+        }
+
+        // --- sanitize_tag tests ---
+
+        #[test]
+        fn sanitize_tag_keeps_valid_tag_unchanged() {
+            assert_eq!(sanitize_tag("v0.3.2"), "v0.3.2");
+        }
+
+        #[test]
+        fn sanitize_tag_replaces_special_characters() {
+            assert_eq!(sanitize_tag("v0.3.2-beta+build"), "v0.3.2-beta_build");
+        }
+
+        #[test]
+        fn sanitize_tag_replaces_spaces_and_punctuation() {
+            assert_eq!(sanitize_tag("hello world!"), "hello_world_");
+        }
+
+        // --- format_version_for_display tests ---
+
+        #[test]
+        fn format_version_for_display_strips_lowercase_v() {
+            assert_eq!(format_version_for_display("v0.3.2"), "0.3.2");
+        }
+
+        #[test]
+        fn format_version_for_display_strips_uppercase_v() {
+            assert_eq!(format_version_for_display("V0.3.2"), "0.3.2");
+        }
+
+        #[test]
+        fn format_version_for_display_no_prefix_unchanged() {
+            assert_eq!(format_version_for_display("0.3.2"), "0.3.2");
+        }
+
+        #[test]
+        fn format_version_for_display_trims_whitespace() {
+            assert_eq!(format_version_for_display("  v0.3.2  "), "0.3.2");
+        }
+    }
 }
