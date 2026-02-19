@@ -1,0 +1,29 @@
+# Nextest configuration for Arb
+# https://nexte.st/docs/configuration/
+
+[store]
+dir = "target/nextest"
+
+[profile.default]
+# Stop on first failure to get faster feedback during development.
+fail-fast = true
+# Use all available CPUs for test parallelism.
+test-threads = "num-cpus"
+# Reasonable per-test timeout.
+slow-timeout = { period = "60s" }
+# Status level for the final summary.
+status-level = "pass"
+final-status-level = "flaky"
+
+[profile.ci]
+# CI should also fail fast to save resources.
+fail-fast = true
+# Use all available CPUs.
+test-threads = "num-cpus"
+# Stricter timeout in CI.
+slow-timeout = { period = "120s", terminate-after = 2 }
+# Show more detail in CI logs.
+status-level = "pass"
+final-status-level = "all"
+# Retry flaky tests once in CI.
+retries = 1
