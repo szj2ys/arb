@@ -131,6 +131,7 @@ humantime = "2.1"
 # Only include image formats actually used in the codebase
 # Removed: tiff, bmp, ico, pnm, dds, tga, openexr, qoi, hdr, farbfeld
 image = { version = "0.25", default-features = false, features = ["png", "jpeg", "gif", "webp"] }
+indicatif = "0.17"
 intrusive-collections = "0.9"
 k9 = "0.12.0"
 lazy_static = "1.4"
@@ -236,6 +237,7 @@ ucd-trie = {version="0.1", default-features=false}
 uds_windows = "1.1"
 umask = { path = "crates/umask" }
 unicode-normalization = "0.1.24"
+ureq = "2"
 unicode-segmentation = "1.12"
 url = "2"
 url-funcs = { path = "lua-api-crates/url-funcs" }
