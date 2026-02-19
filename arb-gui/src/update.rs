@@ -49,11 +49,6 @@ pub fn get_latest_release_info() -> anyhow::Result<Release> {
     get_github_release_info("https://api.github.com/repos/tw93/Arb/releases/latest")
 }
 
-#[allow(unused)]
-pub fn get_nightly_release_info() -> anyhow::Result<Release> {
-    get_github_release_info("https://api.github.com/repos/wezterm/wezterm/releases/tags/nightly")
-}
-
 fn is_newer(latest: &str, current: &str) -> bool {
     let latest = latest.trim_start_matches('v');
     let current = current.trim_start_matches('v');
