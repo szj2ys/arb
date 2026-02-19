@@ -163,6 +163,43 @@ local function apply_theme_to_overrides(overrides, scheme_name)
   return overrides
 end
 
+-- ===== Theme Persistence =====
+-- Persist the user's theme choice to disk so it survives restarts.
+-- State file: ~/.config/arb/.arb_theme (plain text, contains just the theme ID)
+
+local arb_theme_state_path = (os.getenv('HOME') or '') .. '/.config/arb/.arb_theme'
+
+local function save_theme_state(theme_id)
+  if type(theme_id) ~= 'string' or theme_id == '' then
+    return
+  end
+  -- Ensure the directory exists
+  os.execute('mkdir -p ' .. (os.getenv('HOME') or '') .. '/.config/arb')
+  local f = io.open(arb_theme_state_path, 'w')
+  if f then
+    f:write(theme_id)
+    f:close()
+  end
+end
+
+local function load_theme_state()
+  local f = io.open(arb_theme_state_path, 'r')
+  if not f then
+    return nil
+  end
+  local theme_id = f:read('*all')
+  f:close()
+  if not theme_id or theme_id == '' then
+    return nil
+  end
+  -- Strip whitespace/newlines
+  theme_id = theme_id:match('^%s*(.-)%s*$')
+  if theme_id == '' then
+    return nil
+  end
+  return theme_id
+end
+
 wezterm.on('window-config-reloaded', function(window)
   local overrides = window:get_config_overrides() or {}
   local desired = pick_effective_scheme(window, overrides)
@@ -410,7 +447,7 @@ config.window_frame = {
   inactive_titlebar_bg = '#15141b',
 }
 
--- Default scheme; will be overridden dynamically via window-config-reloaded.
+-- Default scheme; persisted theme (if any) is applied after config.colors is set.
 config.color_scheme = 'Arb Dark'
 
 config.window_close_confirmation = 'NeverPrompt'
@@ -520,6 +557,40 @@ config.color_schemes = {
     split = config.colors.split,
   },
 }
+
+-- Apply persisted theme at config-build time (avoids race conditions from window events).
+-- If the user previously selected a theme via Cmd+Shift+T, restore it now.
+do
+  local persisted_id = load_theme_state()
+  if persisted_id then
+    local scheme_name = resolve_scheme_name(persisted_id)
+    if scheme_name then
+      -- Merge all builtin schemes + our custom ones so the lookup always succeeds.
+      local all_schemes = wezterm.color.get_builtin_schemes()
+      if config.color_schemes then
+        for k, v in pairs(config.color_schemes) do
+          all_schemes[k] = v
+        end
+      end
+
+      local scheme = all_schemes[scheme_name]
+      if scheme then
+        config.color_scheme = scheme_name
+
+        -- Sync tab bar colors
+        config.colors = config.colors or {}
+        config.colors.tab_bar = scheme.tab_bar or scheme_tab_bar_colors(scheme)
+        config.colors.split = scheme.split or (scheme.brights and scheme.brights[1]) or '#3d3a4f'
+
+        -- Sync window frame / titlebar
+        config.window_frame = config.window_frame or {}
+        local titlebar_bg = (scheme.tab_bar and scheme.tab_bar.background) or scheme.background
+        config.window_frame.active_titlebar_bg = titlebar_bg
+        config.window_frame.inactive_titlebar_bg = titlebar_bg
+      end
+    end
+  end
+end
 
 -- ===== Shell =====
 local user_shell = os.getenv('SHELL')
@@ -658,6 +729,7 @@ config.keys = {
             local desired = pick_effective_scheme(inner_window, overrides)
             if desired then
               inner_window:set_config_overrides(apply_theme_to_overrides(overrides, desired))
+              save_theme_state(choice_id)
             end
           end),
         }),
