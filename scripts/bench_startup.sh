@@ -7,6 +7,14 @@ set -euo pipefail
 RUNS="${RUNS:-10}"
 WARMUP="${WARMUP:-5}"
 WAIT_TIMEOUT_SEC="${WAIT_TIMEOUT_SEC:-15}"
+SOLO=false
+
+for arg in "$@"; do
+	case "$arg" in
+		--solo) SOLO=true ;;
+		*) printf 'Unknown option: %s\n' "$arg" >&2; exit 1 ;;
+	esac
+done
 
 if ! command -v hyperfine >/dev/null 2>&1; then
 	printf 'Error: hyperfine is required. Install with: brew install hyperfine\n' >&2
@@ -97,9 +105,16 @@ for term in "${TERMINALS[@]}"; do
 	fi
 done
 
-if [[ ${#INSTALLED[@]} -lt 2 ]]; then
-	printf 'Error: need at least 2 installed terminals to compare.\n' >&2
-	exit 1
+if [[ "$SOLO" == true ]]; then
+	if [[ ${#INSTALLED[@]} -lt 1 ]]; then
+		printf 'Error: need at least 1 installed terminal for --solo mode.\n' >&2
+		exit 1
+	fi
+else
+	if [[ ${#INSTALLED[@]} -lt 2 ]]; then
+		printf 'Error: need at least 2 installed terminals to compare (use --solo for single-app mode).\n' >&2
+		exit 1
+	fi
 fi
 
 printf '\nBenchmark config: runs=%s warmup=%s timeout=%ss\n\n' "$RUNS" "$WARMUP" "$WAIT_TIMEOUT_SEC"

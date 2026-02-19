@@ -89,8 +89,14 @@ jobs:
 
       - name: Build both targets
         run: |
+          START=$(date +%s)
           cargo build --release --target aarch64-apple-darwin -p arb -p arb-gui
           cargo build --release --target x86_64-apple-darwin -p arb -p arb-gui
+          END=$(date +%s)
+          DURATION=$((END - START))
+          echo "## Build Time" >> $GITHUB_STEP_SUMMARY
+          echo "Release build (both architectures): ${DURATION}s" >> $GITHUB_STEP_SUMMARY
+          echo "build_seconds=$DURATION" >> $GITHUB_OUTPUT
 
       - name: Lipo merge and verify
         run: |
@@ -107,3 +113,13 @@ jobs:
 
           lipo -info target/universal/release/arb
           lipo -info target/universal/release/arb-gui
+
+      - name: Report binary sizes
+        run: |
+          echo "## Binary Sizes" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          ls -lh target/universal/release/arb target/universal/release/arb-gui >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          # Also output raw bytes for machine parsing
+          echo "arb_bytes=$(stat -f%z target/universal/release/arb)" >> $GITHUB_OUTPUT
+          echo "arb_gui_bytes=$(stat -f%z target/universal/release/arb-gui)" >> $GITHUB_OUTPUT
