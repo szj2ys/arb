@@ -182,7 +182,10 @@ pub fn start_update_checker() {
 
 #[cfg(test)]
 mod tests {
-    use super::is_newer;
+    use super::{compare_versions, is_newer, parse_version_numbers};
+    use std::cmp::Ordering as CmpOrdering;
+
+    // ── existing ────────────────────────────────────────────
 
     #[test]
     fn semver_numeric_comparison() {
@@ -190,5 +193,117 @@ mod tests {
         assert!(!is_newer("0.2.0", "0.11.0"));
         assert!(!is_newer("0.1.1", "0.1.1"));
         assert!(is_newer("v0.1.2", "0.1.1"));
+    }
+
+    // ── Task 1: parse_version_numbers ───────────────────────
+
+    #[test]
+    fn should_parse_standard_semver() {
+        assert_eq!(parse_version_numbers("1.2.3"), Some(vec![1, 2, 3]));
+    }
+
+    #[test]
+    fn should_parse_lowercase_v_prefix() {
+        assert_eq!(parse_version_numbers("v1.0.0"), Some(vec![1, 0, 0]));
+    }
+
+    #[test]
+    fn should_parse_uppercase_v_prefix() {
+        assert_eq!(parse_version_numbers("V1.0.0"), Some(vec![1, 0, 0]));
+    }
+
+    #[test]
+    fn should_return_none_for_empty_string() {
+        assert_eq!(parse_version_numbers(""), None);
+    }
+
+    #[test]
+    fn should_return_none_for_pure_non_numeric() {
+        assert_eq!(parse_version_numbers("abc"), None);
+    }
+
+    #[test]
+    fn should_parse_version_with_prerelease_suffix() {
+        assert_eq!(parse_version_numbers("1.2.3-beta"), Some(vec![1, 2, 3]));
+    }
+
+    #[test]
+    fn should_parse_single_number() {
+        assert_eq!(parse_version_numbers("5"), Some(vec![5]));
+    }
+
+    #[test]
+    fn should_parse_four_segments() {
+        assert_eq!(
+            parse_version_numbers("1.2.3.4"),
+            Some(vec![1, 2, 3, 4])
+        );
+    }
+
+    // ── Task 2: compare_versions ────────────────────────────
+
+    #[test]
+    fn should_compare_equal_when_shorter_padded_with_zeros() {
+        assert_eq!(
+            compare_versions("1.0", "1.0.0"),
+            Some(CmpOrdering::Equal)
+        );
+    }
+
+    #[test]
+    fn should_compare_greater_when_left_longer_with_nonzero() {
+        assert_eq!(
+            compare_versions("1.0.1", "1.0"),
+            Some(CmpOrdering::Greater)
+        );
+    }
+
+    #[test]
+    fn should_compare_less_when_right_longer_with_nonzero() {
+        assert_eq!(
+            compare_versions("1.0", "1.0.1"),
+            Some(CmpOrdering::Less)
+        );
+    }
+
+    #[test]
+    fn should_return_none_when_left_invalid() {
+        assert_eq!(compare_versions("abc", "1.0"), None);
+    }
+
+    #[test]
+    fn should_return_none_when_right_invalid() {
+        assert_eq!(compare_versions("1.0", "xyz"), None);
+    }
+
+    // ── Task 3: is_newer edge cases ─────────────────────────
+
+    #[test]
+    fn should_reject_date_version_vs_semver() {
+        // WezTerm date-version guard: date latest against semver current → false
+        assert!(!is_newer("20240203-110000-abc", "0.1.0"));
+    }
+
+    #[test]
+    fn should_compare_two_date_versions() {
+        // Both are date versions; guard does not fire, numeric compare succeeds
+        assert!(is_newer("20240204-110000-abc", "20240203-110000-abc"));
+    }
+
+    #[test]
+    fn should_fallback_to_not_equal_when_unparseable_and_different() {
+        // Neither parses → compare_versions returns None → latest != current → true
+        assert!(is_newer("abc", "def"));
+    }
+
+    #[test]
+    fn should_fallback_to_not_equal_when_unparseable_and_same() {
+        // Neither parses → compare_versions returns None → latest == current → false
+        assert!(!is_newer("abc", "abc"));
+    }
+
+    #[test]
+    fn should_handle_uppercase_v_prefix_in_is_newer() {
+        assert!(is_newer("V0.2.0", "v0.1.0"));
     }
 }
