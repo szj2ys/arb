@@ -13,25 +13,34 @@ use crate::{
     RequestedWindowGeometry, ResizeIncrement, ResolvedGeometry, ScreenPoint, Size, ULength,
     WindowDecorations, WindowEvent, WindowEventSender, WindowOps, WindowState,
 };
-use anyhow::{anyhow, bail, ensure};
+use anyhow::anyhow;
+#[cfg(feature = "opengl")]
+use anyhow::{bail, ensure};
 use async_trait::async_trait;
 use cocoa::appkit::{
     self, CGFloat, NSApplication, NSApplicationActivateIgnoringOtherApps,
     NSApplicationPresentationOptions, NSBackingStoreBuffered, NSEvent, NSEventModifierFlags,
-    NSOpenGLContext, NSOpenGLPixelFormat, NSPasteboard, NSRunningApplication, NSScreen, NSView,
+    NSPasteboard, NSRunningApplication, NSScreen, NSView,
     NSViewHeightSizable, NSViewWidthSizable, NSWindow, NSWindowStyleMask,
 };
+#[cfg(feature = "opengl")]
+use cocoa::appkit::{NSOpenGLContext, NSOpenGLPixelFormat};
 use cocoa::base::*;
 use cocoa::foundation::{
-    NSArray, NSAutoreleasePool, NSFastEnumeration, NSInteger, NSNotFound, NSPoint, NSRect, NSSize,
+    NSArray, NSFastEnumeration, NSInteger, NSNotFound, NSPoint, NSRect, NSSize,
     NSString, NSUInteger,
 };
+#[cfg(feature = "opengl")]
+use cocoa::foundation::NSAutoreleasePool;
 use config::window::WindowLevel;
 use config::{ConfigHandle, RgbaColor, SrgbaTuple};
 use core_foundation::base::{CFTypeID, TCFType};
+#[cfg(feature = "opengl")]
 use core_foundation::bundle::{CFBundleGetBundleWithIdentifier, CFBundleGetFunctionPointerForName};
 use core_foundation::data::{CFData, CFDataGetBytePtr, CFDataRef};
-use core_foundation::string::{CFString, CFStringRef, UniChar};
+#[cfg(feature = "opengl")]
+use core_foundation::string::CFString;
+use core_foundation::string::{CFStringRef, UniChar};
 use core_foundation::{declare_TCFType, impl_TCFType};
 use objc::declare::ClassDecl;
 use objc::rc::{StrongPtr, WeakPtr};
@@ -48,6 +57,7 @@ use std::ffi::{c_void, CStr};
 use std::path::PathBuf;
 use std::ptr::NonNull;
 use std::rc::Rc;
+#[cfg(feature = "opengl")]
 use std::str::FromStr;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Instant;
@@ -136,12 +146,14 @@ impl NSRange {
     }
 }
 
+#[cfg(feature = "opengl")]
 #[derive(Clone)]
 pub enum BackendImpl {
     Cgl(Rc<cglbits::GlState>),
     Egl(Rc<crate::egl::GlState>),
 }
 
+#[cfg(feature = "opengl")]
 impl BackendImpl {
     pub fn update(&self) {
         if let Self::Cgl(be) = self {
@@ -150,12 +162,14 @@ impl BackendImpl {
     }
 }
 
+#[cfg(feature = "opengl")]
 #[derive(Clone)]
 pub struct GlContextPair {
     pub context: Rc<glium::backend::Context>,
     pub backend: BackendImpl,
 }
 
+#[cfg(feature = "opengl")]
 impl GlContextPair {
     /// on macOS we first try to initialize EGL by dynamically loading it.
     /// The system doesn't provide an EGL implementation, but the ANGLE
@@ -235,6 +249,7 @@ impl GlContextPair {
     }
 }
 
+#[cfg(feature = "opengl")]
 mod cglbits {
     use super::*;
 
@@ -722,6 +737,7 @@ impl Window {
                 screen_changed: false,
                 paint_throttled: false,
                 invalidated: true,
+                #[cfg(feature = "opengl")]
                 gl_context_pair: None,
                 text_cursor_position: Rect::new(Point::new(0, 0), Size::new(0, 0)),
                 tracking_rect_tag: 0,
@@ -906,6 +922,7 @@ pub fn window_level_to_nswindow_level(level: WindowLevel) -> NSWindowLevel {
 
 #[async_trait(?Send)]
 impl WindowOps for Window {
+    #[cfg(feature = "opengl")]
     async fn enable_opengl(&self) -> anyhow::Result<Rc<glium::backend::Context>> {
         let window_id = self.id;
         promise::spawn::spawn(async move {
@@ -1172,6 +1189,7 @@ fn screen_point_to_cartesian(point: ScreenPoint) -> NSPoint {
 }
 
 impl WindowInner {
+    #[cfg(feature = "opengl")]
     fn enable_opengl(&mut self) -> anyhow::Result<Rc<glium::backend::Context>> {
         if let Some(window_view) = WindowView::get_this(unsafe { &**self.view }) {
             window_view.inner.borrow_mut().enable_opengl()
@@ -1759,6 +1777,7 @@ struct Inner {
     paint_throttled: bool,
     window_id: usize,
     invalidated: bool,
+    #[cfg(feature = "opengl")]
     gl_context_pair: Option<GlContextPair>,
     text_cursor_position: Rect,
     tracking_rect_tag: NSInteger,
@@ -1946,6 +1965,7 @@ impl Keyboard {
 }
 
 impl Inner {
+    #[cfg(feature = "opengl")]
     fn enable_opengl(&mut self) -> anyhow::Result<Rc<glium::backend::Context>> {
         let view = self.view_id.as_ref().unwrap().load();
         let glium_context = GlContextPair::create(*view)?;
@@ -3213,6 +3233,7 @@ impl WindowView {
             false
         };
 
+        #[cfg(feature = "opengl")]
         if let Some(this) = Self::get_this(this) {
             let inner = this.inner.borrow_mut();
 

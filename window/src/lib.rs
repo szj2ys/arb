@@ -5,6 +5,7 @@ use config::{ConfigHandle, Dimension, GeometryOrigin};
 use promise::Future;
 use std::any::Any;
 use std::path::PathBuf;
+#[cfg(feature = "opengl")]
 use std::rc::Rc;
 use thiserror::Error;
 use url::Url;
@@ -30,10 +31,12 @@ pub fn default_dpi() -> f64 {
     }
 }
 
+#[cfg(feature = "opengl")]
 mod egl;
 
 pub use bitmaps::{BitmapImage, Image};
 pub use connection::*;
+#[cfg(feature = "opengl")]
 pub use glium;
 pub use os::*;
 pub use wezterm_input_types::*;
@@ -257,8 +260,10 @@ pub trait WindowOps {
         Self: Sized;
 
     /// Setup opengl for rendering
+    #[cfg(feature = "opengl")]
     async fn enable_opengl(&self) -> anyhow::Result<Rc<glium::backend::Context>>;
     /// Advise the window that a frame is finished
+    #[cfg(feature = "opengl")]
     fn finish_frame(&self, frame: glium::Frame) -> anyhow::Result<()> {
         frame.finish()?;
         Ok(())

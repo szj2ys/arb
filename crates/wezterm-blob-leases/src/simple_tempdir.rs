@@ -16,7 +16,7 @@ pub struct SimpleTempDir {
 impl SimpleTempDir {
     pub fn new() -> Result<Self, Error> {
         let root = tempfile::Builder::new()
-            .prefix("wezterm-blob-lease-")
+            .prefix("arb-blob-lease-")
             .rand_bytes(8)
             .tempdir()?;
         Ok(Self {
@@ -29,7 +29,7 @@ impl SimpleTempDir {
         let path = path.as_ref();
         std::fs::create_dir_all(path)?;
         let root = tempfile::Builder::new()
-            .prefix("wezterm-blob-lease-")
+            .prefix("arb-blob-lease-")
             .rand_bytes(8)
             .tempdir_in(path)?;
         Ok(Self {

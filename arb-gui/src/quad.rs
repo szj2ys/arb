@@ -41,6 +41,7 @@ pub struct Vertex {
     pub has_color: f32,
     pub mix_value: f32,
 }
+#[cfg(feature = "opengl")]
 ::window::glium::implement_vertex!(
     Vertex, position, tex, fg_color, alt_color, hsv, has_color, mix_value
 );

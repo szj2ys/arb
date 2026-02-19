@@ -99,7 +99,7 @@ mod imp {
             return apply_pending_update(&marker_path);
         }
 
-        let current_version = config::wezterm_version().to_string();
+        let current_version = config::arb_version().to_string();
         let current_version_display = format_version_for_display(&current_version);
         println!("Current version: {}", current_version_display);
         println!("Checking latest release...");

@@ -47,6 +47,7 @@ mod stats;
 mod tabbar;
 mod termwindow;
 mod unicode_names;
+#[cfg(feature = "opengl")]
 mod uniforms;
 mod update;
 mod utilsprites;
@@ -61,7 +62,7 @@ pub use termwindow::{set_window_class, set_window_position, TermWindow, ICON_DAT
 #[derive(Debug, Parser)]
 #[command(
     about = "Arb Terminal Emulator\nhttp://github.com/tw93/Arb",
-    version = config::wezterm_version()
+    version = config::arb_version()
 )]
 struct Opt {
     /// Skip loading arb.lua

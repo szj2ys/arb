@@ -15,6 +15,8 @@ k9.workspace = true
 gl_generator.workspace = true
 
 [features]
+default = ["opengl"]
+opengl = ["glium"]
 wayland = []
 
 [dependencies]
@@ -40,7 +42,7 @@ raw-window-handle.workspace = true
 resize.workspace = true
 serde = {workspace=true, features = ["rc", "derive"]}
 tiny-skia.workspace = true
-glium.workspace = true
+glium = {workspace = true, optional = true}
 url.workspace = true
 wezterm-bidi.workspace = true
 wezterm-color-types.workspace = true

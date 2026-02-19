@@ -889,7 +889,7 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
         }) => CommandDef {
             brief: "Enter Pane selection mode".into(),
             doc: "Activates the pane selection UI".into(),
-            keys: vec![], // FIXME: find a new assignment
+            keys: vec![(Modifiers::CTRL.union(Modifiers::SHIFT), "o".into())],
             args: &[ArgType::ActivePane],
             menubar: &["Window"],
             icon: Some("cod_multiple_windows"),
@@ -900,7 +900,7 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
         }) => CommandDef {
             brief: "Swap a pane with the active pane".into(),
             doc: "Activates the pane selection UI".into(),
-            keys: vec![], // FIXME: find a new assignment
+            keys: vec![(Modifiers::CTRL.union(Modifiers::SHIFT), "s".into())],
             args: &[ArgType::ActivePane],
             menubar: &["Window"],
             icon: Some("cod_multiple_windows"),
@@ -911,7 +911,7 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
         }) => CommandDef {
             brief: "Swap a pane with the active pane, keeping focus".into(),
             doc: "Activates the pane selection UI".into(),
-            keys: vec![], // FIXME: find a new assignment
+            keys: vec![(Modifiers::CTRL.union(Modifiers::ALT).union(Modifiers::SHIFT), "s".into())],
             args: &[ArgType::ActivePane],
             menubar: &["Window"],
             icon: Some("cod_multiple_windows"),
@@ -922,7 +922,7 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
         }) => CommandDef {
             brief: "Move a pane into its own tab".into(),
             doc: "Activates the pane selection UI".into(),
-            keys: vec![], // FIXME: find a new assignment
+            keys: vec![(Modifiers::CTRL.union(Modifiers::SHIFT), "m".into())],
             args: &[ArgType::ActivePane],
             menubar: &["Window"],
             icon: Some("cod_multiple_windows"),
@@ -933,7 +933,7 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
         }) => CommandDef {
             brief: "Move a pane into its own window".into(),
             doc: "Activates the pane selection UI".into(),
-            keys: vec![], // FIXME: find a new assignment
+            keys: vec![(Modifiers::CTRL.union(Modifiers::ALT).union(Modifiers::SHIFT), "m".into())],
             args: &[ArgType::ActivePane],
             menubar: &["Window"],
             icon: Some("cod_multiple_windows"),

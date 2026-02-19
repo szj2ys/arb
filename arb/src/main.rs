@@ -2,7 +2,7 @@ use anyhow::{anyhow, Context};
 use clap::builder::ValueParser;
 use clap::{Parser, ValueEnum, ValueHint};
 use clap_complete::{generate as generate_completion, shells, Generator as CompletionGenerator};
-use config::{wezterm_version, ConfigHandle};
+use config::{arb_version, ConfigHandle};
 use mux::Mux;
 use std::ffi::OsString;
 use std::io::{IsTerminal, Read, Write};
@@ -26,7 +26,7 @@ pub mod update;
 #[derive(Debug, Parser)]
 #[command(
     about = "Arb Terminal Emulator\nhttp://github.com/tw93/Arb",
-    version = wezterm_version()
+    version = arb_version()
 )]
 pub struct Opt {
     /// Skip loading arb.lua

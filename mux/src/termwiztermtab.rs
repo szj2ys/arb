@@ -109,7 +109,7 @@ impl TermWizTerminalPane {
             size,
             term_config.unwrap_or_else(|| Arc::new(config::TermConfig::new())),
             "WezTerm",
-            config::wezterm_version(),
+            config::arb_version(),
             Box::new(Vec::new()), // FIXME: connect to something?
         ));
 

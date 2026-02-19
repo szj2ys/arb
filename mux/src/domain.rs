@@ -622,7 +622,7 @@ impl Domain for LocalDomain {
             size,
             std::sync::Arc::new(config::TermConfig::new()),
             "WezTerm",
-            config::wezterm_version(),
+            config::arb_version(),
             Box::new(writer.clone()),
         );
         if self.is_conpty() {

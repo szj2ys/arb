@@ -1,6 +1,7 @@
 use crate::color::{LinearRgba, SrgbaPixel};
 use crate::{Point, Rect, Size};
 use downcast_rs::{impl_downcast, Downcast};
+#[cfg(feature = "opengl")]
 use glium::texture::SrgbTexture2d;
 use std::cell::RefCell;
 
@@ -43,6 +44,7 @@ pub trait Texture2d: Downcast {
 }
 impl_downcast!(Texture2d);
 
+#[cfg(feature = "opengl")]
 impl Texture2d for SrgbTexture2d {
     fn write(&self, rect: Rect, im: &dyn BitmapImage) {
         let (im_width, im_height) = im.image_dimensions();
