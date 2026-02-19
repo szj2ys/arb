@@ -36,11 +36,6 @@ fn get_github_release_info(uri: &str) -> anyhow::Result<Release> {
         .send(&mut latest)
         .map_err(|e| anyhow!("failed to query github releases: {}", e))?;
 
-    /*
-    println!("Status: {} {}", _res.status_code(), _res.reason());
-    println!("{}", String::from_utf8_lossy(&latest));
-    */
-
     let latest: Release = serde_json::from_slice(&latest)?;
     Ok(latest)
 }

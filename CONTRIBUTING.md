@@ -9,9 +9,6 @@ cd Arb
 
 # Install required tools (cargo-nextest, nightly rustfmt)
 make install-tools
-
-# Install pre-commit hook (format + test before each commit)
-make install-hooks
 ```
 
 ## Development
