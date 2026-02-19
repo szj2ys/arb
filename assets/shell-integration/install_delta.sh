@@ -34,24 +34,33 @@ echo ""
 if command -v delta &> /dev/null && [[ "$(command -v delta)" == "$USER_BIN_DIR/delta" ]]; then
     echo -e "${GREEN}✓${NC} Delta binary already installed"
 else
-    # Check if vendor delta exists
-    if [[ ! -f "$VENDOR_DELTA" ]]; then
-        echo -e "${YELLOW}⚠${NC}  Delta binary not found in vendor directory"
-        echo -e "${NC}    Expected: $VENDOR_DELTA${NC}"
-        echo ""
+    # Check if delta is available system-wide (e.g., via Homebrew)
+    if command -v delta &> /dev/null; then
+        echo -e "${GREEN}✓${NC} Delta already installed at $(command -v delta)"
+    elif [[ -f "$VENDOR_DELTA" ]]; then
+        # Install from vendor bundle
+        mkdir -p "$USER_BIN_DIR"
+        echo -n "  Installing delta binary... "
+        cp "$VENDOR_DELTA" "$USER_BIN_DIR/delta"
+        chmod +x "$USER_BIN_DIR/delta"
+        echo -e "${GREEN}done ✅${NC}"
+    elif command -v brew &> /dev/null; then
+        # Fallback: install via Homebrew
+        echo -e "${YELLOW}⚠${NC}  Delta not bundled, installing via Homebrew..."
+        if brew install git-delta; then
+            echo -e "${GREEN}✓${NC} Delta installed via Homebrew"
+        else
+            echo -e "${YELLOW}⚠${NC}  Homebrew installation failed"
+            echo "You can install delta manually:"
+            echo "  brew install git-delta"
+            exit 1
+        fi
+    else
+        echo -e "${YELLOW}⚠${NC}  Delta binary not found"
         echo "You can install delta manually:"
         echo "  brew install git-delta"
         exit 1
     fi
-
-    # Create bin directory
-    mkdir -p "$USER_BIN_DIR"
-
-    # Copy delta binary
-    echo -n "  Installing delta binary... "
-    cp "$VENDOR_DELTA" "$USER_BIN_DIR/delta"
-    chmod +x "$USER_BIN_DIR/delta"
-    echo -e "${GREEN}done ✅${NC}"
 fi
 
 set_git_config_if_missing() {
