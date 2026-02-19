@@ -1,5 +1,5 @@
 use anyhow::anyhow;
-use config::{configuration, wezterm_version};
+use config::{configuration, arb_version};
 use http_req::request::{HttpVersion, Request};
 use http_req::uri::Uri;
 use serde::*;
@@ -32,7 +32,7 @@ fn get_github_release_info(uri: &str) -> anyhow::Result<Release> {
     let mut latest = Vec::new();
     let _res = Request::new(&uri)
         .version(HttpVersion::Http10)
-        .header("User-Agent", &format!("arb/{}", wezterm_version()))
+        .header("User-Agent", &format!("arb/{}", arb_version()))
         .send(&mut latest)
         .map_err(|e| anyhow!("failed to query github releases: {}", e))?;
 
@@ -129,7 +129,7 @@ fn update_checker() {
 
         if configuration().check_for_updates {
             if let Ok(latest) = get_latest_release_info() {
-                let current = wezterm_version();
+                let current = arb_version();
                 if is_newer(&latest.tag_name, current) || force_ui {
                     log::info!(
                         "latest release {} is newer than current build {}",

@@ -684,7 +684,7 @@ pub struct ColorSchemeMetaData {
     pub name: Option<String>,
     pub author: Option<String>,
     pub origin_url: Option<String>,
-    pub wezterm_version: Option<String>,
+    pub arb_version: Option<String>,
     #[dynamic(default)]
     pub aliases: Vec<String>,
 }

@@ -83,7 +83,7 @@ impl Base16Scheme {
                 name: Some(scheme.scheme),
                 author: Some(scheme.author),
                 origin_url: None,
-                wezterm_version: None,
+                arb_version: None,
                 aliases: vec![],
             },
         })

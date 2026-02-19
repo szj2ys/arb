@@ -71,7 +71,7 @@ impl Header {
             config::arb_version().to_string(),
         );
         env.insert(
-            "WEZTERM_TARGET_TRIPLE".to_string(),
+            "ARB_TARGET_TRIPLE".to_string(),
             config::arb_target_triple().to_string(),
         );
         env.insert(
