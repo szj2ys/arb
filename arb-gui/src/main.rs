@@ -61,7 +61,7 @@ pub use termwindow::{set_window_class, set_window_position, TermWindow, ICON_DAT
 
 #[derive(Debug, Parser)]
 #[command(
-    about = "Arb Terminal Emulator\nhttp://github.com/tw93/Arb",
+    about = "Arb Terminal Emulator\nhttp://github.com/szj2ys/arb",
     version = config::arb_version()
 )]
 struct Opt {

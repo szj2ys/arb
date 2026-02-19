@@ -213,7 +213,7 @@ fi
 
 # Sign vendored binaries before signing the main app bundle
 echo "[5.5/7] Signing vendored binaries..."
-VENDOR_BINARIES=("starship" "delta" "zoxide")
+VENDOR_BINARIES=("starship" "delta")
 for bin_name in "${VENDOR_BINARIES[@]}"; do
 	bin_path="$APP_BUNDLE_OUT/Contents/Resources/vendor/$bin_name"
 	if [[ -f "$bin_path" && "$SIGNING_IDENTITY" != "-" ]]; then

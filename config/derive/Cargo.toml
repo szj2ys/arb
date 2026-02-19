@@ -2,7 +2,7 @@
 name = "wezterm-config-derive"
 version = "0.1.0"
 edition = "2021"
-repository = "https://github.com/tw93/Arb"
+repository = "https://github.com/szj2ys/arb"
 description = "derive config metadata"
 license = "MIT"
 

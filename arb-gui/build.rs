@@ -118,10 +118,10 @@ BEGIN
     BEGIN
         BLOCK "040904E4"
         BEGIN
-            VALUE "CompanyName",      "Tw93\\0"
+            VALUE "CompanyName",      "szj2ys\\0"
             VALUE "FileDescription",  "Arb - A fast terminal for AI coding\\0"
             VALUE "FileVersion",      "{version}\\0"
-            VALUE "LegalCopyright",   "Tw93, MIT licensed\\0"
+            VALUE "LegalCopyright",   "szj2ys, MIT licensed\\0"
             VALUE "InternalName",     "\\0"
             VALUE "OriginalFilename", "\\0"
             VALUE "ProductName",      "Arb\\0"

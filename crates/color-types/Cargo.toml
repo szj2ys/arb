@@ -3,7 +3,7 @@ name = "wezterm-color-types"
 version = "0.3.0"
 authors = ["Wez Furlong"]
 edition = "2018"
-repository = "https://github.com/tw93/Arb"
+repository = "https://github.com/szj2ys/arb"
 description = "Types for working with colors"
 license = "MIT"
 

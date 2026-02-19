@@ -45,15 +45,15 @@ mod imp {
     use std::process::{Command, Stdio};
     use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
-    const RELEASE_API_URL: &str = "https://api.github.com/repos/tw93/Arb/releases/latest";
+    const RELEASE_API_URL: &str = "https://api.github.com/repos/szj2ys/arb/releases/latest";
     const LATEST_ZIP_URL: &str =
-        "https://github.com/tw93/Arb/releases/latest/download/arb_for_update.zip";
+        "https://github.com/szj2ys/arb/releases/latest/download/arb_for_update.zip";
     const LATEST_SHA_URL: &str =
-        "https://github.com/tw93/Arb/releases/latest/download/arb_for_update.zip.sha256";
-    const RELEASE_LATEST_URL: &str = "https://github.com/tw93/Arb/releases/latest";
+        "https://github.com/szj2ys/arb/releases/latest/download/arb_for_update.zip.sha256";
+    const RELEASE_LATEST_URL: &str = "https://github.com/szj2ys/arb/releases/latest";
     const UPDATE_ZIP_NAME: &str = "arb_for_update.zip";
     const UPDATE_SHA_NAME: &str = "arb_for_update.zip.sha256";
-    const BREW_CASK_NAME: &str = "tw93/tap/arbterm";
+    const BREW_CASK_NAME: &str = "szj2ys/arb/arb";
 
     const PENDING_DIR_REL: &str = "updates/pending";
     const PENDING_MARKER_NAME: &str = "pending-update.json";

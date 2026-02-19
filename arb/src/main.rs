@@ -25,7 +25,7 @@ pub mod update;
 
 #[derive(Debug, Parser)]
 #[command(
-    about = "Arb Terminal Emulator\nhttp://github.com/tw93/Arb",
+    about = "Arb Terminal Emulator\nhttp://github.com/szj2ys/arb",
     version = arb_version()
 )]
 pub struct Opt {
@@ -810,7 +810,7 @@ fn select_main_menu_command() -> anyhow::Result<SubCommand> {
     println!("{PURPLE_BOLD}   / ___ \\| |  | |_) | {RESET}");
     println!("{PURPLE_BOLD}  /_/   \\_\\_|  |_.__/  {RESET}");
     println!(
-        "  {BLUE}https://github.com/tw93/Arb{RESET}  {GRAY}v{}{RESET}",
+        "  {BLUE}https://github.com/szj2ys/arb{RESET}  {GRAY}v{}{RESET}",
         config::arb_version()
     );
     println!("  {GRAY}A fast, out-of-the-box terminal built for AI coding.{RESET}");
