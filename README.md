@@ -19,7 +19,7 @@
 
 ## Features
 
-- **Zero Config**: Polished defaults with JetBrains Mono, opencode theme, optimized macOS font rendering, smooth animations.
+- **Zero Config**: Polished defaults with JetBrains Mono, Arb Dark theme, optimized macOS font rendering, smooth animations.
 - **Built-in Shell Suite**: Comes pre-loaded with Starship, z, Delta, syntax highlighting, autosuggestions, and autocompletions.
 - **Fast & Lightweight**: 40% smaller binary, instant startup, lazy loading, stripped-down GPU-accelerated core.
 - **Lua Scripting**: Retains full Lua scripting support for infinite customization.
