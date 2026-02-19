@@ -1,3 +1,4 @@
+#[cfg(feature = "opengl")]
 pub(crate) fn prefer_swrast() -> bool {
     #[cfg(windows)]
     {

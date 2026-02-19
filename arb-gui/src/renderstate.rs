@@ -4,14 +4,18 @@ use super::utilsprites::{RenderMetrics, UtilSprites};
 use crate::termwindow::webgpu::{adapter_info_to_gpu_info, WebGpuState, WebGpuTexture};
 use ::window::bitmaps::atlas::OutOfTextureSpace;
 use ::window::bitmaps::Texture2d;
+#[cfg(feature = "opengl")]
 use ::window::glium::backend::Context as GliumContext;
+#[cfg(feature = "opengl")]
 use ::window::glium::buffer::{BufferMutSlice, Mapping};
+#[cfg(feature = "opengl")]
 use ::window::glium::{
     CapabilitiesSource, IndexBuffer as GliumIndexBuffer, VertexBuffer as GliumVertexBuffer,
 };
 use ::window::*;
 use anyhow::Context;
 use std::cell::{Ref, RefCell, RefMut};
+#[cfg(feature = "opengl")]
 use std::convert::TryInto;
 use std::rc::Rc;
 use wezterm_font::FontConfiguration;
@@ -21,18 +25,23 @@ const INDICES_PER_CELL: usize = 6;
 
 #[derive(Clone)]
 pub enum RenderContext {
+    #[cfg(feature = "opengl")]
     Glium(Rc<GliumContext>),
     WebGpu(Rc<WebGpuState>),
 }
 
 pub enum RenderFrame<'a> {
+    #[cfg(feature = "opengl")]
     Glium(&'a mut glium::Frame),
     WebGpu,
+    #[cfg(not(feature = "opengl"))]
+    _Phantom(std::marker::PhantomData<&'a ()>),
 }
 
 impl RenderContext {
     pub fn allocate_index_buffer(&self, indices: &[u32]) -> anyhow::Result<IndexBuffer> {
         match self {
+            #[cfg(feature = "opengl")]
             Self::Glium(context) => Ok(IndexBuffer::Glium(GliumIndexBuffer::new(
                 context,
                 glium::index::PrimitiveType::TrianglesList,
@@ -42,8 +51,10 @@ impl RenderContext {
         }
     }
 
+    #[allow(unused_variables)]
     pub fn allocate_vertex_buffer_initializer(&self, num_quads: usize) -> Vec<Vertex> {
         match self {
+            #[cfg(feature = "opengl")]
             Self::Glium(_) => {
                 vec![Vertex::default(); num_quads * VERTICES_PER_CELL]
             }
@@ -51,12 +62,14 @@ impl RenderContext {
         }
     }
 
+    #[allow(unused_variables)]
     pub fn allocate_vertex_buffer(
         &self,
         num_quads: usize,
         initializer: &[Vertex],
     ) -> anyhow::Result<VertexBuffer> {
         match self {
+            #[cfg(feature = "opengl")]
             Self::Glium(context) => Ok(VertexBuffer::Glium(GliumVertexBuffer::dynamic(
                 context,
                 initializer,
@@ -70,6 +83,7 @@ impl RenderContext {
 
     pub fn allocate_texture_atlas(&self, size: usize) -> anyhow::Result<Rc<dyn Texture2d>> {
         match self {
+            #[cfg(feature = "opengl")]
             Self::Glium(context) => {
                 let caps = context.get_capabilities();
                 // You'd hope that allocating a texture would automatically
@@ -108,6 +122,7 @@ impl RenderContext {
 
     pub fn renderer_info(&self) -> String {
         match self {
+            #[cfg(feature = "opengl")]
             Self::Glium(ctx) => format!(
                 "OpenGL: {} {}",
                 ctx.get_opengl_renderer_string(),
@@ -122,11 +137,13 @@ impl RenderContext {
 }
 
 pub enum IndexBuffer {
+    #[cfg(feature = "opengl")]
     Glium(GliumIndexBuffer<u32>),
     WebGpu(WebGpuIndexBuffer),
 }
 
 impl IndexBuffer {
+    #[cfg(feature = "opengl")]
     pub fn glium(&self) -> &GliumIndexBuffer<u32> {
         match self {
             Self::Glium(g) => g,
@@ -136,17 +153,20 @@ impl IndexBuffer {
     pub fn webgpu(&self) -> &WebGpuIndexBuffer {
         match self {
             Self::WebGpu(g) => g,
+            #[cfg(feature = "opengl")]
             _ => unreachable!(),
         }
     }
 }
 
 pub enum VertexBuffer {
+    #[cfg(feature = "opengl")]
     Glium(GliumVertexBuffer<Vertex>),
     WebGpu(WebGpuVertexBuffer),
 }
 
 impl VertexBuffer {
+    #[cfg(feature = "opengl")]
     pub fn glium(&self) -> &GliumVertexBuffer<Vertex> {
         match self {
             Self::Glium(g) => g,
@@ -156,18 +176,21 @@ impl VertexBuffer {
     pub fn webgpu(&self) -> &WebGpuVertexBuffer {
         match self {
             Self::WebGpu(g) => g,
+            #[cfg(feature = "opengl")]
             _ => unreachable!(),
         }
     }
     pub fn webgpu_mut(&mut self) -> &mut WebGpuVertexBuffer {
         match self {
             Self::WebGpu(g) => g,
+            #[cfg(feature = "opengl")]
             _ => unreachable!(),
         }
     }
 }
 
 enum MappedVertexBuffer {
+    #[cfg(feature = "opengl")]
     Glium(GliumMappedVertexBuffer),
     WebGpu(WebGpuMappedVertexBuffer),
 }
@@ -175,6 +198,7 @@ enum MappedVertexBuffer {
 impl MappedVertexBuffer {
     fn slice_mut(&mut self, range: std::ops::Range<usize>) -> &mut [Vertex] {
         match self {
+            #[cfg(feature = "opengl")]
             Self::Glium(g) => &mut g.mapping[range],
             Self::WebGpu(g) => {
                 let mapping: &mut [Vertex] = bytemuck::cast_slice_mut(&mut g.mapping);
@@ -276,6 +300,7 @@ impl WebGpuIndexBuffer {
 /// to create safely in unstable rust, we transmute the lifetimes away
 /// to static and store the owner (RefMut) and the derived Mapping object
 /// in this struct
+#[cfg(feature = "opengl")]
 pub struct GliumMappedVertexBuffer {
     mapping: Mapping<'static, [Vertex]>,
     // Drop the owner after the mapping
@@ -371,6 +396,7 @@ unsafe impl<'a> ExtendStatic for MappedQuads<'a> {
     }
 }
 
+#[cfg(feature = "opengl")]
 unsafe impl<'a, T: ?Sized + ::window::glium::buffer::Content + 'static> ExtendStatic
     for BufferMutSlice<'a, T>
 {
@@ -413,6 +439,7 @@ impl TripleVertexBuffer {
         // This is "safe" because we carry them around together and ensure
         // that the owner is dropped after the derived data.
         let mapping = match &mut *bufs {
+            #[cfg(feature = "opengl")]
             VertexBuffer::Glium(vb) => {
                 let buf_slice = unsafe {
                     vb.slice_mut(..)
@@ -574,6 +601,7 @@ pub struct RenderState {
     pub context: RenderContext,
     pub glyph_cache: RefCell<GlyphCache>,
     pub util_sprites: UtilSprites,
+    #[cfg(feature = "opengl")]
     pub glyph_prog: Option<glium::Program>,
     pub layers: RefCell<Vec<Rc<RenderLayer>>>,
 }
@@ -590,6 +618,7 @@ impl RenderState {
             let result = UtilSprites::new(&mut *glyph_cache.borrow_mut(), metrics);
             match result {
                 Ok(util_sprites) => {
+                    #[cfg(feature = "opengl")]
                     let glyph_prog = match &context {
                         RenderContext::Glium(context) => {
                             Some(Self::compile_prog(&context, Self::glyph_shader)?)
@@ -603,6 +632,7 @@ impl RenderState {
                         context,
                         glyph_cache,
                         util_sprites,
+                        #[cfg(feature = "opengl")]
                         glyph_prog,
                         layers: RefCell::new(vec![main_layer]),
                     });
@@ -669,6 +699,7 @@ impl RenderState {
         Ok(allocated)
     }
 
+    #[cfg(feature = "opengl")]
     fn compile_prog(
         context: &Rc<GliumContext>,
         fragment_shader: fn(&str) -> (String, String),
@@ -701,6 +732,7 @@ impl RenderState {
         anyhow::bail!("Failed to compile shaders: {}", errors.join("\n"))
     }
 
+    #[cfg(feature = "opengl")]
     fn glyph_shader(version: &str) -> (String, String) {
         (
             format!(
