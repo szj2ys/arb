@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>arb — A fast, out-of-the-box terminal built for AI coding</title>
+  <meta name="description" content="arb is a fast, GPU-accelerated terminal emulator with zero config, built-in shell tools, and Lua scripting. Ready to work in seconds.">
+  <meta name="theme-color" content="#15141b">
+  <meta property="og:title" content="arb — Terminal Built for AI Coding">
+  <meta property="og:description" content="Fast, zero-config terminal with built-in Starship, z, Delta, syntax highlighting, and GPU acceleration.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://szj2ys.github.io/arb/">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>></text></svg>">
+  <style>
+    /* ============================================
+       RESET & BASE
+       ============================================ */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #15141b;
+      --bg-elevated: #1c1b22;
+      --bg-surface: #232229;
+      --fg: #edecee;
+      --fg-muted: #9e9ba5;
+      --purple: #a277ff;
+      --purple-dim: rgba(162, 119, 255, 0.12);
+      --green: #61ffca;
+      --green-dim: rgba(97, 255, 202, 0.10);
+      --red: #ff6767;
+      --yellow: #ffca85;
+      --radius: 12px;
+      --radius-lg: 16px;
+      --radius-pill: 9999px;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, monospace;
+      --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    ::selection {
+      background: var(--purple);
+      color: var(--bg);
+    }
+
+    a {
+      color: var(--purple);
+      text-decoration: none;
+      transition: opacity 0.2s var(--ease);
+    }
+    a:hover {
+      opacity: 0.8;
+    }
+
+    /* ============================================
+       LAYOUT
+       ============================================ */
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section {
+      padding: 96px 0;
+    }
+
+    @media (max-width: 640px) {
+      section {
+        padding: 64px 0;
+      }
+    }
+
+    /* ============================================
+       NAV
+       ============================================ */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 0 24px;
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      background: rgba(21, 20, 27, 0.72);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      transition: background 0.3s var(--ease);
+    }
+
+    .nav-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+      color: var(--fg);
+    }
+
+    .nav-prompt {
+      color: var(--purple);
+      font-family: var(--font-mono);
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--fg-muted);
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s var(--ease);
+    }
+    .nav-links a:hover {
+      color: var(--fg);
+      opacity: 1;
+    }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      background: var(--purple);
+      color: var(--bg) !important;
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 600;
+      transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+    }
+    .nav-cta:hover {
+      opacity: 1;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(162, 119, 255, 0.35);
+    }
+
+    @media (max-width: 640px) {
+      .nav-links .nav-link-text { display: none; }
+      .nav-links { gap: 16px; }
+    }
+
+    /* ============================================
+       HERO
+       ============================================ */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding-top: 56px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(ellipse at center, rgba(162, 119, 255, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 720px;
+      padding: 0 24px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: var(--purple-dim);
+      border: 1px solid rgba(162, 119, 255, 0.2);
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--purple);
+      margin-bottom: 32px;
+      letter-spacing: 0.02em;
+    }
+
+    .hero-badge-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .hero h1 {
+      font-size: clamp(48px, 8vw, 80px);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 .gradient {
+      background: linear-gradient(135deg, var(--purple) 0%, var(--green) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: clamp(17px, 2.5vw, 20px);
+      color: var(--fg-muted);
+      line-height: 1.6;
+      max-width: 540px;
+      margin: 0 auto 48px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .hero-install {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: var(--bg-surface);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius);
+      overflow: hidden;
+      max-width: 100%;
+      transition: border-color 0.2s var(--ease);
+    }
+    .hero-install:hover {
+      border-color: rgba(162, 119, 255, 0.3);
+    }
+
+    .hero-install code {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      padding: 14px 20px;
+      color: var(--fg);
+      white-space: nowrap;
+      user-select: all;
+    }
+
+    .hero-install code .prompt-char {
+      color: var(--purple);
+      user-select: none;
+    }
+
+    .hero-install .copy-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border: none;
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      background: transparent;
+      color: var(--fg-muted);
+      cursor: pointer;
+      transition: color 0.2s var(--ease), background 0.2s var(--ease);
+      flex-shrink: 0;
+    }
+    .hero-install .copy-btn:hover {
+      color: var(--purple);
+      background: rgba(162, 119, 255, 0.06);
+    }
+    .hero-install .copy-btn.copied {
+      color: var(--green);
+    }
+
+    .hero-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-top: 8px;
+    }
+
+    .hero-links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--fg-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s var(--ease);
+    }
+    .hero-links a:hover {
+      color: var(--fg);
+      opacity: 1;
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--fg-muted);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(6px); }
+    }
+
+    @media (max-width: 640px) {
+      .hero-scroll { display: none; }
+    }
+
+    /* ============================================
+       FEATURES
+       ============================================ */
+    .features {
+      background: var(--bg);
+      position: relative;
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: clamp(32px, 5vw, 48px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .section-desc {
+      font-size: 17px;
+      color: var(--fg-muted);
+      max-width: 560px;
+      line-height: 1.6;
+      margin-bottom: 64px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .feature-card {
+      background: var(--bg-elevated);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-lg);
+      padding: 36px 32px;
+      transition: border-color 0.3s var(--ease), transform 0.3s var(--ease);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--purple), transparent);
+      opacity: 0;
+      transition: opacity 0.3s var(--ease);
+    }
+
+    .feature-card:hover {
+      border-color: rgba(162, 119, 255, 0.2);
+      transform: translateY(-2px);
+    }
+    .feature-card:hover::before {
+      opacity: 0.6;
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+
+    .feature-icon.purple {
+      background: var(--purple-dim);
+      color: var(--purple);
+    }
+    .feature-icon.green {
+      background: var(--green-dim);
+      color: var(--green);
+    }
+    .feature-icon.yellow {
+      background: rgba(255, 202, 133, 0.10);
+      color: var(--yellow);
+    }
+    .feature-icon.red {
+      background: rgba(255, 103, 103, 0.10);
+      color: var(--red);
+    }
+
+    .feature-card h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+    }
+
+    .feature-card p {
+      font-size: 15px;
+      color: var(--fg-muted);
+      line-height: 1.6;
+    }
+
+    /* ============================================
+       TERMINAL PREVIEW
+       ============================================ */
+    .preview {
+      background: var(--bg);
+    }
+
+    .terminal-window {
+      background: var(--bg-elevated);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      max-width: 720px;
+      margin: 0 auto;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.04);
+    }
+
+    .terminal-titlebar {
+      display: flex;
+      align-items: center;
+      padding: 14px 18px;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .terminal-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .terminal-dot.red { background: var(--red); }
+    .terminal-dot.yellow { background: var(--yellow); }
+    .terminal-dot.green { background: var(--green); }
+
+    .terminal-title {
+      flex: 1;
+      text-align: center;
+      font-size: 13px;
+      color: var(--fg-muted);
+      font-weight: 500;
+    }
+
+    .terminal-body {
+      padding: 24px;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      line-height: 1.8;
+      min-height: 200px;
+    }
+
+    .terminal-line {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .t-prompt {
+      color: var(--purple);
+      user-select: none;
+    }
+
+    .t-cmd {
+      color: var(--green);
+    }
+
+    .t-flag {
+      color: var(--yellow);
+    }
+
+    .t-arg {
+      color: var(--fg);
+    }
+
+    .t-output {
+      color: var(--fg-muted);
+    }
+
+    .t-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 18px;
+      background: var(--purple);
+      border-radius: 1px;
+      animation: blink 1s step-end infinite;
+      vertical-align: text-bottom;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* ============================================
+       INSTALL
+       ============================================ */
+    .install {
+      background: var(--bg);
+      text-align: center;
+    }
+
+    .install-box {
+      background: var(--bg-elevated);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      padding: 56px 40px;
+      max-width: 640px;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .install-box::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 20%;
+      right: 20%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--purple), var(--green), transparent);
+      border-radius: 2px;
+    }
+
+    .install-box h2 {
+      font-size: clamp(28px, 4vw, 36px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+
+    .install-box p {
+      color: var(--fg-muted);
+      font-size: 16px;
+      margin-bottom: 36px;
+    }
+
+    .install-methods {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .install-cmd {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: var(--bg-surface);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius);
+      overflow: hidden;
+      width: 100%;
+      max-width: 440px;
+      transition: border-color 0.2s var(--ease);
+    }
+    .install-cmd:hover {
+      border-color: rgba(162, 119, 255, 0.3);
+    }
+
+    .install-cmd code {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      padding: 16px 20px;
+      color: var(--fg);
+      flex: 1;
+      text-align: left;
+      white-space: nowrap;
+      overflow-x: auto;
+    }
+
+    .install-cmd code .prompt-char {
+      color: var(--purple);
+      user-select: none;
+    }
+
+    .install-cmd .copy-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 52px;
+      border: none;
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      background: transparent;
+      color: var(--fg-muted);
+      cursor: pointer;
+      transition: color 0.2s var(--ease), background 0.2s var(--ease);
+      flex-shrink: 0;
+    }
+    .install-cmd .copy-btn:hover {
+      color: var(--purple);
+      background: rgba(162, 119, 255, 0.06);
+    }
+    .install-cmd .copy-btn.copied {
+      color: var(--green);
+    }
+
+    .install-or {
+      color: var(--fg-muted);
+      font-size: 13px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .install-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--fg);
+      border-radius: var(--radius-pill);
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: border-color 0.2s var(--ease), background 0.2s var(--ease), transform 0.2s var(--ease);
+    }
+    .install-download:hover {
+      border-color: rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.04);
+      transform: translateY(-1px);
+      opacity: 1;
+    }
+
+    /* ============================================
+       FOOTER
+       ============================================ */
+    footer {
+      padding: 40px 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .footer-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 14px;
+      color: var(--fg-muted);
+    }
+
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .footer-right a {
+      color: var(--fg-muted);
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s var(--ease);
+    }
+    .footer-right a:hover {
+      color: var(--fg);
+      opacity: 1;
+    }
+
+    @media (max-width: 640px) {
+      .footer-inner {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+    }
+
+    /* ============================================
+       ANIMATIONS (reduced motion respected)
+       ============================================ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+      html { scroll-behavior: auto; }
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-brand">
+        <span class="nav-prompt">></span>
+        <span>arb</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#features" class="nav-link-text">Features</a></li>
+        <li><a href="#install" class="nav-link-text">Install</a></li>
+        <li>
+          <a href="https://github.com/szj2ys/arb" class="nav-cta" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            GitHub
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content fade-in">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        Open Source &middot; MIT License
+      </div>
+      <h1>
+        Terminal built<br>for <span class="gradient">AI coding</span>
+      </h1>
+      <p class="hero-sub">
+        Fast, zero-config, GPU-accelerated. With built-in Starship, smart directory jumping, syntax highlighting, and Lua scripting.
+      </p>
+      <div class="hero-actions">
+        <div class="hero-install">
+          <code><span class="prompt-char">$ </span>brew install szj2ys/arb/arb</code>
+          <button class="copy-btn" data-copy="brew install szj2ys/arb/arb" aria-label="Copy install command">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          </button>
+        </div>
+        <div class="hero-links">
+          <a href="https://github.com/szj2ys/arb/releases" target="_blank" rel="noopener">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download DMG
+          </a>
+          <a href="https://github.com/szj2ys/arb" target="_blank" rel="noopener">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            View on GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <span>Scroll</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="fade-in">
+        <div class="section-label">Features</div>
+        <h2 class="section-title">Everything you need.<br>Nothing you don't.</h2>
+        <p class="section-desc">
+          arb ships with a carefully curated set of tools so you can start working the moment you open it. No plugins to install. No config files to write.
+        </p>
+      </div>
+      <div class="features-grid">
+
+        <div class="feature-card fade-in">
+          <div class="feature-icon purple">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+          </div>
+          <h3>Zero Config</h3>
+          <p>Polished defaults with JetBrains Mono, Arb Dark theme, optimized macOS font rendering, and smooth animations. Open it and start working.</p>
+        </div>
+
+        <div class="feature-card fade-in">
+          <div class="feature-icon green">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+          </div>
+          <h3>Built-in Shell Suite</h3>
+          <p>Comes pre-loaded with Starship prompt, z smart directories, Delta for diffs, syntax highlighting, autosuggestions, and completions.</p>
+        </div>
+
+        <div class="feature-card fade-in">
+          <div class="feature-icon yellow">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <h3>GPU Accelerated</h3>
+          <p>40% smaller binary, instant startup, lazy loading, and a stripped-down GPU-accelerated rendering core. Fast and lightweight.</p>
+        </div>
+
+        <div class="feature-card fade-in">
+          <div class="feature-icon red">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+          </div>
+          <h3>Lua Scripting</h3>
+          <p>Full Lua scripting support for infinite customization. Configure every detail at <code style="font-family:var(--font-mono);font-size:13px;color:var(--yellow);">~/.config/arb/arb.lua</code></p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- TERMINAL PREVIEW -->
+  <section class="preview">
+    <div class="container">
+      <div class="fade-in" style="text-align:center;margin-bottom:48px;">
+        <div class="section-label">Preview</div>
+        <h2 class="section-title">See it in action</h2>
+      </div>
+      <div class="terminal-window fade-in">
+        <div class="terminal-titlebar">
+          <span class="terminal-dot red"></span>
+          <span class="terminal-dot yellow"></span>
+          <span class="terminal-dot green"></span>
+          <span class="terminal-title">arb</span>
+          <span style="width:36px;"></span>
+        </div>
+        <div class="terminal-body">
+          <div class="terminal-line">
+            <span class="t-prompt">~</span>
+            <span class="t-cmd">brew</span>
+            <span class="t-flag">install</span>
+            <span class="t-arg">szj2ys/arb/arb</span>
+          </div>
+          <div class="terminal-line">
+            <span class="t-output">==> Fetching szj2ys/arb/arb</span>
+          </div>
+          <div class="terminal-line">
+            <span class="t-output">==> Installing arb from szj2ys/arb</span>
+          </div>
+          <div class="terminal-line" style="color:var(--green);">
+            <span>==> arb is ready. Open the app to get started.</span>
+          </div>
+          <br>
+          <div class="terminal-line">
+            <span class="t-prompt">~/projects/arb</span>
+            <span class="t-cmd">git</span>
+            <span class="t-flag">status</span>
+          </div>
+          <div class="terminal-line">
+            <span class="t-output">On branch main</span>
+          </div>
+          <div class="terminal-line">
+            <span style="color:var(--green);">nothing to commit, working tree clean</span>
+          </div>
+          <br>
+          <div class="terminal-line">
+            <span class="t-prompt">~/projects/arb</span>
+            <span class="t-cmd">z</span>
+            <span class="t-arg">docs</span>
+          </div>
+          <div class="terminal-line">
+            <span class="t-prompt">~/projects/arb/docs</span>
+            <span class="t-cursor"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTALL -->
+  <section class="install" id="install">
+    <div class="container">
+      <div class="install-box fade-in">
+        <h2>Ready to start?</h2>
+        <p>Install arb in seconds. Apple-notarized, no security warnings.</p>
+        <div class="install-methods">
+          <div class="install-cmd">
+            <code><span class="prompt-char">$ </span>brew install szj2ys/arb/arb</code>
+            <button class="copy-btn" data-copy="brew install szj2ys/arb/arb" aria-label="Copy install command">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
+          </div>
+          <span class="install-or">or</span>
+          <a href="https://github.com/szj2ys/arb/releases" class="install-download" target="_blank" rel="noopener">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download from GitHub Releases
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-left">
+        <span style="color:var(--purple);font-family:var(--font-mono);font-weight:700;">></span>
+        <span>arb &middot; MIT License</span>
+      </div>
+      <div class="footer-right">
+        <a href="https://github.com/szj2ys/arb" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/szj2ys/arb/issues" target="_blank" rel="noopener">Issues</a>
+        <a href="https://github.com/szj2ys/arb/blob/main/LICENSE" target="_blank" rel="noopener">License</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MINIMAL JS -->
+  <script>
+    /* Copy to clipboard */
+    document.querySelectorAll('.copy-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var text = this.getAttribute('data-copy');
+        var button = this;
+        navigator.clipboard.writeText(text).then(function() {
+          button.classList.add('copied');
+          var checkSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          checkSvg.setAttribute('width', '18');
+          checkSvg.setAttribute('height', '18');
+          checkSvg.setAttribute('viewBox', '0 0 24 24');
+          checkSvg.setAttribute('fill', 'none');
+          checkSvg.setAttribute('stroke', 'currentColor');
+          checkSvg.setAttribute('stroke-width', '2');
+          checkSvg.setAttribute('stroke-linecap', 'round');
+          checkSvg.setAttribute('stroke-linejoin', 'round');
+          var polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+          polyline.setAttribute('points', '20 6 9 17 4 12');
+          checkSvg.appendChild(polyline);
+          var originalSvg = button.querySelector('svg');
+          button.replaceChild(checkSvg, originalSvg);
+          setTimeout(function() {
+            button.classList.remove('copied');
+            var copySvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            copySvg.setAttribute('width', '18');
+            copySvg.setAttribute('height', '18');
+            copySvg.setAttribute('viewBox', '0 0 24 24');
+            copySvg.setAttribute('fill', 'none');
+            copySvg.setAttribute('stroke', 'currentColor');
+            copySvg.setAttribute('stroke-width', '2');
+            copySvg.setAttribute('stroke-linecap', 'round');
+            copySvg.setAttribute('stroke-linejoin', 'round');
+            var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            rect.setAttribute('x', '9');
+            rect.setAttribute('y', '9');
+            rect.setAttribute('width', '13');
+            rect.setAttribute('height', '13');
+            rect.setAttribute('rx', '2');
+            var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', 'M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1');
+            copySvg.appendChild(rect);
+            copySvg.appendChild(path);
+            var currentSvg = button.querySelector('svg');
+            button.replaceChild(copySvg, currentSvg);
+          }, 2000);
+        });
+      });
+    });
+
+    /* Intersection Observer for fade-in */
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.fade-in').forEach(function(el) {
+      observer.observe(el);
+    });
+  </script>
+
+</body>
+</html>
