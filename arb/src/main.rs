@@ -19,6 +19,7 @@ use wezterm_gui_subcommands::*;
 mod asciicast;
 mod cli;
 mod config_cmd;
+mod doctor;
 mod init;
 mod reset;
 pub mod update;
@@ -147,6 +148,12 @@ enum SubCommand {
         about = "Reset Arb shell integration and managed defaults"
     )]
     Reset(reset::ResetCommand),
+
+    #[command(
+        name = "doctor",
+        about = "Diagnose your Arb setup and suggest fixes"
+    )]
+    Doctor(doctor::DoctorCommand),
 }
 
 use termwiz::escape::osc::{
@@ -770,6 +777,7 @@ fn run() -> anyhow::Result<()> {
         SubCommand::Config(cmd) => cmd.run(),
         SubCommand::Init(cmd) => cmd.run(),
         SubCommand::Reset(cmd) => cmd.run(),
+        SubCommand::Doctor(cmd) => cmd.run(),
     }
 }
 
