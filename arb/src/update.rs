@@ -1171,5 +1171,40 @@ log "done"
         fn format_version_for_display_trims_whitespace() {
             assert_eq!(format_version_for_display("  v0.3.2  "), "0.3.2");
         }
+
+        // ── Task 2 (TODO.md): BREW_CASK_NAME and URL constant regression tests ──
+
+        #[test]
+        fn should_have_correct_brew_cask_name() {
+            assert_eq!(
+                BREW_CASK_NAME, "szj2ys/arb/arb",
+                "BREW_CASK_NAME must be 'szj2ys/arb/arb'"
+            );
+        }
+
+        #[test]
+        fn should_have_correct_github_urls() {
+            let urls = [
+                ("RELEASE_API_URL", RELEASE_API_URL),
+                ("LATEST_ZIP_URL", LATEST_ZIP_URL),
+                ("LATEST_SHA_URL", LATEST_SHA_URL),
+                ("RELEASE_LATEST_URL", RELEASE_LATEST_URL),
+            ];
+
+            for (name, url) in &urls {
+                assert!(
+                    url.contains("szj2ys/arb"),
+                    "{} must contain 'szj2ys/arb', got: {}",
+                    name,
+                    url
+                );
+                assert!(
+                    !url.contains("tw93"),
+                    "{} must NOT contain 'tw93', got: {}",
+                    name,
+                    url
+                );
+            }
+        }
     }
 }

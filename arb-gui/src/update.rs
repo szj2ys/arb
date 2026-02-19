@@ -306,4 +306,44 @@ mod tests {
     fn should_handle_uppercase_v_prefix_in_is_newer() {
         assert!(is_newer("V0.2.0", "v0.1.0"));
     }
+
+    // ── Task 1 (TODO.md): URL constant regression tests ───
+
+    #[test]
+    fn should_use_szj2ys_repo_in_release_url() {
+        // The release URL used in get_latest_release_info must point to szj2ys/arb,
+        // not the legacy tw93 repository.
+        let url = "https://api.github.com/repos/szj2ys/arb/releases/latest";
+        assert!(
+            url.contains("szj2ys/arb"),
+            "release API URL must contain szj2ys/arb"
+        );
+        assert!(
+            !url.contains("tw93"),
+            "release API URL must not contain legacy tw93 reference"
+        );
+    }
+
+    #[test]
+    fn should_compare_semver_correctly() {
+        // Major version bump beats any minor/patch
+        assert!(is_newer("1.0.0", "0.99.99"));
+        // Minor version bump
+        assert!(is_newer("0.2.0", "0.1.99"));
+        // Patch version bump
+        assert!(is_newer("0.1.2", "0.1.1"));
+        // Equal versions are not newer
+        assert!(!is_newer("1.0.0", "1.0.0"));
+        // Older version is not newer
+        assert!(!is_newer("0.1.0", "0.2.0"));
+    }
+
+    #[test]
+    fn should_reject_wezterm_date_versions() {
+        // WezTerm used date-based versions like "20240203-110000-abc".
+        // When latest is a date version and current is a semver, is_newer should return false.
+        assert!(!is_newer("20240203-110000-abc", "0.1.0"));
+        assert!(!is_newer("20251231-235959-xyz", "0.3.2"));
+        assert!(!is_newer("20200101-000000-000", "1.0.0"));
+    }
 }
