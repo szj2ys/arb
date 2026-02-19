@@ -149,10 +149,7 @@ enum SubCommand {
     )]
     Reset(reset::ResetCommand),
 
-    #[command(
-        name = "doctor",
-        about = "Diagnose your Arb setup and suggest fixes"
-    )]
+    #[command(name = "doctor", about = "Diagnose your Arb setup and suggest fixes")]
     Doctor(doctor::DoctorCommand),
 }
 

@@ -20,7 +20,6 @@ pub fn arb_target_triple() -> &'static str {
         .unwrap_or(&"someone forgot to call assign_version_info")
 }
 
-
 pub fn running_under_wsl() -> bool {
     #[cfg(unix)]
     unsafe {

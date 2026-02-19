@@ -49,11 +49,14 @@ mod imp {
 
     fn print_result(result: &CheckResult) {
         let (icon, color) = match result.status {
-            CheckStatus::Pass => ("\u{2714}", GREEN), // ✔
-            CheckStatus::Fail => ("\u{2718}", RED),   // ✘
+            CheckStatus::Pass => ("\u{2714}", GREEN),  // ✔
+            CheckStatus::Fail => ("\u{2718}", RED),    // ✘
             CheckStatus::Warn => ("\u{26a0}", YELLOW), // ⚠
         };
-        println!("  {color}{icon}{RESET}  {BOLD}{}{RESET}: {}", result.name, result.message);
+        println!(
+            "  {color}{icon}{RESET}  {BOLD}{}{RESET}: {}",
+            result.name, result.message
+        );
         if let Some(ref fix) = result.fix {
             println!("     {GRAY}{fix}{RESET}");
         }
@@ -73,9 +76,18 @@ mod imp {
 
         println!();
 
-        let pass_count = results.iter().filter(|r| r.status == CheckStatus::Pass).count();
-        let fail_count = results.iter().filter(|r| r.status == CheckStatus::Fail).count();
-        let warn_count = results.iter().filter(|r| r.status == CheckStatus::Warn).count();
+        let pass_count = results
+            .iter()
+            .filter(|r| r.status == CheckStatus::Pass)
+            .count();
+        let fail_count = results
+            .iter()
+            .filter(|r| r.status == CheckStatus::Fail)
+            .count();
+        let warn_count = results
+            .iter()
+            .filter(|r| r.status == CheckStatus::Warn)
+            .count();
 
         if fail_count == 0 && warn_count == 0 {
             println!("{GREEN}{BOLD}All {pass_count} checks passed.{RESET}");

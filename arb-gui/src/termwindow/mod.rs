@@ -1160,9 +1160,13 @@ impl TermWindow {
                     self.do_paint_webgpu()
                 } else {
                     #[cfg(feature = "opengl")]
-                    { Ok(self.do_paint(window)) }
+                    {
+                        Ok(self.do_paint(window))
+                    }
                     #[cfg(not(feature = "opengl"))]
-                    { Ok(true) }
+                    {
+                        Ok(true)
+                    }
                 }
             }
             WindowEvent::Notification(item) => {

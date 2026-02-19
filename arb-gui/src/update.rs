@@ -1,5 +1,5 @@
 use anyhow::anyhow;
-use config::{configuration, arb_version};
+use config::{arb_version, configuration};
 use http_req::request::{HttpVersion, Request};
 use http_req::uri::Uri;
 use serde::*;
@@ -234,36 +234,24 @@ mod tests {
 
     #[test]
     fn should_parse_four_segments() {
-        assert_eq!(
-            parse_version_numbers("1.2.3.4"),
-            Some(vec![1, 2, 3, 4])
-        );
+        assert_eq!(parse_version_numbers("1.2.3.4"), Some(vec![1, 2, 3, 4]));
     }
 
     // ── Task 2: compare_versions ────────────────────────────
 
     #[test]
     fn should_compare_equal_when_shorter_padded_with_zeros() {
-        assert_eq!(
-            compare_versions("1.0", "1.0.0"),
-            Some(CmpOrdering::Equal)
-        );
+        assert_eq!(compare_versions("1.0", "1.0.0"), Some(CmpOrdering::Equal));
     }
 
     #[test]
     fn should_compare_greater_when_left_longer_with_nonzero() {
-        assert_eq!(
-            compare_versions("1.0.1", "1.0"),
-            Some(CmpOrdering::Greater)
-        );
+        assert_eq!(compare_versions("1.0.1", "1.0"), Some(CmpOrdering::Greater));
     }
 
     #[test]
     fn should_compare_less_when_right_longer_with_nonzero() {
-        assert_eq!(
-            compare_versions("1.0", "1.0.1"),
-            Some(CmpOrdering::Less)
-        );
+        assert_eq!(compare_versions("1.0", "1.0.1"), Some(CmpOrdering::Less));
     }
 
     #[test]
