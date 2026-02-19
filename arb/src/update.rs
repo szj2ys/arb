@@ -36,10 +36,11 @@ pub fn cleanup_old_update_dirs_for_tests(update_root: &std::path::Path) -> anyho
 #[cfg(target_os = "macos")]
 mod imp {
     use super::*;
+    use indicatif::{ProgressBar, ProgressStyle};
     use serde::Deserialize;
     use std::cmp::Ordering;
     use std::fs;
-    use std::io::Write;
+    use std::io::{Read as _, Write};
     use std::path::{Component, Path, PathBuf};
     use std::process::{Command, Stdio};
     use std::time::{Duration, SystemTime, UNIX_EPOCH};
@@ -187,17 +188,28 @@ mod imp {
 
         let zip_path = staging_dir.join(UPDATE_ZIP_NAME);
         println!("Downloading {} ...", UPDATE_ZIP_NAME);
-        curl_download_to_file(zip_url, &zip_path, &current_version)
+        download_to_file_with_progress(zip_url, &zip_path, &current_version)
             .context("failed to download update package")?;
 
         if let Some(sha_url) = sha_url {
+            let spinner = ProgressBar::new_spinner();
+            spinner.set_style(
+                ProgressStyle::default_spinner()
+                    .template("{spinner:.green} {msg}")
+                    .expect("valid spinner template"),
+            );
+            spinner.set_message("Downloading checksum...");
+            spinner.enable_steady_tick(Duration::from_millis(100));
+
             match curl_get_text(sha_url, &current_version) {
                 Ok(checksum_text) => {
+                    spinner.finish_and_clear();
                     println!("Verifying package checksum...");
                     verify_sha256(&zip_path, &checksum_text)
                         .context("checksum verification failed")?;
                 }
                 Err(err) => {
+                    spinner.finish_and_clear();
                     println!(
                         "Checksum unavailable ({}). Continuing without checksum.",
                         err
@@ -680,28 +692,62 @@ mod imp {
         String::from_utf8(output).context("curl returned non-utf8 response")
     }
 
-    fn curl_download_to_file(
+    fn download_to_file_with_progress(
         url: &str,
         output_path: &Path,
         current_version: &str,
     ) -> anyhow::Result<()> {
-        run_status(
-            Command::new("/usr/bin/curl")
-                .arg("--fail")
-                .arg("--location")
-                .arg("--silent")
-                .arg("--show-error")
-                .arg("--retry")
-                .arg("3")
-                .arg("--connect-timeout")
-                .arg("20")
-                .arg("--user-agent")
-                .arg(format!("arb/{}", current_version))
-                .arg("--output")
-                .arg(output_path)
-                .arg(url),
-            "download update package",
-        )
+        let user_agent = format!("arb/{}", current_version);
+        let resp = ureq::agent()
+            .get(url)
+            .set("User-Agent", &user_agent)
+            .call()
+            .context("failed to start download")?;
+
+        let total_size = resp
+            .header("Content-Length")
+            .and_then(|v| v.parse::<u64>().ok())
+            .unwrap_or(0);
+
+        let pb = if total_size > 0 {
+            let pb = ProgressBar::new(total_size);
+            pb.set_style(
+                ProgressStyle::default_bar()
+                    .template(
+                        "[{wide_bar:.cyan/blue}] {bytes} / {total_bytes} ({bytes_per_sec}, ETA {eta})",
+                    )
+                    .expect("valid progress bar template")
+                    .progress_chars("=>-"),
+            );
+            pb
+        } else {
+            let pb = ProgressBar::new_spinner();
+            pb.set_style(
+                ProgressStyle::default_spinner()
+                    .template("{spinner:.green} {bytes} downloaded ({bytes_per_sec})")
+                    .expect("valid spinner template"),
+            );
+            pb
+        };
+
+        let mut reader = resp.into_reader();
+        let mut file =
+            fs::File::create(output_path).context("failed to create output file for download")?;
+        let mut buf = [0u8; 8192];
+        loop {
+            let n = reader
+                .read(&mut buf)
+                .context("failed to read from download stream")?;
+            if n == 0 {
+                break;
+            }
+            file.write_all(&buf[..n])
+                .context("failed to write download data to file")?;
+            pb.inc(n as u64);
+        }
+        pb.finish_and_clear();
+
+        Ok(())
     }
 
     fn verify_sha256(zip_path: &Path, checksum_text: &str) -> anyhow::Result<()> {
