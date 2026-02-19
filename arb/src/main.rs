@@ -789,12 +789,11 @@ fn select_main_menu_command() -> anyhow::Result<SubCommand> {
     const RESET: &str = "\x1b[0m";
 
     println!();
-    println!("{PURPLE_BOLD}  _  __      _          {RESET}");
-    println!("{PURPLE_BOLD} | |/ /     | |         {RESET}");
-    println!("{PURPLE_BOLD} | ' / __ _ | | __ _   _ {RESET}");
-    println!("{PURPLE_BOLD} |  < / _` || |/ /| | | |{RESET}");
-    println!("{PURPLE_BOLD} | . \\ (_| ||   < | |_| |{RESET}");
-    println!("{PURPLE_BOLD} |_|\\_\\__,_||_|\\_\\ \\__,_|{RESET}");
+    println!("{PURPLE_BOLD}      _         _      {RESET}");
+    println!("{PURPLE_BOLD}     / \\   _ __| |__   {RESET}");
+    println!("{PURPLE_BOLD}    / _ \\ | '__| '_ \\  {RESET}");
+    println!("{PURPLE_BOLD}   / ___ \\| |  | |_) | {RESET}");
+    println!("{PURPLE_BOLD}  /_/   \\_\\_|  |_.__/  {RESET}");
     println!("  {BLUE}https://github.com/tw93/Arb{RESET}");
     println!("  {GRAY}A fast, out-of-the-box terminal built for AI coding.{RESET}");
     println!();
