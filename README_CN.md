@@ -17,8 +17,7 @@
 
 <div align="center">
   <br />
-  <!-- Replace with actual screenshot: arb terminal with Starship prompt, syntax highlighting, and git status -->
-  <img src="https://via.placeholder.com/800x500/1a1b26/c0caf5?text=arb+terminal" alt="arb 终端截图" width="800" />
+  <img src="docs/terminal-preview.svg" alt="arb 终端预览截图" width="800" />
   <br />
   <sub>arb 搭配 Starship 提示符、语法高亮和智能目录导航</sub>
   <br /><br />

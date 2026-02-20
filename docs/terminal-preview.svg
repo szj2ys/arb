@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <style>
+      .bg { fill: #1c1b22; }
+      .titlebar { fill: #16151b; }
+      .fg { fill: #edecee; font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, monospace; font-size: 13px; }
+      .purple { fill: #a277ff; }
+      .green { fill: #61ffca; }
+      .yellow { fill: #ffca85; }
+      .red { fill: #ff6767; }
+      .dim { fill: #6e6a86; }
+      .cyan { fill: #61ffca; }
+      .white { fill: #edecee; }
+      .bold { font-weight: bold; }
+    </style>
+  </defs>
+
+  <!-- Window background with rounded corners -->
+  <rect class="bg" width="800" height="500" rx="10" ry="10" />
+
+  <!-- Title bar -->
+  <rect class="titlebar" width="800" height="38" rx="10" ry="10" />
+  <rect class="titlebar" y="20" width="800" height="18" />
+
+  <!-- Traffic light buttons -->
+  <circle cx="24" cy="19" r="6.5" fill="#ff5f57" />
+  <circle cx="46" cy="19" r="6.5" fill="#febc2e" />
+  <circle cx="68" cy="19" r="6.5" fill="#28c840" />
+
+  <!-- Window title -->
+  <text x="400" y="24" text-anchor="middle" fill="#6e6a86" font-family="'SF Pro Text', 'Helvetica Neue', Arial, sans-serif" font-size="13">arb</text>
+
+  <!-- Tab bar area -->
+  <rect x="0" y="38" width="800" height="28" fill="#1c1b22" />
+  <rect x="0" y="38" width="160" height="28" fill="#262530" rx="6" ry="6" />
+  <rect x="0" y="56" width="160" height="10" fill="#262530" />
+  <text x="24" y="56" fill="#edecee" font-family="'SF Pro Text', 'Helvetica Neue', Arial, sans-serif" font-size="11.5">~/projects/arb</text>
+  <line x1="0" y1="66" x2="800" y2="66" stroke="#2a2933" stroke-width="1" />
+
+  <!-- Terminal content area -->
+
+  <!-- Line 1: Starship prompt with git branch -->
+  <text y="94" class="fg">
+    <tspan x="24" class="purple bold">~/projects/arb</tspan>
+    <tspan class="dim"> on </tspan>
+    <tspan class="purple"> main</tspan>
+    <tspan class="green"> [+2 ~1]</tspan>
+    <tspan class="yellow"> via </tspan>
+    <tspan class="red bold"> v1.75.0</tspan>
+  </text>
+
+  <!-- Line 2: prompt arrow + command -->
+  <text y="118" class="fg">
+    <tspan x="24" class="green bold">&#x276F;</tspan>
+    <tspan class="white"> cargo build --release</tspan>
+  </text>
+
+  <!-- Line 3: Compiling output -->
+  <text y="150" class="fg">
+    <tspan x="24" class="green bold">   Compiling</tspan>
+    <tspan class="white"> arb v0.1.10 (/Users/dev/projects/arb)</tspan>
+  </text>
+
+  <!-- Line 4: Finished output -->
+  <text y="174" class="fg">
+    <tspan x="24" class="green bold">    Finished</tspan>
+    <tspan class="white"> `release` profile [optimized] target(s) in 12.4s</tspan>
+  </text>
+
+  <!-- Line 5: empty line -->
+
+  <!-- Line 6: new prompt -->
+  <text y="206" class="fg">
+    <tspan x="24" class="purple bold">~/projects/arb</tspan>
+    <tspan class="dim"> on </tspan>
+    <tspan class="purple"> main</tspan>
+    <tspan class="green"> [+2 ~1]</tspan>
+    <tspan class="yellow"> via </tspan>
+    <tspan class="red bold"> v1.75.0</tspan>
+  </text>
+
+  <!-- Line 7: ls command -->
+  <text y="230" class="fg">
+    <tspan x="24" class="green bold">&#x276F;</tspan>
+    <tspan class="white"> ls -la target/release/arb</tspan>
+  </text>
+
+  <!-- Line 8: ls output -->
+  <text y="262" class="fg">
+    <tspan x="24" class="dim">-rwxr-xr-x</tspan>
+    <tspan class="dim">  1 dev staff</tspan>
+    <tspan class="yellow"> 40M</tspan>
+    <tspan class="dim"> Feb 20 14:32</tspan>
+    <tspan class="green"> target/release/arb</tspan>
+  </text>
+
+  <!-- Line 9: empty line -->
+
+  <!-- Line 10: another prompt -->
+  <text y="294" class="fg">
+    <tspan x="24" class="purple bold">~/projects/arb</tspan>
+    <tspan class="dim"> on </tspan>
+    <tspan class="purple"> main</tspan>
+    <tspan class="green"> [+2 ~1]</tspan>
+    <tspan class="yellow"> via </tspan>
+    <tspan class="red bold"> v1.75.0</tspan>
+  </text>
+
+  <!-- Line 11: git diff stat command -->
+  <text y="318" class="fg">
+    <tspan x="24" class="green bold">&#x276F;</tspan>
+    <tspan class="white"> git diff --stat</tspan>
+  </text>
+
+  <!-- Line 12-15: git diff output -->
+  <text y="350" class="fg">
+    <tspan x="24" class="white"> src/main.rs</tspan>
+    <tspan class="dim">        | </tspan>
+    <tspan class="yellow">12</tspan>
+    <tspan class="dim"> </tspan>
+    <tspan class="green">++++++</tspan>
+    <tspan class="red">------</tspan>
+  </text>
+
+  <text y="374" class="fg">
+    <tspan x="24" class="white"> src/renderer.rs</tspan>
+    <tspan class="dim">    | </tspan>
+    <tspan class="yellow"> 8</tspan>
+    <tspan class="dim"> </tspan>
+    <tspan class="green">+++++</tspan>
+    <tspan class="red">---</tspan>
+  </text>
+
+  <text y="398" class="fg">
+    <tspan x="24" class="white"> config/arb.lua</tspan>
+    <tspan class="dim">     |  </tspan>
+    <tspan class="yellow">3</tspan>
+    <tspan class="dim"> </tspan>
+    <tspan class="green">+++</tspan>
+  </text>
+
+  <text y="422" class="fg">
+    <tspan x="24" class="dim"> 3 files changed,</tspan>
+    <tspan class="green"> 14 insertions(+)</tspan>
+    <tspan class="dim">,</tspan>
+    <tspan class="red"> 9 deletions(-)</tspan>
+  </text>
+
+  <!-- Line 16: final prompt with cursor -->
+  <text y="454" class="fg">
+    <tspan x="24" class="purple bold">~/projects/arb</tspan>
+    <tspan class="dim"> on </tspan>
+    <tspan class="purple"> main</tspan>
+    <tspan class="green"> [+2 ~1]</tspan>
+    <tspan class="yellow"> via </tspan>
+    <tspan class="red bold"> v1.75.0</tspan>
+  </text>
+
+  <text y="478" class="fg">
+    <tspan x="24" class="green bold">&#x276F;</tspan>
+  </text>
+
+  <!-- Cursor block -->
+  <rect x="40" y="466" width="8" height="16" fill="#a277ff" opacity="0.8" />
+</svg>
