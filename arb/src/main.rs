@@ -800,12 +800,15 @@ fn select_main_menu_command() -> anyhow::Result<SubCommand> {
     const PURPLE_BOLD: &str = "\x1b[1;35m";
     const BLUE: &str = "\x1b[34m";
     const GRAY: &str = "\x1b[90m";
+    const DIM: &str = "\x1b[2m";
     const GREEN: &str = "\x1b[32m";
     const YELLOW: &str = "\x1b[33m";
+    const RED: &str = "\x1b[31m";
     const BOLD: &str = "\x1b[1m";
     const RESET: &str = "\x1b[0m";
 
     let shell_ready = is_shell_integration_initialized();
+    let version = config::arb_version();
 
     // --- ASCII art + branding ---
     println!();
@@ -814,9 +817,9 @@ fn select_main_menu_command() -> anyhow::Result<SubCommand> {
     println!("{PURPLE_BOLD}    / _ \\ | '__| '_ \\  {RESET}");
     println!("{PURPLE_BOLD}   / ___ \\| |  | |_) | {RESET}");
     println!("{PURPLE_BOLD}  /_/   \\_\\_|  |_.__/  {RESET}");
+    println!();
     println!(
-        "  {BLUE}https://github.com/szj2ys/arb{RESET}  {GRAY}v{}{RESET}",
-        config::arb_version()
+        "  {BOLD}arb{RESET} {GRAY}v{version}{RESET}    {BLUE}https://github.com/szj2ys/arb{RESET}"
     );
     println!("  {GRAY}A fast, out-of-the-box terminal built for AI coding.{RESET}");
     println!();
@@ -826,57 +829,69 @@ fn select_main_menu_command() -> anyhow::Result<SubCommand> {
         println!("  {GREEN}\u{2714}{RESET}  Shell integration {GREEN}initialized{RESET}");
     } else {
         println!("  {YELLOW}\u{26a0}{RESET}  Shell integration {YELLOW}not initialized{RESET}");
-        println!("     {GRAY}Run 'arb init' to get started with shell integration{RESET}");
+        println!("     {GRAY}Tip: run option 0 to get started{RESET}");
     }
 
-    // --- Separator ---
+    // --- Setup section ---
     println!();
-    println!("  {GRAY}------------------------------------------------------{RESET}");
-    println!();
-
-    // --- Menu options ---
+    println!(
+        "  {DIM}\u{2500}\u{2500}\u{2500} Setup \u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}{RESET}"
+    );
     if !shell_ready {
         println!(
-            "  {BOLD}0. Quick Setup{RESET}  Initialize shell integration {GREEN}(recommended){RESET}"
+            "  {BOLD}0{RESET}  {BOLD}quick-setup{RESET}  {GRAY}Initialize shell integration{RESET}  {GREEN}[recommended]{RESET}"
         );
     }
-    println!("  1. config     Open ~/.config/arb/arb.lua");
-    println!("  2. update     Check and install latest version");
-    println!("  3. init       Initialize shell integration");
-    println!("  4. reset      Remove Arb shell integration and managed defaults");
-    println!("  q. quit");
+    println!(
+        "  {BOLD}1{RESET}  {BOLD}init{RESET}         {GRAY}Initialize shell integration{RESET}"
+    );
+    println!("  {BOLD}2{RESET}  {BOLD}config{RESET}       {GRAY}Open and edit arb.lua configuration{RESET}");
     println!();
 
-    let prompt = if shell_ready {
-        "Select option [1-4/q]: "
-    } else {
-        "Select option [0-4/q]: "
-    };
+    // --- Maintenance section ---
+    println!(
+        "  {DIM}\u{2500}\u{2500}\u{2500} Maintenance \u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}{RESET}"
+    );
+    println!(
+        "  {BOLD}3{RESET}  {BOLD}update{RESET}       {GRAY}Check and install latest version{RESET}"
+    );
+    println!("  {BOLD}4{RESET}  {BOLD}reset{RESET}        {GRAY}Remove shell integration and managed defaults{RESET}");
+    println!("  {BOLD}5{RESET}  {BOLD}doctor{RESET}       {GRAY}Diagnose your setup and suggest fixes{RESET}");
+    println!();
+
+    // --- Bottom prompt ---
+    let valid_range = if shell_ready { "1-5" } else { "0-5" };
+    let prompt = format!("  Select option {GRAY}[{valid_range}/q]{RESET}: ");
 
     loop {
         print!("{prompt}");
         std::io::stdout().flush().context("flush stdout")?;
 
         let mut input = String::new();
-        std::io::stdin()
+        let bytes_read = std::io::stdin()
             .read_line(&mut input)
             .context("read menu input")?;
+
+        // Handle EOF (Ctrl+D): exit gracefully
+        if bytes_read == 0 {
+            println!();
+            std::process::exit(0);
+        }
 
         match input.trim().to_ascii_lowercase().as_str() {
             "0" if !shell_ready => {
                 return Ok(SubCommand::Init(init::InitCommand::default()));
             }
-            "1" | "config" => return Ok(SubCommand::Config(config_cmd::ConfigCommand::default())),
-            "2" | "update" => return Ok(SubCommand::Update(update::UpdateCommand::default())),
-            "3" | "init" => return Ok(SubCommand::Init(init::InitCommand::default())),
+            "1" | "init" => return Ok(SubCommand::Init(init::InitCommand::default())),
+            "2" | "config" => return Ok(SubCommand::Config(config_cmd::ConfigCommand::default())),
+            "3" | "update" => return Ok(SubCommand::Update(update::UpdateCommand::default())),
             "4" | "reset" => return Ok(SubCommand::Reset(reset::ResetCommand::default())),
+            "5" | "doctor" => return Ok(SubCommand::Doctor(doctor::DoctorCommand::default())),
             "q" | "quit" | "exit" => std::process::exit(0),
-            _ => {
-                if shell_ready {
-                    println!("Invalid option. Enter 1, 2, 3, 4, or q.");
-                } else {
-                    println!("Invalid option. Enter 0, 1, 2, 3, 4, or q.");
-                }
+            other => {
+                println!(
+                    "  {RED}Invalid option: '{other}'{RESET}  {GRAY}\u{2500} valid: [{valid_range}/q]{RESET}"
+                );
             }
         }
     }
