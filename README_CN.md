@@ -2,7 +2,8 @@
 
 <div align="center">
   <h1>arb</h1>
-  <p><em>一个为 AI 编程打造的快速、开箱即用的终端。</em></p>
+  <p><em>默认极速，按需深入。</em></p>
+  <p>一个面向 AI 编程时代的 GPU 加速终端 — 开箱即用，无需配置。</p>
 </div>
 
 <p align="center">

@@ -2,7 +2,8 @@
 
 <div align="center">
   <h1>arb</h1>
-  <p><em>A fast, out-of-the-box terminal built for AI coding.</em></p>
+  <p><em>Fast by default. Deep when you need it.</em></p>
+  <p>A GPU-accelerated terminal for developers who want to start working, not start configuring.</p>
 </div>
 
 <p align="center">

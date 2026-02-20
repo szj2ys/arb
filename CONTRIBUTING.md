@@ -1,5 +1,7 @@
 # Contributing to Arb
 
+Before diving in, read **[VISION.md](VISION.md)** to understand the project's mission and design principles.
+
 ## Setup
 
 ```bash
