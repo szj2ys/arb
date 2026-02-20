@@ -33,10 +33,29 @@ mod imp {
     use std::os::unix::fs::PermissionsExt;
 
     pub fn run(update_only: bool) -> anyhow::Result<()> {
-        install_arb_wrapper().context("install arb wrapper")?;
+        if let Err(e) = install_arb_wrapper() {
+            run_doctor_diagnostics();
+            return Err(e).context("install arb wrapper");
+        }
 
-        let script = resolve_setup_script()
-            .ok_or_else(|| anyhow!("failed to locate setup_zsh.sh for Arb initialization"))?;
+        let candidates = setup_script_candidates();
+        let script = candidates
+            .iter()
+            .find(|p| p.exists())
+            .cloned()
+            .ok_or_else(|| {
+                run_doctor_diagnostics();
+                let searched = candidates
+                    .iter()
+                    .map(|p| format!("  - {}", p.display()))
+                    .collect::<Vec<_>>()
+                    .join("\n");
+                anyhow!(
+                    "Failed to locate setup_zsh.sh for Arb initialization.\n\
+                 Searched paths:\n{searched}\n\n\
+                 Try reinstalling Arb.app or run `arb doctor` for more details."
+                )
+            })?;
 
         let mut cmd = Command::new("/bin/bash");
         cmd.arg(&script).env("ARB_INIT_INTERNAL", "1");
@@ -51,7 +70,29 @@ mod imp {
             return Ok(());
         }
 
-        bail!("arb init failed with status {}", status);
+        if !update_only {
+            run_doctor_diagnostics();
+        }
+
+        bail!(
+            "arb init failed with status {} (script: {})\n\n\
+             Suggested next steps:\n\
+             1. Review the diagnostic output above\n\
+             2. Run `arb doctor` for detailed checks\n\
+             3. Run `arb reset && arb init` to start fresh",
+            status,
+            script.display()
+        );
+    }
+
+    fn run_doctor_diagnostics() {
+        eprintln!();
+        eprintln!("────────────────────────────────────────");
+        eprintln!("Init failed. Running diagnostics...");
+        eprintln!();
+        let _ = crate::doctor::DoctorCommand::default().run();
+        eprintln!("Fix the issues above and retry with `arb init`");
+        eprintln!();
     }
 
     fn install_arb_wrapper() -> anyhow::Result<()> {
@@ -159,7 +200,7 @@ exit 127
             .replace('`', "\\`")
     }
 
-    fn resolve_setup_script() -> Option<PathBuf> {
+    fn setup_script_candidates() -> Vec<PathBuf> {
         let mut candidates = Vec::new();
 
         if let Ok(cwd) = std::env::current_dir() {
@@ -188,6 +229,6 @@ exit 127
                 .join("setup_zsh.sh"),
         );
 
-        candidates.into_iter().find(|p| p.exists())
+        candidates
     }
 }
