@@ -15,12 +15,31 @@
   <a href="https://github.com/szj2ys/arb/actions"><img src="https://img.shields.io/github/actions/workflow/status/szj2ys/arb/ci.yml?style=flat-square" alt="CI Status"></a>
 </p>
 
+<div align="center">
+  <br />
+  <!-- Replace with actual screenshot: arb terminal with Starship prompt, syntax highlighting, and git status -->
+  <img src="https://via.placeholder.com/800x500/1a1b26/c0caf5?text=arb+terminal" alt="arb 终端截图" width="800" />
+  <br />
+  <sub>arb 搭配 Starship 提示符、语法高亮和智能目录导航</sub>
+  <br /><br />
+</div>
+
+<p align="center">
+  <a href="https://szj2ys.github.io/arb/">
+    <strong>在线体验 →</strong>
+  </a>
+</p>
+
+---
+
 ## 特性
 
-- **零配置**: 精心调校的默认设置，JetBrains Mono 字体、优化的 macOS 字体渲染、流畅动画。
-- **内置 Shell 套件**: 预装 Starship、z、Delta、语法高亮和自动补全建议。
-- **快速轻量**: 二进制体积缩减 40%，即时启动，懒加载，精简的 GPU 加速核心。
-- **Lua 脚本**: 保留完整的 Lua 脚本能力，支持无限自定义。
+- **零配置** — 精心调校的默认设置，JetBrains Mono 字体、优化的 macOS 字体渲染、流畅动画。打开即可使用。
+- **内置 Shell 套件** — 预装 Starship、z、Delta、语法高亮和自动补全建议。无需额外安装插件。
+- **快速轻量** — 二进制体积缩减 40%，即时启动，懒加载，精简的 GPU 加速核心。
+- **Lua 脚本** — 保留完整的 Lua 脚本能力，按需进行无限自定义。
+
+---
 
 ## 为什么做 arb？
 
@@ -43,6 +62,8 @@
 
 通过激进地裁剪未使用的功能、懒加载配色方案和 Shell 优化来实现。
 
+---
+
 ## 快速开始
 
 1. 下载最新 DMG 并拖入 Applications。
@@ -52,6 +73,8 @@
    ```
 3. 打开 arb。应用已通过 Apple 公证，无需安全设置即可直接打开
 4. 首次启动时，arb 会自动配置你的 Shell 环境
+
+---
 
 ## 内置工具
 
@@ -90,6 +113,8 @@ arb 提供直觉化的 macOS 原生快捷键：
 
 </details>
 
+---
+
 ## 配置
 
 ### 自定义
@@ -106,11 +131,14 @@ macOS 上，`arb.app/Contents/Resources/arb.lua` 中的内置默认配置仅作�
 - 移除 arb 管理的 Shell 默认配置和集成：`arb reset`（或非交互式 `arb reset --yes`）
 - GUI 自动更新检查使用数字版本比较（例如 `0.1.10` 正确地被识别为比 `0.1.9` 更新）。
 
+---
+
 ## 支持
 
 - 如果 arb 对你有帮助，欢迎点个 Star 或分享给朋友。
 - 有想法或发现 Bug？提个 Issue/PR 或查看 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
+---
 
 ## 许可
 

@@ -15,12 +15,31 @@
   <a href="https://github.com/szj2ys/arb/actions"><img src="https://img.shields.io/github/actions/workflow/status/szj2ys/arb/ci.yml?style=flat-square" alt="CI Status"></a>
 </p>
 
+<div align="center">
+  <br />
+  <!-- Replace with actual screenshot: arb terminal with Starship prompt, syntax highlighting, and git status -->
+  <img src="https://via.placeholder.com/800x500/1a1b26/c0caf5?text=arb+terminal" alt="arb terminal screenshot" width="800" />
+  <br />
+  <sub>arb with Starship prompt, syntax highlighting, and smart directory navigation</sub>
+  <br /><br />
+</div>
+
+<p align="center">
+  <a href="https://szj2ys.github.io/arb/">
+    <strong>See it in action →</strong>
+  </a>
+</p>
+
+---
+
 ## Features
 
-- **Zero Config**: Polished defaults with JetBrains Mono, Arb Dark theme, optimized macOS font rendering, smooth animations.
-- **Built-in Shell Suite**: Comes pre-loaded with Starship, z, Delta, syntax highlighting, autosuggestions, and autocompletions.
-- **Fast & Lightweight**: 40% smaller binary, instant startup, lazy loading, stripped-down GPU-accelerated core.
-- **Lua Scripting**: Retains full Lua scripting support for infinite customization.
+- **Zero Config** — Polished defaults with JetBrains Mono, Arb Dark theme, optimized macOS font rendering, and smooth animations. Just open and start working.
+- **Built-in Shell Suite** — Pre-loaded with Starship, z, Delta, syntax highlighting, autosuggestions, and autocompletions. No plugins to install.
+- **Fast & Lightweight** — 40% smaller binary, instant startup, lazy loading, and a stripped-down GPU-accelerated core.
+- **Lua Scripting** — Full Lua scripting support for infinite customization when you need it.
+
+---
 
 ## Why arb?
 
@@ -43,6 +62,8 @@ So I built arb to be that environment: fast, polished, and ready to work.
 
 Achieved through aggressive stripping of unused features, lazy loading of color schemes, and shell optimizations.
 
+---
+
 ## Quick Start
 
 1. Download the latest DMG release and drag to Applications.
@@ -52,6 +73,8 @@ Achieved through aggressive stripping of unused features, lazy loading of color 
    ```
 3. Open arb. The app is notarized by Apple, so it opens without security warnings
 4. On first launch, arb will automatically set up your shell environment
+
+---
 
 ## Built-in Tools
 
@@ -90,6 +113,8 @@ arb comes with intuitive macOS-native shortcuts:
 
 </details>
 
+---
+
 ## Configuration
 
 ### Customization
@@ -106,11 +131,14 @@ Use a single user config path: `~/.config/arb/arb.lua`.
 - Remove arb-managed shell defaults and integration: `arb reset` (or non-interactive `arb reset --yes`)
 - GUI auto-update check uses numeric version comparison (for example `0.1.10` is correctly newer than `0.1.9`).
 
+---
+
 ## Support
 
 - If arb helped you, star the repo or share it with friends.
 - Got ideas or found bugs? Open an issue/PR or check [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
+---
 
 ## License
 
