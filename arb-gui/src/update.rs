@@ -1,9 +1,9 @@
 use anyhow::anyhow;
+use arb_version::is_newer_version;
 use config::{arb_version, configuration};
 use http_req::request::{HttpVersion, Request};
 use http_req::uri::Uri;
 use serde::*;
-use std::cmp::Ordering as CmpOrdering;
 use std::convert::TryFrom;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
@@ -44,55 +44,6 @@ pub fn get_latest_release_info() -> anyhow::Result<Release> {
     get_github_release_info("https://api.github.com/repos/szj2ys/arb/releases/latest")
 }
 
-fn is_newer(latest: &str, current: &str) -> bool {
-    let latest = latest.trim_start_matches('v');
-    let current = current.trim_start_matches('v');
-
-    // If latest is a WezTerm-style date version (e.g. 20240203-...) and current is SemVer (e.g. 0.1.0),
-    // treat the date version as older/different system.
-    if latest.starts_with("20") && latest.contains('-') && !current.starts_with("20") {
-        return false;
-    }
-
-    match compare_versions(latest, current) {
-        Some(CmpOrdering::Greater) => true,
-        Some(_) => false,
-        None => latest != current,
-    }
-}
-
-fn compare_versions(left: &str, right: &str) -> Option<CmpOrdering> {
-    let left = parse_version_numbers(left)?;
-    let right = parse_version_numbers(right)?;
-    let max_len = left.len().max(right.len());
-    for idx in 0..max_len {
-        let l = left.get(idx).copied().unwrap_or(0);
-        let r = right.get(idx).copied().unwrap_or(0);
-        match l.cmp(&r) {
-            CmpOrdering::Equal => {}
-            non_eq => return Some(non_eq),
-        }
-    }
-    Some(CmpOrdering::Equal)
-}
-
-fn parse_version_numbers(version: &str) -> Option<Vec<u64>> {
-    let cleaned = version.trim().trim_start_matches(['v', 'V']);
-    let mut out = Vec::new();
-    for part in cleaned.split('.') {
-        let digits: String = part.chars().take_while(|c| c.is_ascii_digit()).collect();
-        if digits.is_empty() {
-            return None;
-        }
-        let value = digits.parse::<u64>().ok()?;
-        out.push(value);
-    }
-    if out.is_empty() {
-        return None;
-    }
-    Some(out)
-}
-
 fn update_checker() {
     // Compute how long we should sleep for;
     // if we've never checked, give it a few seconds after the first
@@ -130,7 +81,7 @@ fn update_checker() {
         if configuration().check_for_updates {
             if let Ok(latest) = get_latest_release_info() {
                 let current = arb_version();
-                if is_newer(&latest.tag_name, current) || force_ui {
+                if is_newer_version(&latest.tag_name, current) || force_ui {
                     log::info!(
                         "latest release {} is newer than current build {}",
                         latest.tag_name,
@@ -182,120 +133,7 @@ pub fn start_update_checker() {
 
 #[cfg(test)]
 mod tests {
-    use super::{compare_versions, is_newer, parse_version_numbers};
-    use std::cmp::Ordering as CmpOrdering;
-
-    // ── existing ────────────────────────────────────────────
-
-    #[test]
-    fn semver_numeric_comparison() {
-        assert!(is_newer("0.1.10", "0.1.9"));
-        assert!(!is_newer("0.2.0", "0.11.0"));
-        assert!(!is_newer("0.1.1", "0.1.1"));
-        assert!(is_newer("v0.1.2", "0.1.1"));
-    }
-
-    // ── Task 1: parse_version_numbers ───────────────────────
-
-    #[test]
-    fn should_parse_standard_semver() {
-        assert_eq!(parse_version_numbers("1.2.3"), Some(vec![1, 2, 3]));
-    }
-
-    #[test]
-    fn should_parse_lowercase_v_prefix() {
-        assert_eq!(parse_version_numbers("v1.0.0"), Some(vec![1, 0, 0]));
-    }
-
-    #[test]
-    fn should_parse_uppercase_v_prefix() {
-        assert_eq!(parse_version_numbers("V1.0.0"), Some(vec![1, 0, 0]));
-    }
-
-    #[test]
-    fn should_return_none_for_empty_string() {
-        assert_eq!(parse_version_numbers(""), None);
-    }
-
-    #[test]
-    fn should_return_none_for_pure_non_numeric() {
-        assert_eq!(parse_version_numbers("abc"), None);
-    }
-
-    #[test]
-    fn should_parse_version_with_prerelease_suffix() {
-        assert_eq!(parse_version_numbers("1.2.3-beta"), Some(vec![1, 2, 3]));
-    }
-
-    #[test]
-    fn should_parse_single_number() {
-        assert_eq!(parse_version_numbers("5"), Some(vec![5]));
-    }
-
-    #[test]
-    fn should_parse_four_segments() {
-        assert_eq!(parse_version_numbers("1.2.3.4"), Some(vec![1, 2, 3, 4]));
-    }
-
-    // ── Task 2: compare_versions ────────────────────────────
-
-    #[test]
-    fn should_compare_equal_when_shorter_padded_with_zeros() {
-        assert_eq!(compare_versions("1.0", "1.0.0"), Some(CmpOrdering::Equal));
-    }
-
-    #[test]
-    fn should_compare_greater_when_left_longer_with_nonzero() {
-        assert_eq!(compare_versions("1.0.1", "1.0"), Some(CmpOrdering::Greater));
-    }
-
-    #[test]
-    fn should_compare_less_when_right_longer_with_nonzero() {
-        assert_eq!(compare_versions("1.0", "1.0.1"), Some(CmpOrdering::Less));
-    }
-
-    #[test]
-    fn should_return_none_when_left_invalid() {
-        assert_eq!(compare_versions("abc", "1.0"), None);
-    }
-
-    #[test]
-    fn should_return_none_when_right_invalid() {
-        assert_eq!(compare_versions("1.0", "xyz"), None);
-    }
-
-    // ── Task 3: is_newer edge cases ─────────────────────────
-
-    #[test]
-    fn should_reject_date_version_vs_semver() {
-        // WezTerm date-version guard: date latest against semver current → false
-        assert!(!is_newer("20240203-110000-abc", "0.1.0"));
-    }
-
-    #[test]
-    fn should_compare_two_date_versions() {
-        // Both are date versions; guard does not fire, numeric compare succeeds
-        assert!(is_newer("20240204-110000-abc", "20240203-110000-abc"));
-    }
-
-    #[test]
-    fn should_fallback_to_not_equal_when_unparseable_and_different() {
-        // Neither parses → compare_versions returns None → latest != current → true
-        assert!(is_newer("abc", "def"));
-    }
-
-    #[test]
-    fn should_fallback_to_not_equal_when_unparseable_and_same() {
-        // Neither parses → compare_versions returns None → latest == current → false
-        assert!(!is_newer("abc", "abc"));
-    }
-
-    #[test]
-    fn should_handle_uppercase_v_prefix_in_is_newer() {
-        assert!(is_newer("V0.2.0", "v0.1.0"));
-    }
-
-    // ── Task 1 (TODO.md): URL constant regression tests ───
+    // ── URL constant regression tests ───
 
     #[test]
     fn should_use_szj2ys_repo_in_release_url() {
@@ -310,28 +148,5 @@ mod tests {
             !url.contains("tw93"),
             "release API URL must not contain legacy tw93 reference"
         );
-    }
-
-    #[test]
-    fn should_compare_semver_correctly() {
-        // Major version bump beats any minor/patch
-        assert!(is_newer("1.0.0", "0.99.99"));
-        // Minor version bump
-        assert!(is_newer("0.2.0", "0.1.99"));
-        // Patch version bump
-        assert!(is_newer("0.1.2", "0.1.1"));
-        // Equal versions are not newer
-        assert!(!is_newer("1.0.0", "1.0.0"));
-        // Older version is not newer
-        assert!(!is_newer("0.1.0", "0.2.0"));
-    }
-
-    #[test]
-    fn should_reject_wezterm_date_versions() {
-        // WezTerm used date-based versions like "20240203-110000-abc".
-        // When latest is a date version and current is a semver, is_newer should return false.
-        assert!(!is_newer("20240203-110000-abc", "0.1.0"));
-        assert!(!is_newer("20251231-235959-xyz", "0.3.2"));
-        assert!(!is_newer("20200101-000000-000", "1.0.0"));
     }
 }

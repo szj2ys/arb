@@ -9,6 +9,7 @@ publish = false
 
 [dependencies]
 anyhow.workspace = true
+arb-version.workspace = true
 chrono.workspace = true
 clap.workspace = true
 clap_complete.workspace = true

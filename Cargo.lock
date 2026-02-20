@@ -127,6 +127,7 @@ name = "arb"
 version = "0.3.2"
 dependencies = [
  "anyhow",
+ "arb-version",
  "cc",
  "chrono",
  "clap",
@@ -171,6 +172,7 @@ name = "arb-gui"
 version = "0.3.2"
 dependencies = [
  "anyhow",
+ "arb-version",
  "benchmarking",
  "bitflags 1.3.2",
  "bytemuck",
@@ -251,6 +253,10 @@ dependencies = [
  "window-funcs",
  "windows",
 ]
+
+[[package]]
+name = "arb-version"
+version = "0.1.0"
 
 [[package]]
 name = "arrayref"

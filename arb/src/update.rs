@@ -38,7 +38,6 @@ mod imp {
     use super::*;
     use indicatif::{ProgressBar, ProgressStyle};
     use serde::Deserialize;
-    use std::cmp::Ordering;
     use std::fs;
     use std::io::{Read as _, Write};
     use std::path::{Component, Path, PathBuf};
@@ -1005,133 +1004,15 @@ log "done"
         bail!("{} failed with status {}", context_text, status);
     }
 
-    fn is_newer_version(latest: &str, current: &str) -> bool {
-        match compare_versions(latest, current) {
-            Some(Ordering::Greater) => true,
-            Some(_) => false,
-            None => latest.trim_start_matches(['v', 'V']) != current.trim_start_matches(['v', 'V']),
-        }
-    }
+    use arb_version::is_newer_version;
 
     fn format_version_for_display(version: &str) -> String {
         version.trim().trim_start_matches(['v', 'V']).to_string()
     }
 
-    fn compare_versions(left: &str, right: &str) -> Option<Ordering> {
-        let left = parse_version_numbers(left)?;
-        let right = parse_version_numbers(right)?;
-        let max_len = left.len().max(right.len());
-        for idx in 0..max_len {
-            let l = left.get(idx).copied().unwrap_or(0);
-            let r = right.get(idx).copied().unwrap_or(0);
-            match l.cmp(&r) {
-                Ordering::Equal => {}
-                non_eq => return Some(non_eq),
-            }
-        }
-        Some(Ordering::Equal)
-    }
-
-    fn parse_version_numbers(version: &str) -> Option<Vec<u64>> {
-        let cleaned = version.trim().trim_start_matches(['v', 'V']);
-        let mut out = Vec::new();
-        for part in cleaned.split('.') {
-            let digits: String = part.chars().take_while(|c| c.is_ascii_digit()).collect();
-            if digits.is_empty() {
-                return None;
-            }
-            let value = digits.parse::<u64>().ok()?;
-            out.push(value);
-        }
-        if out.is_empty() {
-            return None;
-        }
-        Some(out)
-    }
-
     #[cfg(test)]
     mod tests {
         use super::*;
-        use std::cmp::Ordering;
-
-        // --- parse_version_numbers tests ---
-
-        #[test]
-        fn parse_version_numbers_strips_v_prefix() {
-            assert_eq!(parse_version_numbers("v0.3.2"), Some(vec![0, 3, 2]));
-        }
-
-        #[test]
-        fn parse_version_numbers_returns_none_for_non_version() {
-            assert_eq!(parse_version_numbers("not-a-version"), None);
-        }
-
-        #[test]
-        fn parse_version_numbers_single_numeric_segment() {
-            // A bare date-style string like "20230101" parses as a single segment.
-            assert_eq!(parse_version_numbers("20230101"), Some(vec![20230101]));
-        }
-
-        #[test]
-        fn parse_version_numbers_uppercase_v_prefix() {
-            assert_eq!(parse_version_numbers("V1.2.3"), Some(vec![1, 2, 3]));
-        }
-
-        #[test]
-        fn parse_version_numbers_with_prerelease_suffix() {
-            // "0.3.2-beta" -> digits before the dash are captured per segment
-            assert_eq!(parse_version_numbers("0.3.2-beta"), Some(vec![0, 3, 2]));
-        }
-
-        // --- compare_versions tests ---
-
-        #[test]
-        fn compare_versions_equal() {
-            assert_eq!(compare_versions("0.3.2", "0.3.2"), Some(Ordering::Equal));
-        }
-
-        #[test]
-        fn compare_versions_greater_numeric_not_lexicographic() {
-            // 10 > 9 numerically, but "10" < "9" lexicographically
-            assert_eq!(compare_versions("0.3.10", "0.3.9"), Some(Ordering::Greater));
-        }
-
-        #[test]
-        fn compare_versions_less() {
-            assert_eq!(compare_versions("0.3.1", "0.3.2"), Some(Ordering::Less));
-        }
-
-        #[test]
-        fn compare_versions_none_for_garbage() {
-            assert_eq!(compare_versions("foo", "bar"), None);
-        }
-
-        // --- is_newer_version tests ---
-
-        #[test]
-        fn is_newer_version_returns_true_when_latest_is_newer() {
-            assert!(is_newer_version("0.4.0", "0.3.2"));
-        }
-
-        #[test]
-        fn is_newer_version_returns_false_when_versions_equal() {
-            assert!(!is_newer_version("0.3.2", "0.3.2"));
-        }
-
-        #[test]
-        fn is_newer_version_returns_false_when_latest_is_older() {
-            assert!(!is_newer_version("0.3.1", "0.3.2"));
-        }
-
-        #[test]
-        fn is_newer_version_handles_v_prefix() {
-            assert!(is_newer_version("v0.4.0", "0.3.2"));
-        }
-
-        #[test]
-        fn is_newer_version_major_bump_beats_high_minor() {
-            assert!(is_newer_version("1.0.0", "0.99.99"));
-        }
 
         // --- sanitize_tag tests ---
 
