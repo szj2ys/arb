@@ -9,7 +9,6 @@
       .yellow { fill: #ffca85; }
       .red { fill: #ff6767; }
       .dim { fill: #6e6a86; }
-      .cyan { fill: #61ffca; }
       .white { fill: #edecee; }
       .bold { font-weight: bold; }
     </style>

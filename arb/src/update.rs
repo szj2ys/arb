@@ -36,6 +36,7 @@ pub fn cleanup_old_update_dirs_for_tests(update_root: &std::path::Path) -> anyho
 #[cfg(target_os = "macos")]
 mod imp {
     use super::*;
+    use arb_version::is_newer_version;
     use indicatif::{ProgressBar, ProgressStyle};
     use serde::Deserialize;
     use std::fs;
@@ -1003,8 +1004,6 @@ log "done"
         }
         bail!("{} failed with status {}", context_text, status);
     }
-
-    use arb_version::is_newer_version;
 
     fn format_version_for_display(version: &str) -> String {
         version.trim().trim_start_matches(['v', 'V']).to_string()
