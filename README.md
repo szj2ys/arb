@@ -17,8 +17,7 @@
 
 <div align="center">
   <br />
-  <!-- Replace with actual screenshot: arb terminal with Starship prompt, syntax highlighting, and git status -->
-  <img src="https://via.placeholder.com/800x500/1a1b26/c0caf5?text=arb+terminal" alt="arb terminal screenshot" width="800" />
+  <img src="docs/terminal-preview.svg" alt="arb terminal screenshot" width="800" />
   <br />
   <sub>arb with Starship prompt, syntax highlighting, and smart directory navigation</sub>
   <br /><br />
