@@ -1,17 +1,18 @@
 [workspace]
 members = [
-  "crates/bidi",
-  "deps/cairo",
   "arb",
+  "arb-gui",
+  "crates/arb-version",
+  "crates/bidi",
   "crates/wezterm-blob-leases",
   "crates/wezterm-cell",
-  "crates/wezterm-escape-parser",
   "crates/wezterm-dynamic",
-  "arb-gui",
+  "crates/wezterm-escape-parser",
   "crates/wezterm-open-url",
   "crates/wezterm-ssh",
   "crates/wezterm-surface",
   "crates/wezterm-uds",
+  "deps/cairo",
 ]
 resolver = "2"
 exclude = [
@@ -45,6 +46,7 @@ split-debuginfo = "unpacked"
 [workspace.dependencies]
 ahash = "0.8"
 anyhow = "1.0"
+arb-version = { path = "crates/arb-version" }
 assert_fs = "1.0.4"
 async-channel = "2.3"
 async-executor = "1.11"
