@@ -483,6 +483,138 @@
     }
 
     /* ============================================
+       COMPARISON TABLE
+       ============================================ */
+    .comparison {
+      background: var(--bg);
+    }
+
+    .comparison-table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: var(--radius-lg);
+      background: var(--bg-elevated);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px;
+      font-size: 15px;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 16px 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      white-space: nowrap;
+    }
+
+    .comparison-table th {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--fg-muted);
+      letter-spacing: 0.02em;
+    }
+
+    .comparison-table th:first-child,
+    .comparison-table td:first-child {
+      text-align: left;
+      font-weight: 500;
+      color: var(--fg);
+    }
+
+    .comparison-table th.arb-col {
+      color: var(--purple);
+      position: relative;
+    }
+    .comparison-table th.arb-col::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--purple), transparent);
+      border-radius: 2px;
+    }
+
+    .comparison-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comparison-table .check {
+      color: var(--green);
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .comparison-table .dash {
+      color: var(--fg-muted);
+      opacity: 0.4;
+      font-size: 18px;
+    }
+
+    /* ============================================
+       TOOLS SHOWCASE
+       ============================================ */
+    .tools {
+      background: var(--bg);
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .tools-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .tool-card {
+      background: var(--bg-surface);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      transition: border-color 0.3s var(--ease);
+    }
+
+    .tool-card:hover {
+      border-color: rgba(162, 119, 255, 0.25);
+    }
+
+    .tool-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      font-size: 20px;
+      background: var(--purple-dim);
+      color: var(--purple);
+    }
+
+    .tool-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+    }
+
+    .tool-card p {
+      font-size: 14px;
+      color: var(--fg-muted);
+      line-height: 1.5;
+    }
+
+    /* ============================================
        TERMINAL PREVIEW
        ============================================ */
     .preview {
@@ -538,6 +670,44 @@
       flex-wrap: wrap;
     }
 
+    /* Typing animation: sequential line reveal */
+    .terminal-anim .terminal-line,
+    .terminal-anim .terminal-spacer {
+      opacity: 0;
+      transform: translateX(-12px);
+      animation: lineReveal 0.4s var(--ease-out) forwards;
+    }
+
+    @keyframes lineReveal {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .terminal-anim .terminal-line:nth-child(1)  { animation-delay: 0s; }
+    .terminal-anim .terminal-line:nth-child(2)  { animation-delay: 0.3s; }
+    .terminal-anim .terminal-line:nth-child(3)  { animation-delay: 0.6s; }
+    .terminal-anim .terminal-line:nth-child(4)  { animation-delay: 0.9s; }
+    .terminal-anim .terminal-spacer:nth-child(5) { animation-delay: 1.2s; }
+    .terminal-anim .terminal-line:nth-child(6)  { animation-delay: 1.5s; }
+    .terminal-anim .terminal-line:nth-child(7)  { animation-delay: 1.8s; }
+    .terminal-anim .terminal-line:nth-child(8)  { animation-delay: 2.1s; }
+    .terminal-anim .terminal-line:nth-child(9)  { animation-delay: 2.4s; }
+    .terminal-anim .terminal-spacer:nth-child(10) { animation-delay: 2.7s; }
+    .terminal-anim .terminal-line:nth-child(11) { animation-delay: 3.0s; }
+    .terminal-anim .terminal-line:nth-child(12) { animation-delay: 3.3s; }
+    .terminal-anim .terminal-line:nth-child(13) { animation-delay: 3.6s; }
+    .terminal-anim .terminal-spacer:nth-child(14) { animation-delay: 3.9s; }
+    .terminal-anim .terminal-line:nth-child(15) { animation-delay: 4.2s; }
+    .terminal-anim .terminal-line:nth-child(16) { animation-delay: 4.5s; }
+
+    /* Cursor only blinks after last line appears */
+    .terminal-anim .t-cursor {
+      opacity: 0;
+      animation: blink 1s step-end infinite 4.8s;
+    }
+
     .t-prompt {
       color: var(--purple);
       user-select: none;
@@ -572,6 +742,33 @@
     @keyframes blink {
       0%, 100% { opacity: 1; }
       50% { opacity: 0; }
+    }
+
+    /* ============================================
+       HERO BADGES
+       ============================================ */
+    .hero-badges {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    .hero-badges a {
+      display: inline-flex;
+      opacity: 0.7;
+      transition: opacity 0.2s var(--ease);
+    }
+
+    .hero-badges a:hover {
+      opacity: 1;
+    }
+
+    .hero-badges img {
+      height: 22px;
+      display: block;
     }
 
     /* ============================================
@@ -762,9 +959,18 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
+        animation-delay: 0ms !important;
         transition-duration: 0.01ms !important;
       }
       html { scroll-behavior: auto; }
+      .terminal-anim .terminal-line,
+      .terminal-anim .terminal-spacer {
+        opacity: 1;
+        transform: none;
+      }
+      .terminal-anim .t-cursor {
+        opacity: 1;
+      }
     }
 
     .fade-in {
@@ -830,6 +1036,11 @@
             View on GitHub
           </a>
         </div>
+        <div class="hero-badges">
+          <a href="https://github.com/szj2ys/arb/stargazers" target="_blank" rel="noopener"><img src="https://img.shields.io/github/stars/szj2ys/arb?style=flat-square&color=a277ff&labelColor=1c1b22" alt="GitHub Stars"></a>
+          <a href="https://github.com/szj2ys/arb/releases/latest" target="_blank" rel="noopener"><img src="https://img.shields.io/github/v/release/szj2ys/arb?style=flat-square&color=61ffca&labelColor=1c1b22" alt="Latest Version"></a>
+          <a href="https://github.com/szj2ys/arb/blob/main/LICENSE" target="_blank" rel="noopener"><img src="https://img.shields.io/github/license/szj2ys/arb?style=flat-square&color=9e9ba5&labelColor=1c1b22" alt="MIT License"></a>
+        </div>
       </div>
     </div>
     <div class="hero-scroll">
@@ -886,6 +1097,141 @@
     </div>
   </section>
 
+  <!-- COMPARISON -->
+  <section class="comparison" id="comparison">
+    <div class="container">
+      <div class="fade-in" style="text-align:center;margin-bottom:48px;">
+        <div class="section-label">Comparison</div>
+        <h2 class="section-title">How arb compares</h2>
+      </div>
+      <div class="comparison-table-wrap fade-in">
+        <table class="comparison-table" role="table">
+          <thead>
+            <tr>
+              <th scope="col">Feature</th>
+              <th scope="col" class="arb-col">arb</th>
+              <th scope="col">iTerm2</th>
+              <th scope="col">Alacritty</th>
+              <th scope="col">Kitty</th>
+              <th scope="col">Warp</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Zero Config</td>
+              <td><span class="check" aria-label="Yes">&#10003;</span></td>
+              <td><span class="dash" aria-label="No">&mdash;</span></td>
+              <td><span class="dash" aria-label="No">&mdash;</span></td>
+              <td><span class="dash" aria-label="No">&mdash;</span></td>
+              <td><span class="check" aria-label="Yes">&#10003;</span></td>
+            </tr>
+            <tr>
+              <td>Built-in Tools</td>
+              <td><span class="check" aria-label="Yes">&#10003;</span></td>
+              <td><span class="dash" aria-label="No">&mdash;</span></td>
+              <td><span class="dash" aria-label="No">&mdash;</span></td>
+              <td><span class="dash" aria-label="No">&mdash;</span></td>
+              <td><span class="dash" aria-label="No">&mdash;</span></td>
+            </tr>
+            <tr>
+              <td>GPU Rendering</td>
+              <td><span class="check" aria-label="Yes">&#10003;</span></td>
+              <td><span class="dash" aria-label="No">&mdash;</span></td>
+              <td><span class="check" aria-label="Yes">&#10003;</span></td>
+              <td><span class="check" aria-label="Yes">&#10003;</span></td>
+              <td><span class="check" aria-label="Yes">&#10003;</span></td>
+            </tr>
+            <tr>
+              <td>Lua Scripting</td>
+              <td><span class="check" aria-label="Yes">&#10003;</span></td>
+              <td><span class="dash" aria-label="No">&mdash;</span></td>
+              <td><span class="dash" aria-label="No">&mdash;</span></td>
+              <td><span class="dash" aria-label="No">&mdash;</span></td>
+              <td><span class="dash" aria-label="No">&mdash;</span></td>
+            </tr>
+            <tr>
+              <td>No Login Required</td>
+              <td><span class="check" aria-label="Yes">&#10003;</span></td>
+              <td><span class="check" aria-label="Yes">&#10003;</span></td>
+              <td><span class="check" aria-label="Yes">&#10003;</span></td>
+              <td><span class="check" aria-label="Yes">&#10003;</span></td>
+              <td><span class="dash" aria-label="No">&mdash;</span></td>
+            </tr>
+            <tr>
+              <td>Open Source</td>
+              <td><span class="check" aria-label="Yes">&#10003;</span></td>
+              <td><span class="check" aria-label="Yes">&#10003;</span></td>
+              <td><span class="check" aria-label="Yes">&#10003;</span></td>
+              <td><span class="check" aria-label="Yes">&#10003;</span></td>
+              <td><span class="dash" aria-label="No">&mdash;</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOOLS SHOWCASE -->
+  <section class="tools">
+    <div class="container">
+      <div class="fade-in" style="text-align:center;margin-bottom:48px;">
+        <div class="section-label">Batteries Included</div>
+        <h2 class="section-title">Everything pre-installed</h2>
+      </div>
+      <div class="tools-grid">
+
+        <div class="tool-card fade-in">
+          <div class="tool-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <h3>Starship</h3>
+          <p>Minimal, fast, and infinitely customizable cross-shell prompt.</p>
+        </div>
+
+        <div class="tool-card fade-in">
+          <div class="tool-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <h3>z</h3>
+          <p>Smart directory jumping. Navigate to any folder by typing partial names.</p>
+        </div>
+
+        <div class="tool-card fade-in">
+          <div class="tool-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M5 12l7-7 7 7"/></svg>
+          </div>
+          <h3>Delta</h3>
+          <p>Beautiful syntax-highlighted diffs with line numbers and side-by-side view.</p>
+        </div>
+
+        <div class="tool-card fade-in">
+          <div class="tool-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <h3>Syntax Highlighting</h3>
+          <p>Real-time command syntax coloring for instant visual feedback.</p>
+        </div>
+
+        <div class="tool-card fade-in">
+          <div class="tool-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </div>
+          <h3>Autosuggestions</h3>
+          <p>Fish-like suggestions based on your history. Accept with right arrow.</p>
+        </div>
+
+        <div class="tool-card fade-in">
+          <div class="tool-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <h3>Completions</h3>
+          <p>Tab completions for commands, paths, and arguments out of the box.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
   <!-- TERMINAL PREVIEW -->
   <section class="preview">
     <div class="container">
@@ -901,7 +1247,7 @@
           <span class="terminal-title">arb</span>
           <span style="width:36px;"></span>
         </div>
-        <div class="terminal-body">
+        <div class="terminal-body terminal-anim">
           <div class="terminal-line">
             <span class="t-prompt">~</span>
             <span class="t-cmd">brew</span>
@@ -917,26 +1263,41 @@
           <div class="terminal-line" style="color:var(--green);">
             <span>==> arb is ready. Open the app to get started.</span>
           </div>
-          <br>
+          <div class="terminal-spacer" style="height:1.8em;"></div>
           <div class="terminal-line">
+            <span class="t-prompt">~</span>
+            <span class="t-cmd">arb</span>
+            <span class="t-flag">init</span>
+          </div>
+          <div class="terminal-line">
+            <span class="t-output">Setting up Starship, z, Delta, highlighting...</span>
+          </div>
+          <div class="terminal-line" style="color:var(--green);">
+            <span>Done. Your shell is ready.</span>
+          </div>
+          <div class="terminal-line">
+            <span class="t-prompt" style="color:var(--yellow);">&#10148;</span>
             <span class="t-prompt">~/projects/arb</span>
+            <span class="t-cmd">z</span>
+            <span class="t-arg">projects</span>
+          </div>
+          <div class="terminal-spacer" style="height:1.8em;"></div>
+          <div class="terminal-line">
+            <span class="t-prompt" style="color:var(--yellow);">&#10148;</span>
+            <span class="t-prompt">~/projects</span>
             <span class="t-cmd">git</span>
             <span class="t-flag">status</span>
           </div>
           <div class="terminal-line">
             <span class="t-output">On branch main</span>
           </div>
-          <div class="terminal-line">
-            <span style="color:var(--green);">nothing to commit, working tree clean</span>
+          <div class="terminal-line" style="color:var(--green);">
+            <span>nothing to commit, working tree clean</span>
           </div>
-          <br>
+          <div class="terminal-spacer" style="height:1.8em;"></div>
           <div class="terminal-line">
-            <span class="t-prompt">~/projects/arb</span>
-            <span class="t-cmd">z</span>
-            <span class="t-arg">docs</span>
-          </div>
-          <div class="terminal-line">
-            <span class="t-prompt">~/projects/arb/docs</span>
+            <span class="t-prompt" style="color:var(--yellow);">&#10148;</span>
+            <span class="t-prompt">~/projects</span>
             <span class="t-cursor"></span>
           </div>
         </div>
