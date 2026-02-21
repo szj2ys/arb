@@ -10,6 +10,10 @@
 # users should be prompted to install on their next launch.
 # The arb.lua gui-startup handler re-runs this script when the stored
 # version is below the current value.
+#
+# Usage:
+#   bash first_run.sh            # Non-interactive: install everything automatically
+#   bash first_run.sh --choose   # Interactive: prompt user for each component
 
 set -euo pipefail
 
@@ -20,6 +24,16 @@ persist_config_version() {
 	echo "6" >"$HOME/.config/arb/.arb_config_version"
 }
 trap persist_config_version EXIT
+
+# ===== Argument parsing =====
+INTERACTIVE=false
+for arg in "$@"; do
+	case "$arg" in
+		--choose)
+			INTERACTIVE=true
+			;;
+	esac
+done
 
 # Resources directory resolution
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -100,49 +114,55 @@ echo "     Beautiful git diffs with syntax highlighting"
 echo "--------------------------------------------------------"
 echo ""
 
-# Single prompt for the happy path
-read -p "Install all recommended? [Y/n] " -n 1 -r
-echo ""
-
 INSTALL_SHELL=true
 INSTALL_THEME=true
 INSTALL_DELTA=true
 
-if [[ $REPLY =~ ^[Nn]$ ]]; then
-	# Individual opt-out prompts
+if [[ "$INTERACTIVE" == "true" ]]; then
+	# --choose mode: let the user pick individual components
+	read -p "Install all recommended? [Y/n] " -n 1 -r
 	echo ""
-	read -p "Install enhanced shell features? [Y/n] " -n 1 -r
-	echo ""
-	INSTALL_SHELL=false
-	if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
-		INSTALL_SHELL=true
-	fi
 
-	read -p "Apply Arb Theme? [Y/n] " -n 1 -r
-	echo ""
-	INSTALL_THEME=false
-	if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
-		INSTALL_THEME=true
-	fi
+	if [[ $REPLY =~ ^[Nn]$ ]]; then
+		# Individual opt-out prompts
+		echo ""
+		read -p "Install enhanced shell features? [Y/n] " -n 1 -r
+		echo ""
+		INSTALL_SHELL=false
+		if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
+			INSTALL_SHELL=true
+		fi
 
-	read -p "Install Delta? [Y/n] " -n 1 -r
-	echo ""
-	INSTALL_DELTA=false
-	if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
-		INSTALL_DELTA=true
+		read -p "Apply Arb Theme? [Y/n] " -n 1 -r
+		echo ""
+		INSTALL_THEME=false
+		if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
+			INSTALL_THEME=true
+		fi
+
+		read -p "Install Delta? [Y/n] " -n 1 -r
+		echo ""
+		INSTALL_DELTA=false
+		if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
+			INSTALL_DELTA=true
+		fi
 	fi
 fi
 
 # Process Shell Features
 if [[ "$INSTALL_SHELL" == "true" ]]; then
+	echo -n "Setting up shell integration..."
 	if [[ -f "$SETUP_SCRIPT" ]]; then
 		if ! "$SETUP_SCRIPT"; then
+			echo " failed"
 			echo ""
 			echo "Warning: shell setup failed. You can retry manually:"
 			echo "  bash \"$SETUP_SCRIPT\""
+		else
+			echo " done"
 		fi
 	else
-		echo "Error: setup_zsh.sh not found at $SETUP_SCRIPT"
+		echo " skipped (setup_zsh.sh not found at $SETUP_SCRIPT)"
 	fi
 else
 	echo ""
@@ -197,19 +217,24 @@ ensure_user_config_via_cli() {
 
 # Process Arb Theme
 if [[ "$INSTALL_THEME" == "true" ]]; then
+	echo -n "Applying Arb theme..."
 	ensure_user_config_via_cli
+	echo " done"
 fi
 
 # Process Delta Installation
 if [[ "$INSTALL_DELTA" == "true" ]]; then
 	DELTA_SCRIPT="$RESOURCES_DIR/install_delta.sh"
+	echo -n "Installing Delta..."
 	if [[ -f "$DELTA_SCRIPT" ]]; then
-		echo ""
 		if ! bash "$DELTA_SCRIPT"; then
+			echo " failed"
 			echo "Warning: Delta installation failed."
+		else
+			echo " done"
 		fi
 	else
-		echo "Warning: install_delta.sh not found at $DELTA_SCRIPT"
+		echo " skipped (install_delta.sh not found at $DELTA_SCRIPT)"
 	fi
 fi
 
