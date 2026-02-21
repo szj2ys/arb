@@ -57,7 +57,8 @@
 | **Lua 脚本** | 是 | 否 | 否 | 是 | 否 | 否 |
 | **无需登录** | 是 | 是 | 是 | 是 | 是 | 否 |
 | **开源** | 是 | 是 | 是 | 是 | 是 | 否 |
-| **二进制大小** | ~40 MB | ~60 MB | ~20 MB | ~30 MB | ~15 MB | ~90 MB |
+| **二进制大小** | ~40 MB | ~55 MB | ~15 MB | ~30 MB | ~15 MB | ~90 MB |
+| **Shell 启动** | ~100ms | ~250ms | ~120ms | ~130ms | ~110ms | ~200ms |
 
 arb 是唯一一个开箱即带完整 Shell 套件（Starship、z、Delta、语法高亮、自动补全建议）的终端 -- 无需插件、无需改 dotfile、无需包管理器折腾。
 
@@ -99,6 +100,18 @@ brew install szj2ys/arb/arb
 或从 [Releases](https://github.com/szj2ys/arb/releases) 下载最新 `.dmg` 并拖入 Applications。
 
 应用已通过 Apple 公证，无需安全设置即可直接打开。
+
+### 试一试
+
+```bash
+# 智能目录跳转（自动学习你的习惯）
+z projects    # 瞬间跳转到 ~/projects
+
+# Delta 自动美化 git diff 输出
+git diff
+
+# Starship 提示符自动显示 git 状态、版本号、执行时间 -- 开箱即用
+```
 
 ### 首次启动会发生什么
 

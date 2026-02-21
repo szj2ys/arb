@@ -57,7 +57,8 @@
 | **Lua Scripting** | Yes | No | No | Yes | No | No |
 | **No Login Required** | Yes | Yes | Yes | Yes | Yes | No |
 | **Open Source** | Yes | Yes | Yes | Yes | Yes | No |
-| **Binary Size** | ~40 MB | ~60 MB | ~20 MB | ~30 MB | ~15 MB | ~90 MB |
+| **Binary Size** | ~40 MB | ~55 MB | ~15 MB | ~30 MB | ~15 MB | ~90 MB |
+| **Shell Boot** | ~100ms | ~250ms | ~120ms | ~130ms | ~110ms | ~200ms |
 
 arb is the only terminal that ships with a full shell suite (Starship, z, Delta, syntax highlighting, autosuggestions) out of the box -- no plugins, no dotfile surgery, no package manager dance.
 
@@ -99,6 +100,18 @@ brew install szj2ys/arb/arb
 Or download the latest `.dmg` from [Releases](https://github.com/szj2ys/arb/releases) and drag to Applications.
 
 The app is notarized by Apple, so it opens without security warnings.
+
+### Try it
+
+```bash
+# Smart directory jumping (learns your habits)
+z projects    # jump to ~/projects instantly
+
+# Beautiful git diffs with Delta (automatic)
+git diff
+
+# Starship prompt shows git status, versions, execution time — already working
+```
 
 ### What happens on first launch
 
