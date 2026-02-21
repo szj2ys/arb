@@ -17,6 +17,7 @@ use umask::UmaskSaver;
 use wezterm_gui_subcommands::*;
 
 mod asciicast;
+mod bench;
 mod cli;
 mod config_cmd;
 mod doctor;
@@ -153,6 +154,12 @@ enum SubCommand {
 
     #[command(name = "doctor", about = "Diagnose your Arb setup and suggest fixes")]
     Doctor(doctor::DoctorCommand),
+
+    #[command(
+        name = "bench",
+        about = "Benchmark shell startup time and detect installed terminals"
+    )]
+    Bench(bench::BenchCommand),
 }
 
 use termwiz::escape::osc::{
@@ -774,6 +781,7 @@ fn run() -> anyhow::Result<()> {
         SubCommand::Init(cmd) => cmd.run(),
         SubCommand::Reset(cmd) => cmd.run(),
         SubCommand::Doctor(cmd) => cmd.run(),
+        SubCommand::Bench(cmd) => cmd.run(),
     }
 }
 
