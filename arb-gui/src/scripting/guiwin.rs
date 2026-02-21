@@ -37,7 +37,7 @@ impl UserData for GuiWin {
             Ok(format!(
                 "GuiWin(mux_window_id:{}, pid:{})",
                 this.mux_window_id,
-                unsafe { libc::getpid() }
+                std::process::id()
             ))
         });
 
