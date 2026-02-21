@@ -101,7 +101,7 @@ impl ActivateTab {
                 // This logic is coupled with TermWindow::activate_tab
                 // If you update this, update that!
                 let tab_idx = if tab_index < 0 {
-                    max.saturating_sub(tab_index.abs() as usize)
+                    max.saturating_sub(tab_index.unsigned_abs())
                 } else {
                     tab_index as usize
                 };
@@ -123,14 +123,12 @@ impl ActivateTab {
                 let tab_idx = if wrap {
                     let tab = if tab < 0 { max as isize + tab } else { tab };
                     (tab as usize % max) as isize
+                } else if tab < 0 {
+                    0
+                } else if tab >= max as isize {
+                    max as isize - 1
                 } else {
-                    if tab < 0 {
-                        0
-                    } else if tab >= max as isize {
-                        max as isize - 1
-                    } else {
-                        tab
-                    }
+                    tab
                 };
                 tabs.get(tab_idx as usize)
                     .copied()

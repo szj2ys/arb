@@ -189,7 +189,7 @@ END
             }
 
             // Verify this looks like a target directory
-            if target.file_name().map_or(false, |f| {
+            if target.file_name().is_some_and(|f| {
                 let s = f.to_string_lossy();
                 s == "release" || s == "debug" || s == "release-opt" || s.ends_with("-opt")
             }) {

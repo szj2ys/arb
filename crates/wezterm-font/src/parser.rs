@@ -313,7 +313,7 @@ impl ParsedFont {
                     let mut info = format!(
                         "  -- Palette: {} {}",
                         pal.palette_index,
-                        pal.name.to_string()
+                        pal.name
                     );
                     if pal.usable_with_light_bg {
                         info.push_str(" (with light bg)");
@@ -376,7 +376,7 @@ impl ParsedFont {
                 }
                 code.push_str("},\n")
             }
-            code.push_str("\n");
+            code.push('\n');
         }
         code.push_str("})");
         code
@@ -413,21 +413,20 @@ impl ParsedFont {
         };
 
         let has_svg = unsafe {
-            (((*face.face).face_flags as u32) & (crate::ftwrap::FT_FACE_FLAG_SVG as u32)) != 0
+            (((*face.face).face_flags as u32) & crate::ftwrap::FT_FACE_FLAG_SVG) != 0
         };
 
-        if has_svg {
-            if config::configuration().ignore_svg_fonts {
+        if has_svg
+            && config::configuration().ignore_svg_fonts {
                 anyhow::bail!("skipping svg font because ignore_svg_fonts=true");
             }
-        }
 
         let has_color = unsafe {
-            (((*face.face).face_flags as u32) & (crate::ftwrap::FT_FACE_FLAG_COLOR as u32)) != 0
+            (((*face.face).face_flags as u32) & crate::ftwrap::FT_FACE_FLAG_COLOR) != 0
         };
         let assume_emoji_presentation = has_color;
 
-        let names = Names::from_ft_face(&face);
+        let names = Names::from_ft_face(face);
         // Objectively gross, but freetype's italic property is very coarse grained.
         // fontconfig resorts to name matching, so we do too :-/
         let style = match style {
@@ -880,7 +879,7 @@ pub(crate) fn parse_and_collect_font_info(
     origin: FontOrigin,
 ) -> anyhow::Result<()> {
     let lib = crate::ftwrap::Library::new()?;
-    let num_faces = lib.query_num_faces(&source)?;
+    let num_faces = lib.query_num_faces(source)?;
 
     fn load_one(
         lib: &crate::ftwrap::Library,
@@ -910,7 +909,7 @@ pub(crate) fn parse_and_collect_font_info(
     }
 
     for index in 0..num_faces {
-        if let Err(err) = load_one(&lib, &source, index, font_info, &origin) {
+        if let Err(err) = load_one(&lib, source, index, font_info, &origin) {
             log::trace!("error while parsing {:?} index {}: {}", source, index, err);
         }
     }

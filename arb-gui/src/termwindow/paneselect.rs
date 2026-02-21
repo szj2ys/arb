@@ -84,7 +84,7 @@ impl PaneSelector {
             let element = Element::new(&font, ElementContent::Text(caption))
                 .colors(ElementColors {
                     border: BorderColor::new(
-                        term_window.config.pane_select_bg_color.to_linear().into(),
+                        term_window.config.pane_select_bg_color.to_linear(),
                     ),
                     bg: term_window.config.pane_select_bg_color.to_linear().into(),
                     text: term_window.config.pane_select_fg_color.to_linear().into(),
@@ -175,7 +175,7 @@ impl PaneSelector {
 
             match self.mode {
                 PaneSelectMode::Activate => {
-                    if panes.iter().position(|p| p.index == pane_index).is_some() {
+                    if panes.iter().any(|p| p.index == pane_index) {
                         tab.set_active_idx(pane_index);
                     }
                 }

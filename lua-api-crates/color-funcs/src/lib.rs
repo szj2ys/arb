@@ -1,3 +1,6 @@
+#![allow(clippy::multiple_bound_locations)]
+#![allow(clippy::doc_lazy_continuation)]
+
 use crate::schemes::base16::Base16Scheme;
 use crate::schemes::sexy::Sexy;
 use config::lua::mlua::{self, Lua, MetaMethod, UserData, UserDataMethods, UserDataRef};
@@ -182,14 +185,14 @@ pub fn register(lua: &Lua) -> anyhow::Result<()> {
     Ok(())
 }
 
-fn parse_color<'lua>(_: &'lua Lua, spec: String) -> mlua::Result<ColorWrap> {
+fn parse_color(_: &Lua, spec: String) -> mlua::Result<ColorWrap> {
     let color =
         RgbaColor::try_from(spec).map_err(|err| mlua::Error::external(format!("{err:#}")))?;
     Ok(ColorWrap(color))
 }
 
-fn gradient_colors<'lua>(
-    _lua: &'lua Lua,
+fn gradient_colors(
+    _lua: &Lua,
     (gradient, num_colors): (Gradient, usize),
 ) -> mlua::Result<Vec<ColorWrap>> {
     let g = gradient.build().map_err(mlua::Error::external)?;

@@ -196,7 +196,7 @@ impl Face {
                     origin: self.source.origin.clone(),
                     coverage: self.source.coverage.clone(),
                 };
-                res.push(ParsedFont::from_face(&self, source)?);
+                res.push(ParsedFont::from_face(self, source)?);
             }
 
             FT_Done_MM_Var(self.lib, mm);
@@ -362,11 +362,11 @@ impl Face {
                         };
 
                         if axis.tag == ft_make_tag(b'w', b'g', b'h', b't') {
-                            weight = weight * scale;
+                            weight *= scale;
                         }
 
                         if axis.tag == ft_make_tag(b'w', b'd', b't', b'h') {
-                            width = width * scale;
+                            width *= scale;
                         }
                     }
                 }
@@ -419,7 +419,7 @@ impl Face {
                 // Fontconfig duplicates F000..F0FF to 0000..00FF
                 for ucs4 in 0xf00..0xf100 {
                     if coverage.contains(ucs4) {
-                        coverage.add(ucs4 as u32 - 0xf000);
+                        coverage.add(ucs4 - 0xf000);
                     }
                 }
             }
@@ -506,7 +506,7 @@ impl Face {
 
                 for (idx, info) in sizes.iter().enumerate() {
                     log::debug!("idx={} info={:?}", idx, info);
-                    let distance = (info.height - (pixel_height as i16)).abs() as usize;
+                    let distance = (info.height - (pixel_height as i16)).unsigned_abs() as usize;
                     let candidate = Best {
                         idx,
                         distance,
@@ -944,8 +944,8 @@ impl Face {
             // So, we probe here to look for color layer information: if we find it,
             // we don't call freetype's renderer and instead bubble up an error
             // that the embedding application can trap and decide what to do.
-            if slot.format == FT_Glyph_Format_::FT_GLYPH_FORMAT_OUTLINE {
-                if self
+            if slot.format == FT_Glyph_Format_::FT_GLYPH_FORMAT_OUTLINE
+                && self
                     .get_color_glyph_paint(
                         glyph_index,
                         FT_Color_Root_Transform::FT_COLOR_NO_ROOT_TRANSFORM,
@@ -954,7 +954,6 @@ impl Face {
                 {
                     return Err(IsColr1OrLater.into());
                 }
-            }
 
             ft_result(FT_Render_Glyph(slot, render_mode), ())
                 .context("load_and_render_glyph: FT_Render_Glyph")?;
@@ -982,7 +981,7 @@ impl Face {
             unsafe { std::mem::transmute(u32::from(ft_glyph.bitmap.pixel_mode)) };
 
         // pitch is the number of bytes per source row
-        let pitch = ft_glyph.bitmap.pitch.abs() as usize;
+        let pitch = ft_glyph.bitmap.pitch.unsigned_abs() as usize;
         let data = unsafe {
             std::slice::from_raw_parts_mut(
                 ft_glyph.bitmap.buffer,
@@ -1418,7 +1417,7 @@ impl FreeTypeStream {
                 0
             }
             StreamBacking::File(file) => {
-                if let Err(err) = file.seek(SeekFrom::Start(offset.into())) {
+                if let Err(err) = file.seek(SeekFrom::Start(offset)) {
                     log::error!(
                         "failed to seek {} to offset {}: {:#}",
                         myself.name,

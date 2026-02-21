@@ -1,4 +1,6 @@
 #![no_std]
+#![allow(clippy::upper_case_acronyms)]
+#![allow(clippy::doc_lazy_continuation)]
 use alloc::borrow::Cow;
 use core::ops::Range;
 use level::MAX_DEPTH;
@@ -23,7 +25,7 @@ pub use direction::Direction;
 pub use level::Level;
 
 /// Placeholder codepoint index that corresponds to NO_LEVEL
-const DELETED: usize = usize::max_value();
+const DELETED: usize = usize::MAX;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, FromDynamic, ToDynamic)]
 pub enum ParagraphDirectionHint {
@@ -110,7 +112,7 @@ impl BidiRun {
             type Item = usize;
             fn next(&mut self) -> Option<usize> {
                 for idx in self.range.by_ref() {
-                    if self.removed_by_x9.iter().any(|&i| i == idx) {
+                    if self.removed_by_x9.contains(&idx) {
                         // Skip it
                         continue;
                     }
@@ -363,8 +365,8 @@ impl BidiContext {
 
         // Initial visual order
         let mut visual = vec![];
-        for i in 0..levels.len() {
-            if levels[i].removed_by_x9() {
+        for (i, level) in levels.iter().enumerate() {
+            if level.removed_by_x9() {
                 visual.push(DELETED);
             } else {
                 visual.push(i + first_cidx);
@@ -849,7 +851,7 @@ impl BidiContext {
                 // of the substring in this isolating run sequence
                 // enclosed by those brackets (inclusive
                 // of the brackets). Resolve that individual pair.
-                self.resolve_one_pair(pair, &iso_run);
+                self.resolve_one_pair(pair, iso_run);
             }
         }
     }
@@ -1003,7 +1005,6 @@ impl BidiContext {
                     &self.orig_char_types,
                     &self.levels,
                 );
-                return;
             } else {
                 // No strong type matching the oppositedirection was found either
                 // before or after these brackets in this text chain. Resolve the
@@ -1016,7 +1017,6 @@ impl BidiContext {
                     &self.orig_char_types,
                     &self.levels,
                 );
-                return;
             }
         } else {
             // No strong type was found between the brackets. Leave
@@ -1268,7 +1268,7 @@ impl BidiContext {
             line_range: Range<usize>,
             base_level: Level,
             orig_char_types: &[BidiClass],
-            levels: &mut Vec<Level>,
+            levels: &mut [Level],
         ) {
             for i in line_range.rev() {
                 if orig_char_types[i] == BidiClass::WhiteSpace
@@ -1464,12 +1464,9 @@ impl BidiContext {
                         // Do nothing
                     } else if overflow_embedding > 0 {
                         overflow_embedding -= 1;
-                    } else {
-                        if !stack.isolate_status() {
-                            if stack.depth() >= 2 {
-                                stack.pop();
-                            }
-                        }
+                    } else if !stack.isolate_status()
+                    && stack.depth() >= 2 {
+                        stack.pop();
                     }
                 }
                 BidiClass::BoundaryNeutral => {}
@@ -1715,22 +1712,16 @@ impl BidiContext {
 
 impl BidiClass {
     pub fn is_iso_init(self) -> bool {
-        match self {
-            BidiClass::RightToLeftIsolate
+        matches!(self, BidiClass::RightToLeftIsolate
             | BidiClass::LeftToRightIsolate
-            | BidiClass::FirstStrongIsolate => true,
-            _ => false,
-        }
+            | BidiClass::FirstStrongIsolate)
     }
 
     pub fn is_iso_control(self) -> bool {
-        match self {
-            BidiClass::RightToLeftIsolate
+        matches!(self, BidiClass::RightToLeftIsolate
             | BidiClass::LeftToRightIsolate
             | BidiClass::PopDirectionalIsolate
-            | BidiClass::FirstStrongIsolate => true,
-            _ => false,
-        }
+            | BidiClass::FirstStrongIsolate)
     }
 
     pub fn is_neutral(self) -> bool {
@@ -1762,6 +1753,7 @@ struct Run {
 }
 
 impl Run {
+    #[allow(clippy::needless_range_loop)]
     fn first_significant_bidi_class(
         &self,
         types: &[BidiClass],

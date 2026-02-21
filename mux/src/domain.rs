@@ -323,10 +323,7 @@ impl LocalDomain {
             for (k, v) in cmd.iter_full_env_as_str() {
                 set_environment_variables.insert(k.to_string(), v.to_string());
             }
-            let cwd = match cmd.get_cwd() {
-                Some(cwd) => Some(PathBuf::from(cwd)),
-                None => None,
-            };
+            let cwd = cmd.get_cwd().map(PathBuf::from);
             let spawn_command = SpawnCommand {
                 label: None,
                 domain: SpawnTabDomain::DomainName(ed.name.clone()),
@@ -339,7 +336,7 @@ impl LocalDomain {
             let spawn_command = config::with_lua_config_on_main_thread(|lua| async {
                 let lua = lua.ok_or_else(|| anyhow::anyhow!("missing lua context"))?;
                 let value = config::lua::emit_async_callback(
-                    &*lua,
+                    &lua,
                     (ed.fixup_command.clone(), (spawn_command.clone())),
                 )
                 .await?;
@@ -682,7 +679,7 @@ impl Domain for LocalDomain {
                     let label = config::with_lua_config_on_main_thread(|lua| async {
                         let lua = lua.ok_or_else(|| anyhow::anyhow!("missing lua context"))?;
                         let value = config::lua::emit_async_callback(
-                            &*lua,
+                            &lua,
                             (label_func.clone(), (self.name.clone())),
                         )
                         .await?;

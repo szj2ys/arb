@@ -61,16 +61,13 @@ mod test {
 /// of the associated Terminal instance.
 /// It will write and read data to and from the associated Terminal.
 pub struct ProbeCapabilities<'a> {
-    read: Box<&'a mut dyn Read>,
-    write: Box<&'a mut dyn Write>,
+    read: &'a mut dyn Read,
+    write: &'a mut dyn Write,
 }
 
 impl<'a> ProbeCapabilities<'a> {
     pub fn new<R: Read, W: Write>(read: &'a mut R, write: &'a mut W) -> Self {
-        Self {
-            read: Box::new(read),
-            write: Box::new(write),
-        }
+        Self { read, write }
     }
 
     /// Probe for the XTVERSION response

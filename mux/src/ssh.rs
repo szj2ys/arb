@@ -198,7 +198,7 @@ pub fn ssh_domain_to_ssh_config(ssh_dom: &SshDomain) -> anyhow::Result<ConfigMap
         }
     };
 
-    let mut ssh_config = ssh_config.for_host(&remote_host_name);
+    let mut ssh_config = ssh_config.for_host(remote_host_name);
     ssh_config.insert(
         "wezterm_ssh_backend".to_string(),
         match ssh_dom
@@ -280,7 +280,7 @@ impl RemoteSshDomain {
                 format!("cd {};", shell_words::quote(&dir))
             } else if let Some(dir) = cmd.get_cwd() {
                 let dir = dir.to_str().context("converting cwd to string")?;
-                format!("cd {};", shell_words::quote(&dir))
+                format!("cd {};", shell_words::quote(dir))
             } else {
                 String::new()
             };
@@ -554,8 +554,8 @@ fn connect_ssh_session(
                     let size = *self.size.lock().unwrap();
                     if starting_size != size {
                         return Ok(Some(InputEvent::Resized {
-                            cols: size.cols as usize,
-                            rows: size.rows as usize,
+                            cols: size.cols,
+                            rows: size.rows,
                         }));
                     }
                 }
@@ -653,7 +653,7 @@ fn connect_ssh_session(
                 match smol::block_on(session.request_pty(
                     &config::configuration().term,
                     crate::terminal_size_to_pty_size(*size.lock().unwrap())?,
-                    command_line.as_ref().map(|s| s.as_str()),
+                    command_line.as_deref(),
                     Some(env),
                 )) {
                     Err(err) => {
@@ -722,7 +722,7 @@ impl Domain for RemoteSshDomain {
                     &config::configuration().term,
                     crate::terminal_size_to_pty_size(size)
                         .context("compute pty size from terminal size")?,
-                    command_line.as_ref().map(|s| s.as_str()),
+                    command_line.as_deref(),
                     Some(env.clone()),
                 )
                 .await

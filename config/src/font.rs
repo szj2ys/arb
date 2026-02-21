@@ -599,7 +599,7 @@ impl TextStyle {
         // Insert our bundled default JetBrainsMono as a fallback
         // in case their preference doesn't match anything.
         // But don't add it if it is already their preference.
-        if !font.iter().any(|f| *f == default_font) {
+        if !font.contains(&default_font) {
             default_font.is_fallback = true;
             font.push(default_font);
         }
@@ -614,20 +614,20 @@ impl TextStyle {
             "Hiragino Sans GB",
         ] {
             let fallback = FontAttributes::new_fallback(family);
-            if !font.iter().any(|f| *f == fallback) {
+            if !font.contains(&fallback) {
                 font.push(fallback);
             }
         }
 
         // We bundle this emoji font as an in-memory fallback
         let emoji_fallback = FontAttributes::new_fallback("Noto Color Emoji");
-        if !font.iter().any(|f| *f == emoji_fallback) {
+        if !font.contains(&emoji_fallback) {
             font.push(emoji_fallback);
         }
 
         // Add symbols that many people end up using via patched fonts
         let symbol_fallback = FontAttributes::new_fallback("Symbols Nerd Font Mono");
-        if !font.iter().any(|f| *f == symbol_fallback) {
+        if !font.contains(&symbol_fallback) {
             font.push(symbol_fallback);
         }
 

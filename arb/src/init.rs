@@ -175,7 +175,7 @@ exit 127
             }
         }
 
-        for candidate in [
+        [
             PathBuf::from("/Applications/Arb.app/Contents/MacOS/arb"),
             config::HOME_DIR
                 .join("Applications")
@@ -183,13 +183,9 @@ exit 127
                 .join("Contents")
                 .join("MacOS")
                 .join("arb"),
-        ] {
-            if candidate.exists() {
-                return Some(candidate);
-            }
-        }
-
-        None
+        ]
+        .into_iter()
+        .find(|candidate| candidate.exists())
     }
 
     fn escape_for_double_quotes(value: &str) -> String {

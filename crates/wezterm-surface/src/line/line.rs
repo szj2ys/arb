@@ -224,9 +224,8 @@ impl Line {
                     .map(|line| line.len() + cell.width() > width)
                     .unwrap_or(true);
                 if need_new_line {
-                    lines
-                        .last_mut()
-                        .map(|line| line.set_last_cell_was_wrapped(true, seqno));
+                    if let Some(line) = lines
+                        .last_mut() { line.set_last_cell_was_wrapped(true, seqno) }
                     lines.push(Line::new(seqno));
                     delta = cell.cell_index();
                 }
@@ -504,7 +503,7 @@ impl Line {
         let cells = self.coerce_vec_storage();
         for cell in cells.iter_mut() {
             let replace = match cell.attrs().hyperlink() {
-                Some(ref link) if link.is_implicit() => Some(Cell::new_grapheme(
+                Some(link) if link.is_implicit() => Some(Cell::new_grapheme(
                     cell.str(),
                     cell.attrs().clone().set_hyperlink(None).clone(),
                     None,
@@ -1057,7 +1056,7 @@ impl Line {
         self.make_cells();
 
         match &mut self.cells {
-            CellStorage::V(c) => return c,
+            CellStorage::V(c) => c,
             CellStorage::C(_) => unreachable!(),
         }
     }
@@ -1212,7 +1211,7 @@ impl Line {
     }
 }
 
-impl<'a> From<&'a str> for Line {
+impl From<&str> for Line {
     fn from(s: &str) -> Line {
         Line::from_text(s, &CellAttributes::default(), SEQ_ZERO, None)
     }

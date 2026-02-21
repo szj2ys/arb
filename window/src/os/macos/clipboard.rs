@@ -7,6 +7,12 @@ pub struct Clipboard {
     pasteboard: id,
 }
 
+impl Default for Clipboard {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Clipboard {
     pub fn new() -> Self {
         let pasteboard = unsafe { NSPasteboard::generalPasteboard(nil) };

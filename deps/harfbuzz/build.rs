@@ -75,12 +75,6 @@ fn harfbuzz() {
     cfg.compile("harfbuzz");
 }
 
-fn git_submodule_update() {
-    let _ = std::process::Command::new("git")
-        .args(["submodule", "update", "--init"])
-        .status();
-}
-
 fn main() {
     harfbuzz();
     let out_dir = env::var("OUT_DIR").unwrap();

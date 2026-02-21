@@ -23,6 +23,12 @@ pub struct ClientId {
     pub ssh_auth_sock: Option<String>,
 }
 
+impl Default for ClientId {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ClientId {
     pub fn new() -> Self {
         let id = CLIENT_ID.fetch_add(1, Ordering::Relaxed);

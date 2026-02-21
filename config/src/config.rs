@@ -1456,7 +1456,7 @@ impl Config {
         let need_disk_schemes = cfg
             .color_scheme
             .as_ref()
-            .map_or(false, |name| !cfg.color_schemes.contains_key(name.as_str()));
+            .is_some_and(|name| !cfg.color_schemes.contains_key(name.as_str()));
         if need_disk_schemes {
             cfg.load_color_schemes(&cfg.compute_color_scheme_dirs())
                 .ok();
@@ -2302,7 +2302,7 @@ pub(crate) fn validate_domain_name(name: &str) -> Result<(), String> {
         Err(format!(
             "\"{name}\" is a built-in domain and cannot be redefined"
         ))
-    } else if name == "" {
+    } else if name.is_empty() {
         Err("the empty string is an invalid domain name".to_string())
     } else {
         Ok(())

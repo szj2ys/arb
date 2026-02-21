@@ -12,6 +12,12 @@ static COUNT: AtomicUsize = AtomicUsize::new(0);
 /// may be no windows present in the mux.
 pub struct Activity {}
 
+impl Default for Activity {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Activity {
     pub fn new() -> Self {
         COUNT.fetch_add(1, Ordering::SeqCst);

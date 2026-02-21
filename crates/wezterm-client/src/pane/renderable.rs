@@ -761,8 +761,8 @@ impl RenderableState {
                 }
             };
 
-            if inner.client.overlay_lag_indicator && idx == inner.dimensions.physical_top {
-                if inner.is_tardy() {
+            if inner.client.overlay_lag_indicator && idx == inner.dimensions.physical_top
+                && inner.is_tardy() {
                     let status = format!(
                         "arb: {:.0?}⏳since last response",
                         inner.last_recv_time.elapsed()
@@ -782,7 +782,6 @@ impl RenderableState {
                         .unwrap()
                         .overlay_text_with_attribute(col, &status, attr, SEQ_ZERO);
                 }
-            }
 
             inner.lines.put(idx, entry);
         }

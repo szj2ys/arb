@@ -90,7 +90,7 @@ impl PerPane {
             changed = true;
         }
 
-        if !changed && !force_with_input_serial.is_some() {
+        if !changed && force_with_input_serial.is_none() {
             return None;
         }
 

@@ -432,7 +432,7 @@ impl InputMap {
                 continue;
             }
             if entry.action == *action {
-                candidates.push((key.clone(), mods.clone()));
+                candidates.push((key.clone(), *mods));
             }
         }
 

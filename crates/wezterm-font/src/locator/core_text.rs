@@ -211,7 +211,7 @@ impl FontLocator for CoreTextFontLocator {
         }
 
         matches.sort_by(|(a_len, a), (b_len, b)| {
-            let primary = a_len.cmp(&b_len).reverse();
+            let primary = a_len.cmp(b_len).reverse();
             if primary == Ordering::Equal {
                 a.cmp(b)
             } else {

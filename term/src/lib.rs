@@ -15,6 +15,14 @@
 //!
 //! The entrypoint to the crate is the [Terminal](terminal/struct.Terminal.html)
 //! struct.
+#![allow(clippy::result_large_err)]
+#![allow(clippy::drop_non_drop)]
+#![allow(clippy::unused_io_amount)]
+#![allow(clippy::match_like_matches_macro)]
+#![allow(clippy::upper_case_acronyms)]
+#![allow(clippy::needless_borrows_for_generic_args)]
+#![allow(clippy::boxed_local)]
+
 use anyhow::Error;
 #[cfg(feature = "use_serde")]
 use serde::{Deserialize, Serialize};
