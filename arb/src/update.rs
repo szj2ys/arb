@@ -1052,8 +1052,6 @@ log "done"
             assert_eq!(format_version_for_display("  v0.3.2  "), "0.3.2");
         }
 
-        // ── Task 2 (TODO.md): BREW_CASK_NAME and URL constant regression tests ──
-
         #[test]
         fn should_have_correct_brew_cask_name() {
             assert_eq!(
