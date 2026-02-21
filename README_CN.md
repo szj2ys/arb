@@ -3,7 +3,7 @@
 <div align="center">
   <h1>arb</h1>
   <p><em>默认极速，按需深入。</em></p>
-  <p>一个面向 AI 编程时代的 GPU 加速终端 — 开箱即用，无需配置。</p>
+  <p>一个自带 Shell 套件的 GPU 加速 macOS 终端。<br />零配置。零插件。打开即可编程。</p>
 </div>
 
 <p align="center">
@@ -13,6 +13,13 @@
   <a href="https://github.com/szj2ys/arb/releases/latest"><img src="https://img.shields.io/github/v/release/szj2ys/arb?style=flat-square" alt="Latest Release"></a>
   <a href="https://github.com/szj2ys/arb/releases"><img src="https://img.shields.io/github/downloads/szj2ys/arb/total?style=flat-square" alt="Downloads"></a>
   <a href="https://github.com/szj2ys/arb/actions"><img src="https://img.shields.io/github/actions/workflow/status/szj2ys/arb/ci.yml?style=flat-square" alt="CI Status"></a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/binary-~40%20MB-brightgreen?style=flat-square" alt="Binary Size ~40 MB" />
+  <img src="https://img.shields.io/badge/shell%20boot-~100ms-brightgreen?style=flat-square" alt="Shell Boot ~100ms" />
+  <img src="https://img.shields.io/badge/config-zero-brightgreen?style=flat-square" alt="Zero Config" />
+  <img src="https://img.shields.io/badge/login-not%20required-brightgreen?style=flat-square" alt="No Login Required" />
 </p>
 
 <div align="center">
@@ -25,7 +32,7 @@
 
 <p align="center">
   <a href="https://szj2ys.github.io/arb/">
-    <strong>在线体验 →</strong>
+    <strong>在线体验 &rarr;</strong>
   </a>
 </p>
 
@@ -33,45 +40,79 @@
 
 ## 特性
 
-- **零配置** — 精心调校的默认设置，JetBrains Mono 字体、优化的 macOS 字体渲染、流畅动画。打开即可使用。
-- **内置 Shell 套件** — 预装 Starship、z、Delta、语法高亮和自动补全建议。无需额外安装插件。
-- **快速轻量** — 二进制体积缩减 40%，即时启动，懒加载，精简的 GPU 加速核心。
-- **Lua 脚本** — 保留完整的 Lua 脚本能力，按需进行无限自定义。
+- **零配置** -- 精心调校的默认设置，JetBrains Mono 字体、优化的 macOS 字体渲染、流畅动画。打开即可使用。
+- **内置 Shell 套件** -- 预装 Starship、z、Delta、语法高亮和自动补全建议。无需额外安装插件。
+- **快速轻量** -- ~40 MB 二进制，即时启动，懒加载，精简的 GPU 加速核心。
+- **Lua 脚本** -- 保留完整的 Lua 脚本能力，按需进行无限自定义。
 
 ---
 
-## 为什么做 arb？
+## 竞品对比
 
-我重度依赖命令行进行工作和个人项目。
+|  | arb | iTerm2 | Alacritty | Kitty | Ghostty | Warp |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **零配置** | 是 | 否 | 否 | 否 | 否 | 部分 |
+| **内置 Shell 工具** | 是 | 否 | 否 | 否 | 否 | 部分 |
+| **GPU 渲染** | 是 | 部分 | 是 | 是 | 是 | 是 |
+| **Lua 脚本** | 是 | 否 | 否 | 是 | 否 | 否 |
+| **无需登录** | 是 | 是 | 是 | 是 | 是 | 否 |
+| **开源** | 是 | 是 | 是 | 是 | 是 | 否 |
+| **二进制大小** | ~40 MB | ~60 MB | ~20 MB | ~30 MB | ~15 MB | ~90 MB |
 
-我用了多年 Alacritty，但它不支持多标签页，在 AI 辅助编程场景下越来越不方便。Kitty 在审美和布局上有些怪癖。Ghostty 有潜力但字体渲染还需改进。Warp 臃肿且需要登录。iTerm2 可靠但略显老态，深度定制也不够方便。
+arb 是唯一一个开箱即带完整 Shell 套件（Starship、z、Delta、语法高亮、自动补全建议）的终端 -- 无需插件、无需改 dotfile、无需包管理器折腾。
 
-我想要一个开箱即用、无需大量配置的环境——而且要快得多、轻得多。
+---
 
-所以我做了 arb：快速、精致、即刻可用。
+## 为什么选 arb？
+
+### 一条命令，新机器就绑定
+
+大多数终端需要你分别安装提示符、模糊搜索、语法高亮、补全和 diff 工具。arb 把这些全部内置为 Shell 套件。运行 `brew install szj2ys/arb/arb`，打开应用，你的 Shell 就完整了。
+
+### 为 AI 编程工作流而生
+
+AI 辅助开发意味着更多标签页、更多分屏、更多上下文切换。arb 启动极快（Shell 启动 ~100ms），原生支持多标签页和分屏，让你专注于和 AI 工具的对话，而不是等终端响应。
+
+### 只在需要时才配置
+
+arb 提供有主见的默认设置（JetBrains Mono、Arb Dark、流畅动画），适合大多数开发者直接使用。当你确实想修改时，`~/.config/arb/arb.lua` 一个 Lua 配置文件就能完全掌控 -- 没有分散的 dotfile，没有插件管理器，没有依赖链。
 
 ### 性能
 
-| 指标 | 上游 | arb | 方法 |
+| 指标 | 典型终端 | arb | 方法 |
 | :--- | :--- | :--- | :--- |
 | **可执行文件大小** | ~67 MB | ~40 MB | 激进的符号裁剪和功能精简 |
 | **资源体积** | ~100 MB | ~80 MB | 资源优化和懒加载 |
 | **启动延迟** | 标准 | 即时 | 即时初始化 |
 | **Shell 启动** | ~200ms | ~100ms | 优化的环境初始化 |
 
-通过激进地裁剪未使用的功能、懒加载配色方案和 Shell 优化来实现。
-
 ---
 
 ## 快速开始
 
-1. 下载最新 DMG 并拖入 Applications。
-2. 或使用 Homebrew 安装：
-   ```bash
-   brew install szj2ys/arb/arb
-   ```
-3. 打开 arb。应用已通过 Apple 公证，无需安全设置即可直接打开
-4. 首次启动时，arb 会自动配置你的 Shell 环境
+### 安装
+
+```bash
+brew install szj2ys/arb/arb
+```
+
+或从 [Releases](https://github.com/szj2ys/arb/releases) 下载最新 `.dmg` 并拖入 Applications。
+
+应用已通过 Apple 公证，无需安全设置即可直接打开。
+
+### 首次启动会发生什么
+
+1. arb 检测你的 Shell（zsh），自动安装内置 Shell 套件 -- Starship 提示符、z 目录跳转、Delta diff 工具、语法高亮和自动补全建议。
+2. 在你的 `.zshrc` 中追加一段最小化配置块。arb 只追加，不会覆盖你现有的配置。
+3. 一切就绪。打开新标签页，你就拥有了一个完整装备的 Shell。
+
+### 常用命令
+
+```bash
+arb doctor   # 检查 Shell 集成是否正常
+arb update   # 从命令行检查并应用更新
+arb reset    # 移除 arb 管理的 Shell 配置（--yes 非交互式）
+```
 
 ---
 
