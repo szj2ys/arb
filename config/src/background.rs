@@ -153,14 +153,11 @@ impl FromDynamic for BackgroundSize {
         value: &Value,
         options: FromDynamicOptions,
     ) -> Result<Self, wezterm_dynamic::Error> {
-        match value {
-            Value::String(label) => match label.as_str() {
-                "Contain" => return Ok(Self::Contain),
-                "Cover" => return Ok(Self::Cover),
-                _ => {}
-            },
+        if let Value::String(label) = value { match label.as_str() {
+            "Contain" => return Ok(Self::Contain),
+            "Cover" => return Ok(Self::Cover),
             _ => {}
-        }
+        } }
         match PixelUnit::from_dynamic(value, options) {
             Ok(pix) => Ok(Self::Dimension(pix.into())),
             Err(_) => Err(wezterm_dynamic::Error::Message(format!(

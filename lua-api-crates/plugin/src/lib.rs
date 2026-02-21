@@ -1,3 +1,5 @@
+#![allow(clippy::never_loop)]
+
 use anyhow::{anyhow, Context};
 use config::lua::get_or_create_sub_module;
 use config::lua::mlua::{self, Lua, Value};
@@ -43,11 +45,9 @@ fn compute_repo_dir(url: &str) -> String {
 
 fn get_remote(repo: &Repository) -> anyhow::Result<Option<Remote<'_>>> {
     let remotes = repo.remotes()?;
-    for remote in remotes.iter() {
-        if let Some(name) = remote {
-            let remote = repo.find_remote(name)?;
-            return Ok(Some(remote));
-        }
+    for name in remotes.iter().flatten() {
+        let remote = repo.find_remote(name)?;
+        return Ok(Some(remote));
     }
     Ok(None)
 }

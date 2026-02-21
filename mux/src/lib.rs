@@ -1,3 +1,21 @@
+#![allow(clippy::too_many_arguments)]
+#![allow(clippy::result_large_err)]
+#![allow(clippy::field_reassign_with_default)]
+#![allow(clippy::manual_flatten)]
+#![allow(clippy::match_like_matches_macro)]
+#![allow(clippy::derived_hash_with_manual_eq)]
+#![allow(clippy::non_canonical_partial_ord_impl)]
+#![allow(clippy::option_map_unit_fn)]
+#![allow(clippy::needless_borrow)]
+#![allow(clippy::unnecessary_get_then_check)]
+#![allow(clippy::needless_borrows_for_generic_args)]
+#![allow(clippy::wildcard_in_or_patterns)]
+#![allow(clippy::type_complexity)]
+#![allow(clippy::redundant_guards)]
+#![allow(clippy::redundant_closure)]
+#![allow(clippy::boxed_local)]
+#![allow(clippy::box_collection)]
+
 use crate::client::{ClientId, ClientInfo};
 use crate::pane::{CachePolicy, Pane, PaneId};
 use crate::ssh_agent::AgentProxy;
@@ -167,7 +185,7 @@ fn parse_buffered_data(pane: Weak<dyn Pane>, dead: &Arc<AtomicBool>, mut rx: Fil
 
                             // Flush prior actions
                             if !actions.is_empty() {
-                                send_actions_to_mux(&pane, &dead, std::mem::take(&mut actions));
+                                send_actions_to_mux(&pane, dead, std::mem::take(&mut actions));
                                 action_size = 0;
                             }
                         }
@@ -186,7 +204,7 @@ fn parse_buffered_data(pane: Weak<dyn Pane>, dead: &Arc<AtomicBool>, mut rx: Fil
                     action.append_to(&mut actions);
 
                     if flush && !actions.is_empty() {
-                        send_actions_to_mux(&pane, &dead, std::mem::take(&mut actions));
+                        send_actions_to_mux(&pane, dead, std::mem::take(&mut actions));
                         action_size = 0;
                     }
                 });
@@ -221,7 +239,7 @@ fn parse_buffered_data(pane: Weak<dyn Pane>, dead: &Arc<AtomicBool>, mut rx: Fil
                         }
                     }
 
-                    send_actions_to_mux(&pane, &dead, std::mem::take(&mut actions));
+                    send_actions_to_mux(&pane, dead, std::mem::take(&mut actions));
                     deadline = None;
                     action_size = 0;
                 }
@@ -238,7 +256,7 @@ fn parse_buffered_data(pane: Weak<dyn Pane>, dead: &Arc<AtomicBool>, mut rx: Fil
     // for very short lived commands so that we don't forget to
     // display what they displayed.
     if !actions.is_empty() {
-        send_actions_to_mux(&pane, &dead, std::mem::take(&mut actions));
+        send_actions_to_mux(&pane, dead, std::mem::take(&mut actions));
     }
 }
 
@@ -573,8 +591,7 @@ impl Mux {
     pub fn iter_clients(&self) -> Vec<ClientInfo> {
         self.clients
             .read()
-            .values()
-            .map(|info| info.clone())
+            .values().cloned()
             .collect()
     }
 
@@ -611,7 +628,7 @@ impl Mux {
             .and_then(|ident| {
                 self.clients
                     .read()
-                    .get(&ident)
+                    .get(ident)
                     .and_then(|info| info.active_workspace.clone())
             })
             .unwrap_or_else(|| self.get_default_workspace())
@@ -621,14 +638,14 @@ impl Mux {
     pub fn active_workspace_for_client(&self, ident: &Arc<ClientId>) -> String {
         self.clients
             .read()
-            .get(&ident)
+            .get(ident)
             .and_then(|info| info.active_workspace.clone())
             .unwrap_or_else(|| self.get_default_workspace())
     }
 
     pub fn set_active_workspace_for_client(&self, ident: &Arc<ClientId>, workspace: &str) {
         let mut clients = self.clients.write();
-        if let Some(info) = clients.get_mut(&ident) {
+        if let Some(info) = clients.get_mut(ident) {
             info.active_workspace.replace(workspace.to_string());
             self.notify(MuxNotification::ActiveWorkspaceChanged(ident.clone()));
         }
@@ -1036,9 +1053,7 @@ impl Mux {
 
     pub fn iter_panes(&self) -> Vec<Arc<dyn Pane>> {
         self.panes
-            .read()
-            .iter()
-            .map(|(_, v)| Arc::clone(v))
+            .read().values().map(|v| Arc::clone(v))
             .collect()
     }
 
@@ -1134,7 +1149,7 @@ impl Mux {
                 .get_domain(*domain_id)
                 .ok_or_else(|| anyhow!("domain id {} is invalid", domain_id))?,
             SpawnTabDomain::DomainName(name) => {
-                self.get_domain_by_name(&name).ok_or_else(|| {
+                self.get_domain_by_name(name).ok_or_else(|| {
                     let names: Vec<String> = self
                         .domains_by_name
                         .read()

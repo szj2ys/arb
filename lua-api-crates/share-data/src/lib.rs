@@ -1,3 +1,5 @@
+#![allow(unused_mut)]
+
 use config::lua::get_or_create_module;
 use config::lua::mlua::{
     self, IntoLua, Lua, UserData, UserDataMethods, UserDataRef, Value as LuaValue,
@@ -211,7 +213,7 @@ fn lua_value_to_gvalue_impl(value: LuaValue, visited: &mut HashSet<usize>) -> ml
                 }
 
                 Value::Array(Array {
-                    inner: Arc::new(Mutex::new(array.into())),
+                    inner: Arc::new(Mutex::new(array)),
                 })
             } else {
                 let mut obj = BTreeMap::default();
@@ -228,7 +230,7 @@ fn lua_value_to_gvalue_impl(value: LuaValue, visited: &mut HashSet<usize>) -> ml
                     obj.insert(key, value);
                 }
                 Value::Object(Object {
-                    inner: Arc::new(Mutex::new(obj.into())),
+                    inner: Arc::new(Mutex::new(obj)),
                 })
             }
         }
@@ -299,7 +301,7 @@ impl UserData for Value {
                                     arr[i - 1].clone().into_lua(lua)?,
                                 ]));
                             }
-                            return Ok(mlua::Variadic::new());
+                            Ok(mlua::Variadic::new())
                         }
                         _ => unreachable!(),
                     },
@@ -319,7 +321,7 @@ impl UserData for Value {
                                 this_is_key = true;
                             }
 
-                            while let Some((this_key, value)) = iter.next() {
+                            for (this_key, value) in iter {
                                 if this_is_key {
                                     return Ok(mlua::MultiValue::from_vec(vec![
                                         this_key.clone().into_lua(lua)?,
@@ -330,7 +332,7 @@ impl UserData for Value {
                                     this_is_key = true;
                                 }
                             }
-                            return Ok(mlua::MultiValue::new());
+                            Ok(mlua::MultiValue::new())
                         }
                         _ => unreachable!(),
                     },

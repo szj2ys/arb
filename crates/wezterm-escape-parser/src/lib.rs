@@ -2,6 +2,11 @@
 // using derive(FromPrimitive)
 #![allow(clippy::useless_attribute)]
 #![allow(clippy::upper_case_acronyms)]
+#![allow(clippy::result_large_err)]
+#![allow(clippy::result_unit_err)]
+#![allow(clippy::legacy_numeric_constants)]
+#![allow(clippy::wrong_self_convention)]
+#![allow(clippy::large_enum_variant)]
 #![cfg_attr(not(feature = "std"), no_std)]
 //! This module provides the ability to parse escape sequences and attach
 //! semantic meaning to them.  It can also encode the semantic values as

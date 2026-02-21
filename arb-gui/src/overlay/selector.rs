@@ -118,7 +118,7 @@ impl SelectorState {
 
         let labels = &self.labels;
         let max_label_len = labels.iter().map(|s| s.len()).max().unwrap_or(0);
-        let mut labels_iter = labels.into_iter();
+        let mut labels_iter = labels.iter();
 
         let config = configuration();
         let colors = &config.resolved_palette;
@@ -207,7 +207,7 @@ impl SelectorState {
     fn trigger_event(&self, entry: Option<InputSelectorEntry>) {
         let name = self.event_name.clone();
         let window = self.window.clone();
-        let pane = self.pane.clone();
+        let pane = self.pane;
 
         promise::spawn::spawn_into_main_thread(async move {
             trampoline(name, window, pane, entry);
@@ -251,7 +251,7 @@ impl SelectorState {
                         // since the number of labels is always <= self.max_items
                         // by construction, we have pos as usize <= self.max_items
                         // for free
-                        self.active_idx = self.top_row + pos as usize;
+                        self.active_idx = self.top_row + pos;
                         if self.launch(self.active_idx) {
                             break;
                         }
@@ -354,11 +354,10 @@ impl SelectorState {
                     if y > 0 && y as usize <= self.filtered_entries.len() {
                         self.active_idx = self.top_row + y as usize - 1;
 
-                        if mouse_buttons == MouseButtons::LEFT {
-                            if self.launch(self.active_idx) {
+                        if mouse_buttons == MouseButtons::LEFT
+                            && self.launch(self.active_idx) {
                                 break;
                             }
-                        }
                     }
                     if mouse_buttons != MouseButtons::NONE {
                         // Treat any other mouse button as cancel

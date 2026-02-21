@@ -73,8 +73,6 @@ impl SplitPane {
 
         let direction = if self.left || self.right || self.horizontal {
             SplitDirection::Horizontal
-        } else if self.top || self.bottom {
-            SplitDirection::Vertical
         } else {
             SplitDirection::Vertical
         };

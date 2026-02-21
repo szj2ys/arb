@@ -37,11 +37,11 @@ impl Default for SmallColor {
     }
 }
 
-impl Into<ColorAttribute> for SmallColor {
-    fn into(self) -> ColorAttribute {
-        match self {
-            Self::Default => ColorAttribute::Default,
-            Self::PaletteIndex(idx) => ColorAttribute::PaletteIndex(idx),
+impl From<SmallColor> for ColorAttribute {
+    fn from(val: SmallColor) -> Self {
+        match val {
+            SmallColor::Default => ColorAttribute::Default,
+            SmallColor::PaletteIndex(idx) => ColorAttribute::PaletteIndex(idx),
         }
     }
 }
@@ -93,6 +93,7 @@ struct FatAttributes {
     hyperlink: Option<Arc<Hyperlink>>,
     /// The image data, if any
     #[cfg(feature = "use_image")]
+    #[allow(clippy::vec_box)]
     image: Vec<Box<ImageCell>>,
     /// The color of the underline.  If None, then
     /// the foreground color is to be used
@@ -265,11 +266,10 @@ impl CellAttributes {
     }
 
     pub fn foreground(&self) -> ColorAttribute {
-        if let Some(fat) = self.fat.as_ref() {
-            if fat.foreground != ColorAttribute::Default {
+        if let Some(fat) = self.fat.as_ref()
+            && fat.foreground != ColorAttribute::Default {
                 return fat.foreground;
             }
-        }
         self.foreground.into()
     }
 
@@ -301,11 +301,10 @@ impl CellAttributes {
     }
 
     pub fn background(&self) -> ColorAttribute {
-        if let Some(fat) = self.fat.as_ref() {
-            if fat.background != ColorAttribute::Default {
+        if let Some(fat) = self.fat.as_ref()
+            && fat.background != ColorAttribute::Default {
                 return fat.background;
             }
-        }
         self.background.into()
     }
 
@@ -428,16 +427,15 @@ impl CellAttributes {
             background: self.background,
             fat: None,
         };
-        if let Some(fat) = self.fat.as_ref() {
-            if fat.background != ColorAttribute::Default
-                || fat.foreground != ColorAttribute::Default
+        if let Some(fat) = self.fat.as_ref()
+            && (fat.background != ColorAttribute::Default
+                || fat.foreground != ColorAttribute::Default)
             {
                 res.allocate_fat_attributes();
                 let new_fat = res.fat.as_mut().unwrap();
                 new_fat.foreground = fat.foreground;
                 new_fat.background = fat.background;
             }
-        }
         // Reset the semantic type; clone_sgr_only is used primarily
         // to create a "blank" cell when clearing and we want that to
         // be deterministically tagged as Output so that we have an
@@ -625,7 +623,7 @@ impl TeenyString {
                     len,
                 );
             }
-            let word = Self::set_marker_bit(word as u64, width);
+            let word = Self::set_marker_bit(word, width);
             Self(word)
         } else {
             let vec = Box::new(TeenyStringHeap {
@@ -861,11 +859,10 @@ impl UnicodeVersion {
     #[inline]
     fn wcwidth(&self, c: char) -> usize {
         #[cfg(feature = "std")]
-        if let Some(ref cell_widths) = self.cell_widths {
-            if let Some(width) = cell_widths.get(&(c as u32)) {
+        if let Some(ref cell_widths) = self.cell_widths
+            && let Some(width) = cell_widths.get(&(c as u32)) {
                 return (*width).into();
             }
-        }
         self.width(WCWIDTH_TABLE.classify(c))
     }
 
@@ -939,7 +936,7 @@ pub fn unicode_column_width(s: &str, version: Option<&UnicodeVersion>) -> usize 
 /// the Cell that is used to hold a grapheme, and that per-Cell version
 /// can then be used to calculate width.
 pub fn grapheme_column_width(s: &str, version: Option<&UnicodeVersion>) -> usize {
-    let version = version.as_deref().unwrap_or(&LATEST_UNICODE_VERSION);
+    let version = version.unwrap_or(&LATEST_UNICODE_VERSION);
 
     // Optimization: if there is a single byte we can directly cast
     // that byte as a char which will be in the range 0.255.

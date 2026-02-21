@@ -38,7 +38,6 @@ use std::sync::Arc;
 /// How is this used? The Mux::client_had_input function
 /// will call AgentProxy::update_target to signal when
 /// the active client may have changed.
-
 pub struct AgentProxy {
     sock_path: PathBuf,
     current_target: RwLock<Option<Arc<ClientId>>>,
@@ -76,6 +75,12 @@ fn update_symlink<P: AsRef<Path>, Q: AsRef<Path>>(original: P, link: Q) -> anyho
                 );
             }
         }
+    }
+}
+
+impl Default for AgentProxy {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -121,7 +126,7 @@ impl AgentProxy {
     }
 
     fn process_updates(receiver: Receiver<()>) {
-        while let Ok(_) = receiver.recv() {
+        while receiver.recv().is_ok() {
             // De-bounce multiple input events so that we don't quickly
             // thrash between the host and proxy value
             std::thread::sleep(std::time::Duration::from_millis(100));
@@ -174,7 +179,7 @@ impl AgentProxy {
         });
 
         log::trace!("filtered to {clients:#?}");
-        match clients.get(0) {
+        match clients.first() {
             Some(info) => {
                 let current = self.current_target.read().clone();
                 let needs_update = match (current, &info.client_id) {

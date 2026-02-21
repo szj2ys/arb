@@ -221,12 +221,12 @@ impl crate::TermWindow {
         // Clamp and use the nearest texel rather than interpolate.
         // This prevents things like the box cursor outlines from
         // being randomly doubled in width or height
-        let atlas_nearest_sampler = Sampler::new(&*tex)
+        let atlas_nearest_sampler = Sampler::new(tex)
             .wrap_function(SamplerWrapFunction::Clamp)
             .magnify_filter(MagnifySamplerFilter::Nearest)
             .minify_filter(MinifySamplerFilter::Nearest);
 
-        let atlas_linear_sampler = Sampler::new(&*tex)
+        let atlas_linear_sampler = Sampler::new(tex)
             .wrap_function(SamplerWrapFunction::Clamp)
             .magnify_filter(MagnifySamplerFilter::Linear)
             .minify_filter(MinifySamplerFilter::Linear);

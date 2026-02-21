@@ -58,12 +58,12 @@ impl TmuxDomainState {
             return false;
         };
 
-        return local_tab.panes.get(&pane_id).is_some();
+        local_tab.panes.get(&pane_id).is_some()
     }
 
     pub fn check_window_attached(&self, window_id: TmuxWindowId) -> bool {
         let gui_tabs = self.gui_tabs.lock();
-        return gui_tabs.get(&window_id).is_some();
+        gui_tabs.get(&window_id).is_some()
     }
 
     /// after we create a tab for a remote pane, save its ID into the
@@ -86,24 +86,19 @@ impl TmuxDomainState {
             }
             None => {
                 panes.insert(pane_id);
-                return Ok(());
+                Ok(())
             }
         }
     }
 
     fn add_attached_window(&self, target: &WindowItem, tab_id: &TabId) -> anyhow::Result<()> {
         let mut gui_tabs = self.gui_tabs.lock();
-        if !gui_tabs.contains_key(&target.window_id) {
-            gui_tabs.insert(
-                target.window_id,
-                TmuxTab {
+        gui_tabs.entry(target.window_id).or_insert_with(|| TmuxTab {
                     tab_id: *tab_id,
                     tmux_window_id: target.window_id,
                     layout_csum: target.layout_csum.clone(),
                     panes: HashSet::new(),
-                },
-            );
-        }
+                });
 
         Ok(())
     }
@@ -264,7 +259,7 @@ impl TmuxDomainState {
 
         let p = PaneItem {
             session_id: 0,
-            window_id: window_id,
+            window_id,
             pane_id: remote_id,
             _pane_index: 0,
             cursor_x: 0,
@@ -283,7 +278,7 @@ impl TmuxDomainState {
 
         let _ = mux.add_pane(&pane);
 
-        return Ok(pane);
+        Ok(pane)
     }
 
     fn sync_pane_state(&self, panes: &[PaneItem]) -> anyhow::Result<()> {
@@ -339,12 +334,9 @@ impl TmuxDomainState {
                         anyhow::bail!("invalid tmux window id {}", pane.window_id);
                     };
 
-                    match mux.get_tab(local_tab.tab_id) {
-                        Some(tab) => {
-                            tab.set_active_pane(&local_pane);
-                            mux.notify(MuxNotification::PaneFocused(local_pane.pane_id()));
-                        }
-                        None => {}
+                    if let Some(tab) = mux.get_tab(local_tab.tab_id) {
+                        tab.set_active_pane(&local_pane);
+                        mux.notify(MuxNotification::PaneFocused(local_pane.pane_id()));
                     }
                 }
             }
@@ -384,10 +376,10 @@ impl TmuxDomainState {
             };
 
             let tab = Arc::new(Tab::new(&size));
-            tab.set_title(&format!("{}", &window.window_name));
+            tab.set_title(&(&window.window_name).to_string());
             mux.add_tab_no_panes(&tab);
 
-            let _ = self.add_attached_window(window, &tab.tab_id())?;
+            self.add_attached_window(window, &tab.tab_id())?;
 
             let mut split_stack;
             let mut split_direction;
@@ -446,7 +438,7 @@ impl TmuxDomainState {
                         local_pane = self.create_pane(&p).context("failed to create pane")?;
                         self.add_attached_pane(p.window_id, p.pane_id)?;
                         let _ = mux.add_pane(&local_pane);
-                        if let None = tab.get_active_pane() {
+                        if tab.get_active_pane().is_none() {
                             tab.assign_pane(&local_pane);
                             split_pane_index = tab.get_active_idx();
                             continue;
@@ -527,15 +519,12 @@ impl TmuxDomainState {
         }
 
         // To keep the active window last one to make it active after set the focus pane
-        match windows.iter().find(|w| w.window_active) {
-            Some(window) => {
-                self.cmd_queue.lock().push_back(Box::new(ListAllPanes {
-                    window_id: window.window_id,
-                    prune: false,
-                    layout_csum: window.layout_csum.clone(),
-                }));
-            }
-            None => {}
+        if let Some(window) = windows.iter().find(|w| w.window_active) {
+            self.cmd_queue.lock().push_back(Box::new(ListAllPanes {
+                window_id: window.window_id,
+                prune: false,
+                layout_csum: window.layout_csum.clone(),
+            }));
         }
 
         if *self.attach_state.lock() == AttachState::Init {
@@ -568,23 +557,19 @@ impl TmuxDomainState {
 
                 match n {
                     MuxNotification::PaneFocused(pane_id) => {
-                        let tmux_pane_id = match tmux_domain
+                        let tmux_pane_id = tmux_domain
                             .inner
                             .remote_panes
                             .lock()
                             .iter()
-                            .find(|(_, p)| p.lock().local_pane_id == pane_id)
-                        {
-                            Some((_, p)) => Some(p.lock().pane_id),
-                            None => None,
-                        };
+                            .find(|(_, p)| p.lock().local_pane_id == pane_id).map(|(_, p)| p.lock().pane_id);
 
                         if let Some(pane_id) = tmux_pane_id {
                             tmux_domain
                                 .inner
                                 .cmd_queue
                                 .lock()
-                                .push_back(Box::new(SelectPane { pane_id: pane_id }));
+                                .push_back(Box::new(SelectPane { pane_id }));
                             TmuxDomainState::schedule_send_next_command(domain_id);
                         }
                     }
@@ -593,20 +578,16 @@ impl TmuxDomainState {
                             let Some(tab) = window.get_active() else {
                                 return;
                             };
-                            let tmux_window_id = match tmux_domain
+                            let tmux_window_id = tmux_domain
                                 .inner
                                 .gui_tabs
                                 .lock()
                                 .iter()
-                                .find(|(_, t)| t.tab_id == tab.tab_id())
-                            {
-                                Some((_, t)) => Some(t.tmux_window_id),
-                                None => None,
-                            };
+                                .find(|(_, t)| t.tab_id == tab.tab_id()).map(|(_, t)| t.tmux_window_id);
                             if let Some(window_id) = tmux_window_id {
                                 tmux_domain.inner.cmd_queue.lock().push_back(Box::new(
                                     SelectWindow {
-                                        window_id: window_id,
+                                        window_id,
                                     },
                                 ));
                                 TmuxDomainState::schedule_send_next_command(domain_id);
@@ -948,7 +929,7 @@ impl TmuxCommand for Resize {
             }
         } else {
             log::info!("The tmux version is not supported");
-            return "".to_string();
+            "".to_string()
         }
     }
 
@@ -973,7 +954,7 @@ impl TmuxCommand for CapturePane {
         format!(
             "capture-pane -p -t %{} -e -C -S {}\n",
             self.pane_id,
-            self.history_limit * -1
+            -self.history_limit
         )
     }
 

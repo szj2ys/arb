@@ -1,3 +1,5 @@
+#![allow(clippy::needless_lifetimes)]
+
 use anyhow::anyhow;
 use config::lua::get_or_create_module;
 use config::lua::mlua::{self, Lua};

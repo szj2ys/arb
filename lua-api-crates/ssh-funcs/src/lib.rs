@@ -15,8 +15,8 @@ pub fn register(lua: &Lua) -> anyhow::Result<()> {
     Ok(())
 }
 
-fn enumerate_ssh_hosts<'lua>(
-    lua: &'lua Lua,
+fn enumerate_ssh_hosts(
+    lua: &Lua,
     config_files: Variadic<String>,
 ) -> mlua::Result<HashMap<String, wezterm_ssh::ConfigMap>> {
     let mut config = wezterm_ssh::Config::new();

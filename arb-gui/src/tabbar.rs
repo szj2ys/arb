@@ -56,7 +56,7 @@ fn call_format_tab_title(
             let panes = lua.create_sequence_from(pane_info.iter().cloned())?;
 
             let v = config::lua::emit_sync_callback(
-                &*lua,
+                &lua,
                 (
                     "format-tab-title".to_string(),
                     (
@@ -72,7 +72,7 @@ fn call_format_tab_title(
             match &v {
                 mlua::Value::Nil => Ok(None),
                 mlua::Value::Table(_) => {
-                    let items = <Vec<FormatItem>>::from_lua(v, &*lua)?;
+                    let items = <Vec<FormatItem>>::from_lua(v, &lua)?;
 
                     let esc = format_as_escapes(items.clone())?;
                     let line = parse_status_text(&esc, CellAttributes::default());
@@ -83,7 +83,7 @@ fn call_format_tab_title(
                     }))
                 }
                 _ => {
-                    let s = String::from_lua(v, &*lua)?;
+                    let s = String::from_lua(v, &lua)?;
                     let line = parse_status_text(&s, CellAttributes::default());
                     Ok(Some(TitleText {
                         len: line.len(),
@@ -668,57 +668,54 @@ pub fn parse_status_text(text: &str, default_cell: CellAttributes) -> Line {
             }
             Action::CSI(csi) => {
                 flush_print(&mut print_buffer, &mut cells, &pen);
-                match csi {
-                    CSI::Sgr(sgr) => match sgr {
-                        Sgr::Reset => pen = default_cell.clone(),
-                        Sgr::Intensity(i) => {
-                            pen.set_intensity(i);
+                if let CSI::Sgr(sgr) = csi { match sgr {
+                    Sgr::Reset => pen = default_cell.clone(),
+                    Sgr::Intensity(i) => {
+                        pen.set_intensity(i);
+                    }
+                    Sgr::Underline(u) => {
+                        pen.set_underline(u);
+                    }
+                    Sgr::Overline(o) => {
+                        pen.set_overline(o);
+                    }
+                    Sgr::VerticalAlign(o) => {
+                        pen.set_vertical_align(o);
+                    }
+                    Sgr::Blink(b) => {
+                        pen.set_blink(b);
+                    }
+                    Sgr::Italic(i) => {
+                        pen.set_italic(i);
+                    }
+                    Sgr::Inverse(inverse) => {
+                        pen.set_reverse(inverse);
+                    }
+                    Sgr::Invisible(invis) => {
+                        pen.set_invisible(invis);
+                    }
+                    Sgr::StrikeThrough(strike) => {
+                        pen.set_strikethrough(strike);
+                    }
+                    Sgr::Foreground(col) => {
+                        if let ColorSpec::Default = col {
+                            pen.set_foreground(default_cell.foreground());
+                        } else {
+                            pen.set_foreground(col);
                         }
-                        Sgr::Underline(u) => {
-                            pen.set_underline(u);
+                    }
+                    Sgr::Background(col) => {
+                        if let ColorSpec::Default = col {
+                            pen.set_background(default_cell.background());
+                        } else {
+                            pen.set_background(col);
                         }
-                        Sgr::Overline(o) => {
-                            pen.set_overline(o);
-                        }
-                        Sgr::VerticalAlign(o) => {
-                            pen.set_vertical_align(o);
-                        }
-                        Sgr::Blink(b) => {
-                            pen.set_blink(b);
-                        }
-                        Sgr::Italic(i) => {
-                            pen.set_italic(i);
-                        }
-                        Sgr::Inverse(inverse) => {
-                            pen.set_reverse(inverse);
-                        }
-                        Sgr::Invisible(invis) => {
-                            pen.set_invisible(invis);
-                        }
-                        Sgr::StrikeThrough(strike) => {
-                            pen.set_strikethrough(strike);
-                        }
-                        Sgr::Foreground(col) => {
-                            if let ColorSpec::Default = col {
-                                pen.set_foreground(default_cell.foreground());
-                            } else {
-                                pen.set_foreground(col);
-                            }
-                        }
-                        Sgr::Background(col) => {
-                            if let ColorSpec::Default = col {
-                                pen.set_background(default_cell.background());
-                            } else {
-                                pen.set_background(col);
-                            }
-                        }
-                        Sgr::UnderlineColor(col) => {
-                            pen.set_underline_color(col);
-                        }
-                        Sgr::Font(_) => {}
-                    },
-                    _ => {}
-                }
+                    }
+                    Sgr::UnderlineColor(col) => {
+                        pen.set_underline_color(col);
+                    }
+                    Sgr::Font(_) => {}
+                } }
             }
             Action::OperatingSystemCommand(_)
             | Action::DeviceControl(_)

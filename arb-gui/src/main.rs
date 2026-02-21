@@ -1,5 +1,26 @@
 // Don't create a new standard console window when launched from the windows GUI.
 #![cfg_attr(not(test), windows_subsystem = "windows")]
+#![allow(
+    clippy::await_holding_refcell_ref,
+    clippy::enum_variant_names,
+    clippy::extra_unused_lifetimes,
+    clippy::field_reassign_with_default,
+    clippy::if_same_then_else,
+    clippy::large_enum_variant,
+    clippy::legacy_numeric_constants,
+    clippy::manual_unwrap_or_default,
+    clippy::match_like_matches_macro,
+    clippy::missing_safety_doc,
+    clippy::nonminimal_bool,
+    clippy::reserve_after_initialization,
+    clippy::result_large_err,
+    clippy::too_many_arguments,
+    clippy::type_complexity,
+    clippy::unnecessary_mut_passed,
+    clippy::vec_box,
+    clippy::wildcard_in_or_patterns,
+    clippy::wrong_self_convention
+)]
 
 use crate::utilsprites::RenderMetrics;
 use ::window::*;
@@ -151,11 +172,10 @@ async fn spawn_tab_in_domain_if_mux_is_empty(
 
     let domain = domain.unwrap_or_else(|| mux.default_domain());
 
-    if !is_connecting {
-        if have_panes_in_domain_and_ws(&domain, &workspace) {
+    if !is_connecting
+        && have_panes_in_domain_and_ws(&domain, &workspace) {
             return Ok(());
         }
-    }
 
     let window_id = {
         // Force the builder to notify the frontend early,
@@ -190,7 +210,7 @@ async fn spawn_tab_in_domain_if_mux_is_empty(
         true
     });
 
-    let dpi = config.dpi.unwrap_or_else(|| ::window::default_dpi());
+    let dpi = config.dpi.unwrap_or_else(::window::default_dpi);
     let _tab = domain
         .spawn(
             // Keep spawn path light; GUI will publish definitive pixel geometry
@@ -357,7 +377,7 @@ async fn async_run_terminal_gui(
 
             domain.attach(Some(window_id)).await?;
             let config = config::configuration();
-            let dpi = config.dpi.unwrap_or_else(|| ::window::default_dpi());
+            let dpi = config.dpi.unwrap_or_else(::window::default_dpi);
             let tab = domain
                 .spawn(
                     // Keep spawn path light; GUI will publish definitive pixel geometry
@@ -398,7 +418,7 @@ impl Publish {
             let _ = mux;
             let _ = config;
             let _ = always_new_process;
-            return Self::NoConnectButPublish;
+            Self::NoConnectButPublish
         }
 
         #[cfg(not(target_os = "macos"))]
@@ -589,7 +609,7 @@ fn setup_mux(
             .as_deref()
             .unwrap_or(mux::DEFAULT_WORKSPACE),
     );
-    mux.set_active_workspace(&default_workspace_name);
+    mux.set_active_workspace(default_workspace_name);
 
     let default_name =
         default_domain_name.unwrap_or(config.default_domain.as_deref().unwrap_or("local"));
@@ -724,7 +744,7 @@ fn notify_on_panic() {
 
 fn terminate_with_error_message(err: &str) -> ! {
     log::error!("{}; terminating", err);
-    fatal_toast_notification("Arb Error", &err);
+    fatal_toast_notification("Arb Error", err);
     std::process::exit(1);
 }
 

@@ -213,10 +213,10 @@ impl TmuxDomainState {
                 }
                 Event::WindowRenamed { window, name } => {
                     let gui_tabs = self.gui_tabs.lock();
-                    if let Some(x) = gui_tabs.get(&window) {
+                    if let Some(x) = gui_tabs.get(window) {
                         let mux = Mux::get();
                         if let Some(tab) = mux.get_tab(x.tab_id) {
-                            tab.set_title(&format!("{}", name));
+                            tab.set_title(&name.to_string());
                         }
                     }
                 }
@@ -325,7 +325,7 @@ impl TmuxDomainState {
                 direction: split_request.direction,
             }));
             TmuxDomainState::schedule_send_next_command(self.domain_id);
-            return Ok(());
+            Ok(())
         } else {
             anyhow::bail!("Could not find the tmux pane peer for local pane: {pane_id}");
         }

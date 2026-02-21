@@ -226,7 +226,7 @@ impl Capabilities {
                 Some(_) => ColorLevel::TwoFiftySix,
                 _ => {
                     // COLORTERM isn't set, so look at the terminfo.
-                    if let Some(ref db) = terminfo_db.as_ref() {
+                    if let Some(db) = terminfo_db.as_ref() {
                         let has_true_color = db
                             .get::<cap::TrueColor>()
                             .unwrap_or(cap::TrueColor(false))

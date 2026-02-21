@@ -126,7 +126,7 @@ impl LocalProcessInfo {
         }
 
         fn cwd_for_pid(pid: libc::pid_t) -> PathBuf {
-            LocalProcessInfo::current_working_dir(pid as _).unwrap_or_else(PathBuf::new)
+            LocalProcessInfo::current_working_dir(pid as _).unwrap_or_default()
         }
 
         fn exe_and_args_for_pid_sysctl(pid: libc::pid_t) -> Option<(PathBuf, Vec<String>)> {
@@ -158,7 +158,7 @@ impl LocalProcessInfo {
         }
 
         fn exe_for_pid(pid: libc::pid_t) -> PathBuf {
-            LocalProcessInfo::executable_path(pid as _).unwrap_or_else(PathBuf::new)
+            LocalProcessInfo::executable_path(pid as _).unwrap_or_default()
         }
 
         let procs: Vec<_> = all_pids().into_iter().filter_map(info_for_pid).collect();
@@ -191,11 +191,7 @@ impl LocalProcessInfo {
             }
         }
 
-        if let Some(info) = procs.iter().find(|info| info.pbi_pid == pid) {
-            Some(build_proc(info, &procs))
-        } else {
-            None
-        }
+        procs.iter().find(|info| info.pbi_pid == pid).map(|info| build_proc(info, &procs))
     }
 }
 
@@ -220,7 +216,7 @@ fn parse_exe_and_argv_sysctl(buf: Vec<u8>) -> Option<(PathBuf, Vec<String>)> {
     fn consume_cstr(ptr: &mut &[u8]) -> Option<String> {
         // Parse to the end of a null terminated string
         let nul = ptr.iter().position(|&c| c == 0)?;
-        let s = String::from_utf8_lossy(&ptr[0..nul]).to_owned().to_string();
+        let s = String::from_utf8_lossy(&ptr[0..nul]).into_owned();
         *ptr = ptr.get(nul + 1..)?;
 
         // Find the position of the first non null byte. `.position()`

@@ -1,3 +1,14 @@
+#![allow(
+    clippy::if_same_then_else,
+    clippy::missing_transmute_annotations,
+    clippy::mut_from_ref,
+    clippy::not_unsafe_ptr_arg_deref,
+    clippy::to_string_trait_impl,
+    clippy::type_complexity,
+    clippy::unnecessary_cast,
+    clippy::unnecessary_unwrap
+)]
+
 use async_trait::async_trait;
 use bitflags::bitflags;
 use config::window::WindowLevel;

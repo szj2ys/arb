@@ -253,12 +253,6 @@ fn freetype() {
     println!("cargo:lib={}", build_dir.display());
 }
 
-fn git_submodule_update() {
-    let _ = std::process::Command::new("git")
-        .args(["submodule", "update", "--init"])
-        .status();
-}
-
 fn main() {
     zlib();
     libpng();

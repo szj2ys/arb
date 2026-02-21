@@ -177,8 +177,8 @@ impl Sftp {
                 reply,
             )))
             .await?;
-        let result = rx.recv().await??;
-        Ok(result)
+        rx.recv().await??;
+        Ok(())
     }
 
     /// Remove a directory from the remote filesystem.
@@ -194,8 +194,8 @@ impl Sftp {
                 reply,
             )))
             .await?;
-        let result = rx.recv().await??;
-        Ok(result)
+        rx.recv().await??;
+        Ok(())
     }
 
     /// Get the metadata for a file, performed by stat(2).
@@ -248,8 +248,8 @@ impl Sftp {
                 reply,
             )))
             .await?;
-        let result = rx.recv().await??;
-        Ok(result)
+        rx.recv().await??;
+        Ok(())
     }
 
     /// Create symlink at `target` pointing at `path`.
@@ -270,8 +270,8 @@ impl Sftp {
                 reply,
             )))
             .await?;
-        let result = rx.recv().await??;
-        Ok(result)
+        rx.recv().await??;
+        Ok(())
     }
 
     /// Read a symlink at `path`.
@@ -332,8 +332,8 @@ impl Sftp {
                 reply,
             )))
             .await?;
-        let result = rx.recv().await??;
-        Ok(result)
+        rx.recv().await??;
+        Ok(())
     }
 
     /// Remove a file on the remote filesystem.
@@ -349,8 +349,8 @@ impl Sftp {
                 reply,
             )))
             .await?;
-        let result = rx.recv().await??;
-        Ok(result)
+        rx.recv().await??;
+        Ok(())
     }
 }
 

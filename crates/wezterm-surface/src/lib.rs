@@ -1,4 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
+#![allow(clippy::result_large_err)]
+#![allow(clippy::module_inception)]
+#![allow(clippy::len_without_is_empty)]
 use crate::line::CellRef;
 use alloc::borrow::Cow;
 use core::cmp::min;
@@ -46,20 +49,19 @@ pub enum Position {
 
 #[cfg_attr(feature = "use_serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, Hash, Copy, PartialEq, Eq, FromDynamic, ToDynamic)]
+#[derive(Default)]
 pub enum CursorVisibility {
     Hidden,
+    #[default]
     Visible,
 }
 
-impl Default for CursorVisibility {
-    fn default() -> CursorVisibility {
-        CursorVisibility::Visible
-    }
-}
 
 #[cfg_attr(feature = "use_serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, FromDynamic, ToDynamic)]
+#[derive(Default)]
 pub enum CursorShape {
+    #[default]
     Default,
     BlinkingBlock,
     SteadyBlock,
@@ -69,11 +71,6 @@ pub enum CursorShape {
     SteadyBar,
 }
 
-impl Default for CursorShape {
-    fn default() -> CursorShape {
-        CursorShape::Default
-    }
-}
 
 impl CursorShape {
     pub fn is_blinking(self) -> bool {
@@ -278,7 +275,7 @@ impl Surface {
         let seq = self.seqno.saturating_sub(1) + changes.len();
 
         for change in &changes {
-            self.apply_change(&change);
+            self.apply_change(change);
         }
 
         self.seqno += changes.len();
@@ -525,7 +522,7 @@ impl Surface {
     }
 
     pub fn screen_lines(&self) -> Vec<Cow<'_, Line>> {
-        self.lines.iter().map(|line| Cow::Borrowed(line)).collect()
+        self.lines.iter().map(Cow::Borrowed).collect()
     }
 
     /// Returns a stream of changes suitable to update the screen
@@ -637,11 +634,11 @@ impl Surface {
             } else {
                 let last_change = changes.len() - 1;
                 match (&changes[last_change], trailing_color) {
-                    (&Change::ClearToEndOfLine(ref color), None) => {
+                    (Change::ClearToEndOfLine(color), None) => {
                         trailing_color = Some(*color);
                         trailing_idx = Some(idx);
                     }
-                    (&Change::ClearToEndOfLine(ref color), Some(other)) => {
+                    (Change::ClearToEndOfLine(color), Some(other)) => {
                         if other == *color {
                             trailing_idx = Some(idx);
                             continue;
@@ -906,7 +903,7 @@ fn compute_position_change(current: usize, pos: &Position, limit: usize) -> usiz
                     limit.saturating_sub(1),
                 )
             } else {
-                current.saturating_sub((*delta).abs() as usize)
+                current.saturating_sub((*delta).unsigned_abs())
             }
         }
         Absolute(abs) => min(*abs, limit.saturating_sub(1)),

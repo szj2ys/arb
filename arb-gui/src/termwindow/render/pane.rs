@@ -147,7 +147,7 @@ impl crate::TermWindow {
             };
 
             // Calculate the width - respect right padding
-            let width = if pos.left + pos.width >= self.terminal_size.cols as usize {
+            let width = if pos.left + pos.width >= self.terminal_size.cols {
                 // Right-most pane: extend to split center but respect window padding
                 let padding_right =
                     self.config
@@ -164,7 +164,7 @@ impl crate::TermWindow {
             };
 
             // Calculate the height - respect bottom padding
-            let height = if pos.top + pos.height >= self.terminal_size.rows as usize {
+            let height = if pos.top + pos.height >= self.terminal_size.rows {
                 // Bottom-most pane: extend to split center but respect window padding
                 let padding_bottom =
                     self.config
@@ -181,7 +181,7 @@ impl crate::TermWindow {
                     - bottom_bar_height
                     - border.bottom.get() as f32
             } else {
-                (pos.height as f32 * cell_height) + height_delta as f32
+                (pos.height as f32 * cell_height) + height_delta
             };
 
             euclid::rect(x, y, width, height)
@@ -281,7 +281,7 @@ impl crate::TermWindow {
 
             // Adjust the scrollbar thumb position
             let config = &self.config;
-            let padding = self.effective_right_padding(&config) as f32;
+            let padding = self.effective_right_padding(config) as f32;
 
             let thumb_x = self.dimensions.pixel_width - padding as usize - border.right.get();
 
@@ -327,7 +327,7 @@ impl crate::TermWindow {
 
         let (selrange, rectangular) = {
             let sel = self.selection(pos.pane.pane_id());
-            (sel.range.clone(), sel.rectangular)
+            (sel.range, sel.rectangular)
         };
 
         let start = Instant::now();
@@ -539,10 +539,10 @@ impl crate::TermWindow {
                                 left_pixel_x: self.left_pixel_x,
                                 pixel_width: self.content_pixel_width,
                                 stable_line_idx: Some(stable_row),
-                                line: &line,
+                                line,
                                 selection: selrange.clone(),
-                                cursor: &self.cursor,
-                                palette: &self.palette,
+                                cursor: self.cursor,
+                                palette: self.palette,
                                 dims: &self.dims,
                                 config: &self.term_window.config,
                                 cursor_border_color: self.cursor_border_color,
@@ -677,7 +677,7 @@ impl crate::TermWindow {
         };
 
         // Calculate the width - respect right padding
-        let width = if pos.left + pos.width >= self.terminal_size.cols as usize {
+        let width = if pos.left + pos.width >= self.terminal_size.cols {
             // Right-most pane: extend to split center but respect window padding
             let padding_right =
                 self.config
@@ -694,7 +694,7 @@ impl crate::TermWindow {
         };
 
         // Calculate the height - respect bottom padding
-        let height = if pos.top + pos.height >= self.terminal_size.rows as usize {
+        let height = if pos.top + pos.height >= self.terminal_size.rows {
             // Bottom-most pane: extend to split center but respect window padding
             let padding_bottom =
                 self.config
@@ -711,7 +711,7 @@ impl crate::TermWindow {
                 - bottom_bar_height
                 - border.bottom.get() as f32
         } else {
-            (pos.height as f32 * cell_height) + height_delta as f32
+            (pos.height as f32 * cell_height) + height_delta
         };
 
         let background_rect = euclid::rect(x, y, width, height);

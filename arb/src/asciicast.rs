@@ -299,10 +299,10 @@ mod unix {
             let size = unsafe { size.assume_init() };
 
             Ok(PtySize {
-                rows: size.ws_row.into(),
-                cols: size.ws_col.into(),
-                pixel_width: size.ws_xpixel.into(),
-                pixel_height: size.ws_ypixel.into(),
+                rows: size.ws_row,
+                cols: size.ws_col,
+                pixel_width: size.ws_xpixel,
+                pixel_height: size.ws_ypixel,
             })
         }
 
@@ -533,7 +533,7 @@ impl PlayCommand {
                 if event.1 != "o" {
                     continue;
                 }
-                std::io::stdout().write_all(&event.2.as_bytes())?;
+                std::io::stdout().write_all(event.2.as_bytes())?;
             }
 
             return Ok(());
@@ -550,7 +550,7 @@ impl PlayCommand {
                 if event.1 != "o" {
                     continue;
                 }
-                sent_parser.parse(&event.2.as_bytes(), |act| sent_actions.push(act));
+                sent_parser.parse(event.2.as_bytes(), |act| sent_actions.push(act));
             }
             drop(tx);
         } else {
@@ -599,8 +599,8 @@ impl PlayCommand {
                 let duration = target.saturating_duration_since(Instant::now());
                 std::thread::sleep(duration);
 
-                tty.write_all(&event.2.as_bytes())?;
-                sent_parser.parse(&event.2.as_bytes(), |act| sent_actions.push(act));
+                tty.write_all(event.2.as_bytes())?;
+                sent_parser.parse(event.2.as_bytes(), |act| sent_actions.push(act));
             }
 
             std::thread::sleep(Duration::from_millis(100));

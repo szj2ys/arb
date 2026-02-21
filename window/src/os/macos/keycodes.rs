@@ -119,8 +119,7 @@ fn build_map() -> HashMap<u16, PhysKeyCode> {
         (kVK_DownArrow, PhysKeyCode::DownArrow),
         (kVK_UpArrow, PhysKeyCode::UpArrow),
     ]
-    .iter()
-    .map(|&tuple| tuple)
+    .iter().copied()
     .collect()
 }
 

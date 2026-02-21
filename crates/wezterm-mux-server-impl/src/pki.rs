@@ -42,11 +42,9 @@ impl Pki {
         };
 
         if let Ok(iter) = dns_lookup::getaddrinfo(Some(&hostname), None, Some(hints)) {
-            for entry in iter {
-                if let Ok(entry) = entry {
-                    if let Some(canon) = entry.canonname {
-                        alt_names.push(canon);
-                    }
+            for entry in iter.flatten() {
+                if let Some(canon) = entry.canonname {
+                    alt_names.push(canon);
                 }
             }
         }

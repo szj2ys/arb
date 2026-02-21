@@ -45,7 +45,7 @@ impl<'a> Deref for Performer<'a> {
 
 impl<'a> DerefMut for Performer<'a> {
     fn deref_mut(&mut self) -> &mut TerminalState {
-        &mut self.state
+        self.state
     }
 }
 
@@ -205,7 +205,7 @@ impl<'a> Performer<'a> {
             if self.insert {
                 let margin = self.left_and_right_margins.end;
                 let screen = self.screen_mut();
-                for _ in x..x + print_width as usize {
+                for _ in x..x + print_width {
                     screen.insert_cell(x, y, margin, seqno);
                 }
             }
@@ -252,17 +252,11 @@ impl<'a> Performer<'a> {
     pub fn perform(&mut self, action: Action) {
         debug!("perform {:?}", action);
         if self.suppress_initial_title_change {
-            match &action {
-                Action::OperatingSystemCommand(osc) => match **osc {
-                    OperatingSystemCommand::SetIconNameAndWindowTitle(_) => {
-                        debug!("suppressed {:?}", osc);
-                        self.suppress_initial_title_change = false;
-                        return;
-                    }
-                    _ => {}
-                },
-                _ => {}
-            }
+            if let Action::OperatingSystemCommand(osc) = &action { if let OperatingSystemCommand::SetIconNameAndWindowTitle(_) = **osc {
+                debug!("suppressed {:?}", osc);
+                self.suppress_initial_title_change = false;
+                return;
+            } }
         }
         match action {
             Action::Print(c) => self.print(c),
@@ -300,13 +294,13 @@ impl<'a> Performer<'a> {
                         // but note that *that* text has the validity value
                         // inverted; there's a note about this in the xterm
                         // ctlseqs docs.
-                        match s.data.as_slice() {
-                            &[b'"', b'p'] => {
+                        match *s.data.as_slice() {
+                            [b'"', b'p'] => {
                                 // DECSCL - select conformance level
                                 write!(self.writer, "{}1$r65;1\"p{}", DCS, ST).ok();
                                 self.writer.flush().ok();
                             }
-                            &[b'r'] => {
+                            [b'r'] => {
                                 // DECSTBM - top and bottom margins
                                 let margins = self.top_and_bottom_margins.clone();
                                 write!(
@@ -320,7 +314,7 @@ impl<'a> Performer<'a> {
                                 .ok();
                                 self.writer.flush().ok();
                             }
-                            &[b's'] => {
+                            [b's'] => {
                                 // DECSLRM - left and right margins
                                 let margins = self.left_and_right_margins.clone();
                                 write!(
@@ -472,7 +466,7 @@ impl<'a> Performer<'a> {
 
             ControlCode::Enquiry => {
                 let response = self.config.enq_answerback();
-                if response.len() > 0 {
+                if !response.is_empty() {
                     write!(self.writer, "{}", response).ok();
                     self.writer.flush().ok();
                 }
@@ -881,12 +875,12 @@ impl<'a> Performer<'a> {
                 self.pen.set_semantic_type(SemanticType::Prompt);
             }
             OperatingSystemCommand::FinalTermSemanticPrompt(
-                FinalTermSemanticPrompt::MarkEndOfPromptAndStartOfInputUntilNextMarker { .. },
+                FinalTermSemanticPrompt::MarkEndOfPromptAndStartOfInputUntilNextMarker,
             ) => {
                 self.pen.set_semantic_type(SemanticType::Input);
             }
             OperatingSystemCommand::FinalTermSemanticPrompt(
-                FinalTermSemanticPrompt::MarkEndOfPromptAndStartOfInputUntilEndOfLine { .. },
+                FinalTermSemanticPrompt::MarkEndOfPromptAndStartOfInputUntilEndOfLine,
             ) => {
                 self.pen.set_semantic_type(SemanticType::Input);
                 self.clear_semantic_attribute_on_newline = true;
@@ -913,7 +907,7 @@ impl<'a> Performer<'a> {
                 }
             }
             OperatingSystemCommand::RxvtExtension(params) => {
-                if let Some("notify") = params.get(0).map(String::as_str) {
+                if let Some("notify") = params.first().map(String::as_str) {
                     let title = params.get(1);
                     let body = params.get(2);
                     let (title, body) = match (title.cloned(), body.cloned()) {
@@ -1016,7 +1010,7 @@ impl<'a> Performer<'a> {
                                     // We set the border to the background color; we don't
                                     // have an escape that sets that independently, and this
                                     // way just looks better.
-                                    self.palette_mut().cursor_border = c.into();
+                                    self.palette_mut().cursor_border = c;
                                 }
                                 set_or_query!(cursor_bg)
                             }

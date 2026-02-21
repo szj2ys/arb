@@ -10,6 +10,11 @@
 //! manage unknown enum variants.
 #![allow(dead_code)]
 #![allow(clippy::range_plus_one)]
+#![allow(
+    clippy::drop_non_drop,
+    clippy::large_enum_variant,
+    clippy::match_like_matches_macro
+)]
 
 use anyhow::{bail, Context as _, Error};
 use config::keyassignment::{PaneDirection, ScrollbackEraseMode};
@@ -1027,7 +1032,7 @@ impl From<Vec<(StableRowIndex, Line)>> for SerializedLines {
                 if let Some(link) = cell.attrs_mut().hyperlink().map(Arc::clone) {
                     cell.attrs_mut().set_hyperlink(None);
                     match current_link.as_ref() {
-                        Some(current) if Arc::ptr_eq(&current, &link) => {
+                        Some(current) if Arc::ptr_eq(current, &link) => {
                             // Continue the current streak
                             current_range = range_union(current_range, x..x + 1);
                         }

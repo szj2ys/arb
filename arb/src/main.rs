@@ -58,6 +58,7 @@ pub struct Opt {
 }
 
 #[derive(Debug, Clone, ValueEnum)]
+#[allow(clippy::enum_variant_names)]
 enum Shell {
     Bash,
     Elvish,
@@ -353,7 +354,7 @@ impl ImgCatCommand {
                 let width = info.width as usize;
                 let height = info.height as usize;
                 // but ensure that it fits
-                if width as usize > pixel_width || height as usize > pixel_height {
+                if width > pixel_width || height > pixel_height {
                     let width = width as f32;
                     let height = height as f32;
                     let mut candidates = vec![];
@@ -418,7 +419,7 @@ impl ImgCatCommand {
         let start = std::time::Instant::now();
         let im = image::load_from_memory(data).with_context(|| match self.file_name.as_ref() {
             Some(file_name) => format!("loading image from file {file_name:?}"),
-            None => format!("loading image from stdin"),
+            None => "loading image from stdin".to_string(),
         })?;
         if self.show_resample_timing {
             eprintln!(
@@ -533,7 +534,7 @@ impl ImgCatCommand {
         // explicitly after we've drawn things.
         // We can only do this reasonably sanely if we aren't setting
         // the absolute position.
-        let needs_force_cursor_move = !self.no_move_cursor && !self.position.is_some() && (is_tmux || is_conpty)
+        let needs_force_cursor_move = !self.no_move_cursor && self.position.is_none() && (is_tmux || is_conpty)
             // We can only use forced movement if we know the pixel geometry
             && (term_size.xpixel != 0 && term_size.ypixel != 0);
 
@@ -565,7 +566,7 @@ impl ImgCatCommand {
             // column as a result of doing this.
             term.render(&[Change::CursorPosition {
                 x: Position::Absolute(0),
-                y: Position::Relative(-1 * (cursor_y as isize)),
+                y: Position::Relative(-(cursor_y as isize)),
             }])?;
         }
 
@@ -601,8 +602,7 @@ impl ImgCatCommand {
         if self.hold {
             term.set_raw_mode()?;
             while let Ok(Some(event)) = term.poll_input(None) {
-                match event {
-                    InputEvent::Key(
+                if let InputEvent::Key(
                         KeyEvent {
                             key: KeyCode::Enter | KeyCode::Escape,
                             modifiers: _,
@@ -611,10 +611,8 @@ impl ImgCatCommand {
                             key: KeyCode::Char('c') | KeyCode::Char('d'),
                             modifiers: Modifiers::CTRL,
                         },
-                    ) => {
-                        break;
-                    }
-                    _ => {}
+                    ) = event {
+                    break;
                 }
             }
         }
@@ -933,7 +931,7 @@ fn delegate_to_gui(saver: UmaskSaver) -> anyhow::Result<()> {
             portable_pty::unix::close_random_fds();
         }
         let res = cmd.exec();
-        return Err(anyhow::anyhow!("failed to exec {cmd:?}: {res:?}"));
+        Err(anyhow::anyhow!("failed to exec {cmd:?}: {res:?}"))
     }
 
     #[cfg(windows)]

@@ -27,9 +27,9 @@ pub enum Blink {
 /// Allow converting to boolean; true means some kind of
 /// blink, false means none.  This is used in some
 /// generic code to determine whether to enable blink.
-impl Into<bool> for Blink {
-    fn into(self) -> bool {
-        self != Blink::None
+impl From<Blink> for bool {
+    fn from(val: Blink) -> Self {
+        val != Blink::None
     }
 }
 
@@ -80,9 +80,9 @@ impl Default for Underline {
 /// Allow converting to boolean; true means some kind of
 /// underline, false means none.  This is used in some
 /// generic code to determine whether to enable underline.
-impl Into<bool> for Underline {
-    fn into(self) -> bool {
-        self != Underline::None
+impl From<Underline> for bool {
+    fn from(val: Underline) -> Self {
+        val != Underline::None
     }
 }
 
@@ -252,7 +252,9 @@ impl Display for CSI {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, FromPrimitive, ToPrimitive)]
+#[derive(Default)]
 pub enum CursorStyle {
+    #[default]
     Default = 0,
     BlinkingBlock = 1,
     SteadyBlock = 2,
@@ -262,11 +264,6 @@ pub enum CursorStyle {
     SteadyBar = 6,
 }
 
-impl Default for CursorStyle {
-    fn default() -> CursorStyle {
-        CursorStyle::Default
-    }
-}
 
 #[derive(Debug, Clone, PartialEq, Eq, FromPrimitive, ToPrimitive)]
 pub enum DeviceAttributeCodes {
@@ -300,7 +297,7 @@ impl DeviceAttributeFlags {
         write!(f, "{}", leader)?;
         for item in &self.attributes {
             match item {
-                DeviceAttribute::Code(c) => write!(f, ";{}", c.to_u16().ok_or_else(|| FmtError)?)?,
+                DeviceAttribute::Code(c) => write!(f, ";{}", c.to_u16().ok_or(FmtError)?)?,
                 DeviceAttribute::Unspecified(param) => write!(f, ";{}", param)?,
             }
         }
@@ -318,10 +315,10 @@ impl DeviceAttributeFlags {
             match i {
                 CsiParam::Integer(p) => match FromPrimitive::from_i64(*p) {
                     Some(c) => attributes.push(DeviceAttribute::Code(c)),
-                    None => attributes.push(DeviceAttribute::Unspecified(i.clone())),
+                    None => attributes.push(DeviceAttribute::Unspecified(*i)),
                 },
                 CsiParam::P(b';') => {}
-                _ => attributes.push(DeviceAttribute::Unspecified(i.clone())),
+                _ => attributes.push(DeviceAttribute::Unspecified(*i)),
             }
         }
         Self { attributes }
@@ -834,7 +831,7 @@ impl Display for Mode {
             Mode::SaveDecPrivateMode(mode) => emit!("s", mode),
             Mode::RestoreDecPrivateMode(mode) => emit!("r", mode),
             Mode::QueryDecPrivateMode(DecPrivateMode::Code(mode)) => {
-                write!(f, "?{}$p", mode.to_u16().ok_or_else(|| FmtError)?)
+                write!(f, "?{}$p", mode.to_u16().ok_or(FmtError)?)
             }
             Mode::QueryDecPrivateMode(DecPrivateMode::Unspecified(mode)) => {
                 write!(f, "?{}$p", mode)
@@ -842,7 +839,7 @@ impl Display for Mode {
             Mode::SetMode(mode) => emit_mode!("h", mode),
             Mode::ResetMode(mode) => emit_mode!("l", mode),
             Mode::QueryMode(TerminalMode::Code(mode)) => {
-                write!(f, "?{}$p", mode.to_u16().ok_or_else(|| FmtError)?)
+                write!(f, "?{}$p", mode.to_u16().ok_or(FmtError)?)
             }
             Mode::QueryMode(TerminalMode::Unspecified(mode)) => write!(f, "?{}$p", mode),
             Mode::XtermKeyMode { resource, value } => {
@@ -1240,7 +1237,7 @@ impl<T: ParamEnum + PartialEq + ToPrimitive> EncodeCSIParam for T {
         if *self == ParamEnum::default() {
             write!(f, "{}", control)
         } else {
-            let value = self.to_i64().ok_or_else(|| FmtError)?;
+            let value = self.to_i64().ok_or(FmtError)?;
             write!(f, "{}{}", value, control)
         }
     }
@@ -1773,7 +1770,7 @@ impl Cracked {
                     res.push(None);
                 }
                 CsiParam::Integer(_) => {
-                    res.push(Some(p.clone()));
+                    res.push(Some(*p));
                     if let Some(CsiParam::P(b';')) = iter.peek() {
                         iter.next();
                     }
@@ -2132,20 +2129,20 @@ impl<'a> CSIParser<'a> {
     fn xterm_key_modifier(&mut self, params: &'a [CsiParam]) -> Result<CSI, ()> {
         match params {
             [CsiParam::P(b'>'), a, CsiParam::P(b';'), b] => {
-                let resource = XtermKeyModifierResource::parse(a.as_integer().ok_or_else(|| ())?)
-                    .ok_or_else(|| ())?;
+                let resource = XtermKeyModifierResource::parse(a.as_integer().ok_or(())?)
+                    .ok_or(())?;
                 Ok(self.advance_by(
                     4,
                     params,
                     CSI::Mode(Mode::XtermKeyMode {
                         resource,
-                        value: Some(b.as_integer().ok_or_else(|| ())?),
+                        value: Some(b.as_integer().ok_or(())?),
                     }),
                 ))
             }
             [CsiParam::P(b'>'), a, CsiParam::P(b';')] => {
-                let resource = XtermKeyModifierResource::parse(a.as_integer().ok_or_else(|| ())?)
-                    .ok_or_else(|| ())?;
+                let resource = XtermKeyModifierResource::parse(a.as_integer().ok_or(())?)
+                    .ok_or(())?;
                 Ok(self.advance_by(
                     3,
                     params,
@@ -2156,8 +2153,8 @@ impl<'a> CSIParser<'a> {
                 ))
             }
             [CsiParam::P(b'>'), p] => {
-                let resource = XtermKeyModifierResource::parse(p.as_integer().ok_or_else(|| ())?)
-                    .ok_or_else(|| ())?;
+                let resource = XtermKeyModifierResource::parse(p.as_integer().ok_or(())?)
+                    .ok_or(())?;
                 Ok(self.advance_by(
                     2,
                     params,
@@ -2412,10 +2409,9 @@ impl<'a> CSIParser<'a> {
     }
 
     fn terminal_mode(&mut self, params: &'a [CsiParam]) -> Result<TerminalMode, ()> {
-        let p0 = params
-            .get(0)
+        let p0 = params.first()
             .and_then(CsiParam::as_integer)
-            .ok_or_else(|| ())?;
+            .ok_or(())?;
         match FromPrimitive::from_i64(p0) {
             None => {
                 Ok(self.advance_by(1, params, TerminalMode::Unspecified(p0.to_u16().ok_or(())?)))
@@ -2961,12 +2957,9 @@ impl<'a> Iterator for CSIParser<'a> {
     type Item = CSI;
 
     fn next(&mut self) -> Option<CSI> {
-        let params = match self.params.take() {
-            None => return None,
-            Some(params) => params,
-        };
+        let params = self.params.take()?;
 
-        match self.parse_next(&params) {
+        match self.parse_next(params) {
             Ok(csi) => Some(csi),
             Err(()) => Some(CSI::Unspecified(Box::new(Unspecified {
                 params: params.to_vec(),

@@ -18,7 +18,7 @@ use std::time::{Duration, Instant};
 const CLS_NAME: &str = "ArbAppDelegate";
 
 thread_local! {
-    static LAST_OPEN_UNTITLED_SPAWN: RefCell<Option<Instant>> = RefCell::new(None);
+    static LAST_OPEN_UNTITLED_SPAWN: RefCell<Option<Instant>> = const { RefCell::new(None) };
 }
 // macOS can emit applicationOpenUntitledFile twice while no window has
 // materialized yet; keep a wider debounce to avoid duplicate SpawnWindow work.

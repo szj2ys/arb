@@ -475,7 +475,7 @@ impl CharSelector {
         let element = Element::new(&font, ElementContent::Children(elements))
             .colors(ElementColors {
                 border: BorderColor::new(
-                    term_window.config.char_select_bg_color.to_linear().into(),
+                    term_window.config.char_select_bg_color.to_linear(),
                 ),
                 bg: term_window.config.char_select_bg_color.to_linear().into(),
                 text: term_window.config.char_select_fg_color.to_linear().into(),

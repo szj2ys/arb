@@ -284,9 +284,7 @@ impl<'lua> Eq for ValuePrinterHelper<'lua> {}
 
 impl<'lua> PartialOrd for ValuePrinterHelper<'lua> {
     fn partial_cmp(&self, rhs: &Self) -> Option<std::cmp::Ordering> {
-        let lhs = lua_value_to_dynamic(self.value.clone()).unwrap_or(DynValue::Null);
-        let rhs = lua_value_to_dynamic(rhs.value.clone()).unwrap_or(DynValue::Null);
-        lhs.partial_cmp(&rhs)
+        Some(self.cmp(rhs))
     }
 }
 
@@ -343,7 +341,7 @@ impl<'lua> std::fmt::Debug for ValuePrinterHelper<'lua> {
                 self.visited
                     .borrow_mut()
                     .insert(self.value.to_pointer() as usize);
-                if is_array_style_table(&t) {
+                if is_array_style_table(t) {
                     // Treat as list
                     let mut list = fmt.debug_list();
                     for value in t.clone().sequence_values() {
@@ -367,6 +365,7 @@ impl<'lua> std::fmt::Debug for ValuePrinterHelper<'lua> {
                 } else {
                     // Treat as map; put it into a BTreeMap so that we have a stable
                     // order for our tests.
+                    #[allow(clippy::mutable_key_type)]
                     let mut map = BTreeMap::new();
                     for pair in t.clone().pairs::<LuaValue, LuaValue>() {
                         match pair {

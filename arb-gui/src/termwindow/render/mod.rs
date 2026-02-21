@@ -225,7 +225,7 @@ pub struct ClusterStyleCache<'a> {
 impl crate::TermWindow {
     pub fn update_next_frame_time(&self, next_due: Option<Instant>) {
         if next_due.is_some() {
-            update_next_frame_time(&mut *self.has_animation.borrow_mut(), next_due);
+            update_next_frame_time(&mut self.has_animation.borrow_mut(), next_due);
         }
     }
 
@@ -274,10 +274,10 @@ impl crate::TermWindow {
         let top_offset = self.dimensions.pixel_height as f32 / 2.;
         let gl_state = self.render_state.as_ref().unwrap();
         quad.set_position(
-            rect.min_x() as f32 - left_offset,
-            rect.min_y() as f32 - top_offset,
-            rect.max_x() as f32 - left_offset,
-            rect.max_y() as f32 - top_offset,
+            rect.min_x() - left_offset,
+            rect.min_y() - top_offset,
+            rect.max_x() - left_offset,
+            rect.max_y() - top_offset,
         );
         quad.set_texture(gl_state.util_sprites.filled_box.texture_coords());
         quad.set_is_background();
@@ -317,8 +317,8 @@ impl crate::TermWindow {
         quad.set_position(
             point.x - left_offset,
             point.y - top_offset,
-            (point.x + cell_size.width as f32) - left_offset,
-            (point.y + cell_size.height as f32) - top_offset,
+            (point.x + cell_size.width) - left_offset,
+            (point.y + cell_size.height) - top_offset,
         );
         quad.set_texture(sprite);
         quad.set_fg_color(color);
@@ -740,8 +740,8 @@ impl crate::TermWindow {
         let mut glyphs = Vec::with_capacity(infos.len());
         let mut iter = infos.iter().peekable();
         while let Some(info) = iter.next() {
-            if self.config.custom_block_glyphs {
-                if info.only_char.and_then(BlockKey::from_char).is_some() {
+            if self.config.custom_block_glyphs
+                && info.only_char.and_then(BlockKey::from_char).is_some() {
                     // Don't bother rendering the glyph from the font, as it can
                     // have incorrect advance metrics.
                     // Instead, just use our pixel-perfect cell metrics
@@ -758,7 +758,6 @@ impl crate::TermWindow {
                     }));
                     continue;
                 }
-            }
 
             let followed_by_space = match iter.peek() {
                 Some(next_info) => next_info.is_space,
@@ -767,7 +766,7 @@ impl crate::TermWindow {
 
             glyphs.push(glyph_cache.cached_glyph(
                 info,
-                &style,
+                style,
                 followed_by_space,
                 font,
                 metrics,
@@ -801,7 +800,7 @@ impl crate::TermWindow {
                 };
                 let window = self.window.as_ref().unwrap().clone();
 
-                let presentation_width = PresentationWidth::with_cluster(&cluster);
+                let presentation_width = PresentationWidth::with_cluster(cluster);
 
                 match font.shape(
                     &cluster.text,
@@ -814,7 +813,7 @@ impl crate::TermWindow {
                 ) {
                     Ok(info) => {
                         let glyphs = self.glyph_infos_to_glyphs(
-                            &style,
+                            style,
                             &mut gl_state.glyph_cache.borrow_mut(),
                             &info,
                             &font,

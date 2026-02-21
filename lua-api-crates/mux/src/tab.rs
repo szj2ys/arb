@@ -9,7 +9,7 @@ use std::sync::Arc;
 pub struct MuxTab(pub TabId);
 
 impl MuxTab {
-    pub fn resolve<'a>(&self, mux: &'a Arc<Mux>) -> mlua::Result<Arc<Tab>> {
+    pub fn resolve(&self, mux: &Arc<Mux>) -> mlua::Result<Arc<Tab>> {
         mux.get_tab(self.0)
             .ok_or_else(|| mlua::Error::external(format!("tab id {} not found in mux", self.0)))
     }
@@ -44,7 +44,8 @@ impl UserData for MuxTab {
         methods.add_method("set_title", |_, this, title: String| {
             let mux = get_mux()?;
             let tab = this.resolve(&mux)?;
-            Ok(tab.set_title(&title))
+            let _: () = tab.set_title(&title);
+            Ok(())
         });
         methods.add_method("active_pane", |_, this, _: ()| {
             let mux = get_mux()?;
@@ -98,11 +99,8 @@ impl UserData for MuxTab {
                     pixel_height: pos.pixel_height,
                 };
                 let info = luahelper::dynamic_to_lua_value(lua, info.to_dynamic())?;
-                match &info {
-                    LuaValue::Table(t) => {
-                        t.set("pane", MuxPane(pos.pane.pane_id()))?;
-                    }
-                    _ => {}
+                if let LuaValue::Table(t) = &info {
+                    t.set("pane", MuxPane(pos.pane.pane_id()))?;
                 }
                 result.set(idx + 1, info)?;
             }

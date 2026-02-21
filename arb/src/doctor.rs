@@ -104,14 +104,15 @@ mod imp {
     }
 
     pub(crate) fn run_all_checks() -> Vec<CheckResult> {
-        let mut results = Vec::new();
-        results.push(check_shell_integration());
-        results.push(check_starship());
-        results.push(check_delta());
-        results.push(check_user_config());
-        results.push(check_app_bundle());
-        results.push(check_version());
-        results.push(check_homebrew_cask());
+        let mut results = vec![
+            check_shell_integration(),
+            check_starship(),
+            check_delta(),
+            check_user_config(),
+            check_app_bundle(),
+            check_version(),
+            check_homebrew_cask(),
+        ];
         results.extend(check_zsh_plugins());
         results
     }
@@ -263,7 +264,7 @@ mod imp {
         let config_path = config::CONFIG_DIRS
             .first()
             .cloned()
-            .unwrap_or_else(|| config_home())
+            .unwrap_or_else(config_home)
             .join("arb.lua");
 
         if !config_path.exists() {

@@ -45,9 +45,8 @@ impl super::TermWindow {
                             col_span.prune_trailing_blanks(seqno);
                         }
 
-                        result
-                            .last_mut()
-                            .map(|line| line.append_line(col_span, seqno));
+                        if let Some(line) = result
+                            .last_mut() { line.append_line(col_span, seqno) }
 
                         last_was_wrapped = last_col_idx == last_phys_idx
                             && phys
@@ -147,21 +146,19 @@ impl super::TermWindow {
                         // it doesn't include the origin
                         (origin.x.saturating_sub(1), SelectionX::Cell(x))
                     }
+                } else if (x >= origin.x && y == origin.y) || y > origin.y {
+                    // If the selection is extending forwards from the origin, it includes the
+                    // origin and doesn't include the cell under the cursor. Note that the
+                    // reported cell here is offset by -50% from the real cell you see on the
+                    // screen, so this causes a visual cell on the screen to be selected when
+                    // the mouse moves over 50% of its width, which effectively means the next
+                    // cell is being reported here, hence it's excluded
+                    (origin.x, SelectionX::Cell(x).saturating_sub(1))
                 } else {
-                    if (x >= origin.x && y == origin.y) || y > origin.y {
-                        // If the selection is extending forwards from the origin, it includes the
-                        // origin and doesn't include the cell under the cursor. Note that the
-                        // reported cell here is offset by -50% from the real cell you see on the
-                        // screen, so this causes a visual cell on the screen to be selected when
-                        // the mouse moves over 50% of its width, which effectively means the next
-                        // cell is being reported here, hence it's excluded
-                        (origin.x, SelectionX::Cell(x).saturating_sub(1))
-                    } else {
-                        // If the selection is extending backwards from the origin, it doesn't
-                        // include the origin and includes the cell under the cursor, which has
-                        // the same effect as described above when going backwards
-                        (origin.x.saturating_sub(1), SelectionX::Cell(x))
-                    }
+                    // If the selection is extending backwards from the origin, it doesn't
+                    // include the origin and includes the cell under the cursor, which has
+                    // the same effect as described above when going backwards
+                    (origin.x.saturating_sub(1), SelectionX::Cell(x))
                 };
 
                 self.selection(pane.pane_id()).range =
@@ -187,7 +184,6 @@ impl super::TermWindow {
                 let start_coord = self
                     .selection(pane.pane_id())
                     .origin
-                    .clone()
                     .unwrap_or(end_word.start);
                 let start_word = SelectionRange::word_around(start_coord, &**pane);
 
@@ -201,7 +197,6 @@ impl super::TermWindow {
                 let start_coord = self
                     .selection(pane.pane_id())
                     .origin
-                    .clone()
                     .unwrap_or(end_line.start);
                 let start_line = SelectionRange::line_around(start_coord, &**pane);
 
@@ -215,7 +210,6 @@ impl super::TermWindow {
                 let start_coord = self
                     .selection(pane.pane_id())
                     .origin
-                    .clone()
                     .unwrap_or(end_word.start);
                 let start_word = SelectionRange::zone_around(start_coord, &**pane);
 

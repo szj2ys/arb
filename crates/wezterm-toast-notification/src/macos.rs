@@ -171,12 +171,12 @@ pub fn show_notif(toast: ToastNotification) -> Result<(), Box<dyn std::error::Er
         let identifier = uuid::Uuid::new_v4().to_string();
         let request = UNNotificationRequest::requestWithIdentifier_content_trigger(
             &NSString::from_str(&identifier),
-            &*notif,
+            &notif,
             None,
         );
 
         CENTER.addNotificationRequest_withCompletionHandler(
-            &*request,
+            &request,
             Some(&RcBlock::new(move |err: *mut NSError| {
                 if err.is_null() {
                     if let Some(timeout) = toast.timeout {

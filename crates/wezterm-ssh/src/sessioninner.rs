@@ -190,9 +190,8 @@ impl SessionInner {
             }
         }
         if let Some(kh) = self.config.get("userknownhostsfile") {
-            for file in kh.split_whitespace() {
+            if let Some(file) = kh.split_whitespace().next() {
                 sess.set_option(libssh_rs::SshOption::KnownHosts(Some(file.to_string())))?;
-                break;
             }
         }
         if let Some(types) = self.config.get("pubkeyacceptedtypes") {
@@ -522,25 +521,23 @@ impl SessionInner {
                                 state.fd.take();
                             }
                         }
+                    } else if info.exited && state.buf.is_empty() {
+                        log::trace!("channel {channel_id} exited and we have no data to send to fd {fd_num}: close it!");
+                        state.fd.take();
                     } else {
-                        if info.exited && state.buf.is_empty() {
-                            log::trace!("channel {channel_id} exited and we have no data to send to fd {fd_num}: close it!");
-                            state.fd.take();
-                        } else {
-                            // We can write our buffered output
-                            match write_from_buf(fd, &mut state.buf) {
-                                Ok(_) => {}
-                                Err(err) => {
-                                    log::debug!(
-                                        "error while writing to channel {} fd {}: {:#}",
-                                        channel_id,
-                                        fd_num,
-                                        err
-                                    );
+                        // We can write our buffered output
+                        match write_from_buf(fd, &mut state.buf) {
+                            Ok(_) => {}
+                            Err(err) => {
+                                log::debug!(
+                                    "error while writing to channel {} fd {}: {:#}",
+                                    channel_id,
+                                    fd_num,
+                                    err
+                                );
 
-                                    // Close it out
-                                    state.fd.take();
-                                }
+                                // Close it out
+                                state.fd.take();
                             }
                         }
                     }

@@ -828,7 +828,7 @@ impl Reconnectable {
         // we can connect using those same credentials and avoid running through
         // the SSH authentication flow.
         if let Some(Ok(_)) = tls_client.ssh_parameters() {
-            match self.try_connect(&tls_client, ui, &remote_address, remote_host_name) {
+            match self.try_connect(&tls_client, ui, remote_address, remote_host_name) {
                 Ok(stream) => {
                     self.stream.replace(stream);
                     return Ok(());
@@ -934,7 +934,7 @@ impl Reconnectable {
 
         let cloned_ui = ui.clone();
         let stream = cloned_ui.run_and_log_error({
-            || self.try_connect(&tls_client, ui, &remote_address, remote_host_name)
+            || self.try_connect(&tls_client, ui, remote_address, remote_host_name)
         })?;
         self.stream.replace(stream);
         Ok(())
@@ -963,7 +963,7 @@ impl Reconnectable {
 
         if let Some(chain_file) = tls_client.pem_ca.as_ref() {
             connector
-                .set_certificate_chain_file(&chain_file)
+                .set_certificate_chain_file(chain_file)
                 .context(format!(
                     "set_certificate_chain_file to {} for TLS client",
                     chain_file.display()
@@ -1177,7 +1177,7 @@ impl Client {
                 };
                 ui.output_str(&err.to_string());
                 log::error!("{:?}", err);
-                return Err(err.into());
+                Err(err.into())
             }
             Err(err) => {
                 log::trace!("{:?}", err);

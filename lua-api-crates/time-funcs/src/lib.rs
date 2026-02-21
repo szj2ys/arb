@@ -1,3 +1,5 @@
+#![allow(clippy::needless_lifetimes)]
+
 use chrono::prelude::*;
 use config::lua::mlua::{self, Lua, MetaMethod, UserData, UserDataMethods, UserDataRef};
 use config::lua::{
@@ -100,7 +102,7 @@ impl ScheduledEvent {
         // changed.
         if config::configuration().generation() == generation {
             let args = lua.pack_multi(())?;
-            emit_event(&lua, (self.user_event_id, args)).await?;
+            emit_event(lua, (self.user_event_id, args)).await?;
         }
         Ok(())
     }
@@ -180,12 +182,12 @@ pub fn register(lua: &Lua) -> anyhow::Result<()> {
     Ok(())
 }
 
-fn strftime_utc<'lua>(_: &'lua Lua, format: String) -> mlua::Result<String> {
+fn strftime_utc(_: &Lua, format: String) -> mlua::Result<String> {
     let local: DateTime<Utc> = Utc::now();
     Ok(local.format(&format).to_string())
 }
 
-fn strftime<'lua>(_: &'lua Lua, format: String) -> mlua::Result<String> {
+fn strftime(_: &Lua, format: String) -> mlua::Result<String> {
     let local: DateTime<Local> = Local::now();
     Ok(local.format(&format).to_string())
 }

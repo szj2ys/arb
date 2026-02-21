@@ -1,3 +1,10 @@
+#![allow(clippy::useless_conversion)]
+#![allow(clippy::manual_flatten)]
+#![allow(clippy::to_string_trait_impl)]
+#![allow(clippy::field_reassign_with_default)]
+#![allow(clippy::wrong_self_convention)]
+#![allow(clippy::inherent_to_string_shadow_display)]
+
 //! Configuration for the gui portion of the terminal
 
 use anyhow::{anyhow, bail, Context, Error};
@@ -83,7 +90,7 @@ lazy_static! {
 }
 
 thread_local! {
-    static LUA_CONFIG: RefCell<Option<LuaConfigState>> = RefCell::new(None);
+    static LUA_CONFIG: RefCell<Option<LuaConfigState>> = const { RefCell::new(None) };
 }
 
 fn toml_table_has_numeric_keys(t: &toml::value::Table) -> bool {
@@ -178,6 +185,12 @@ pub struct ColorSchemeRegistry {
     loaded: RwLock<HashMap<String, Palette>>,
 }
 
+impl Default for ColorSchemeRegistry {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ColorSchemeRegistry {
     pub fn new() -> Self {
         Self {
@@ -247,6 +260,7 @@ impl ColorSchemeRegistry {
 
     /// Clone all loaded schemes (for backward compatibility with .clone())
     /// Note: This will eagerly load ALL schemes if called before any are cached
+    #[allow(clippy::should_implement_trait)]
     pub fn clone(&self) -> HashMap<String, Palette> {
         let loaded = self.loaded.read();
 
@@ -481,7 +495,7 @@ fn config_dirs() -> Vec<PathBuf> {
 
     #[cfg(unix)]
     if let Some(d) = std::env::var_os("XDG_CONFIG_DIRS") {
-        dirs.extend(std::env::split_paths(&d).map(|s| PathBuf::from(s).join("arb")));
+        dirs.extend(std::env::split_paths(&d).map(|s| s.join("arb")));
     }
 
     dirs
@@ -652,10 +666,8 @@ impl ConfigInner {
 
     fn accumulate_watch_paths(lua: &Lua, watch_paths: &mut Vec<PathBuf>) {
         if let Ok(mlua::Value::Table(tbl)) = lua.named_registry_value("arb-watch-paths") {
-            for path in tbl.sequence_values::<String>() {
-                if let Ok(path) = path {
-                    watch_paths.push(PathBuf::from(path));
-                }
+            for path in tbl.sequence_values::<String>().flatten() {
+                watch_paths.push(PathBuf::from(path));
             }
         }
     }
@@ -686,7 +698,7 @@ impl ConfigInner {
                 // don't keep reloading every time something in the
                 // home dir changes!
                 // <https://github.com/wezterm/wezterm/issues/1895>
-                if parent != &*HOME_DIR {
+                if parent != *HOME_DIR {
                     watch_paths.push(parent.to_path_buf());
                 }
             }
@@ -778,6 +790,12 @@ impl ConfigInner {
 pub struct Configuration {
     inner: Mutex<ConfigInner>,
     reload_epoch: AtomicUsize,
+}
+
+impl Default for Configuration {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Configuration {
@@ -910,7 +928,7 @@ impl ConfigHandle {
 impl std::ops::Deref for ConfigHandle {
     type Target = Config;
     fn deref(&self) -> &Config {
-        &*self.config
+        &self.config
     }
 }
 

@@ -247,6 +247,12 @@ pub struct ConnectionUI {
     tx: Sender<UIRequest>,
 }
 
+impl Default for ConnectionUI {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ConnectionUI {
     pub fn new() -> Self {
         Self::with_params(Default::default())
@@ -414,7 +420,7 @@ impl ConnectionUI {
     }
 
     pub fn test_alive(&self) -> bool {
-        if !self.tx.send(UIRequest::Output(vec![])).is_ok() {
+        if self.tx.send(UIRequest::Output(vec![])).is_err() {
             return false;
         }
         std::thread::sleep(Duration::from_millis(50));
@@ -448,7 +454,7 @@ pub fn show_configuration_error_message(err: &str) {
     log::error!("Configuration Error: {}", err);
     let ui = get_error_window();
 
-    let mut wrapped = textwrap::fill(&err, 78);
-    wrapped.push_str("\n");
+    let mut wrapped = textwrap::fill(err, 78);
+    wrapped.push('\n');
     ui.output_str(&wrapped);
 }

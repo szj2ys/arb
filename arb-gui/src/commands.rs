@@ -116,7 +116,7 @@ impl CommandDef {
                 .resolve(config.key_map_preference)
                 .clone();
 
-            let ukey = DeferredKeyCode::try_from(us_layout_shift(&label))
+            let ukey = DeferredKeyCode::try_from(us_layout_shift(label))
                 .unwrap()
                 .resolve(config.key_map_preference)
                 .clone();
@@ -177,8 +177,8 @@ impl CommandDef {
                     def.permute_keys(config)
                 };
                 Some(ExpandedCommand {
-                    brief: def.brief.into(),
-                    doc: def.doc.into(),
+                    brief: def.brief,
+                    doc: def.doc,
                     keys,
                     action,
                     menubar: def.menubar,
@@ -324,15 +324,14 @@ impl CommandDef {
         for ((keycode, mods), entry) in inputmap.keys.default.iter() {
             if result
                 .iter()
-                .position(|cmd| cmd.action == entry.action)
-                .is_some()
+                .any(|cmd| cmd.action == entry.action)
             {
                 continue;
             }
             if let Some(cmd) = derive_command_from_key_assignment(&entry.action) {
                 result.push(ExpandedCommand {
-                    brief: cmd.brief.into(),
-                    doc: cmd.doc.into(),
+                    brief: cmd.brief,
+                    doc: cmd.doc,
                     keys: vec![(*mods, keycode.clone())],
                     action: entry.action.clone(),
                     menubar: cmd.menubar,
@@ -344,15 +343,14 @@ impl CommandDef {
             for entry in table.values() {
                 if result
                     .iter()
-                    .position(|cmd| cmd.action == entry.action)
-                    .is_some()
+                    .any(|cmd| cmd.action == entry.action)
                 {
                     continue;
                 }
                 if let Some(cmd) = derive_command_from_key_assignment(&entry.action) {
                     result.push(ExpandedCommand {
-                        brief: cmd.brief.into(),
-                        doc: cmd.doc.into(),
+                        brief: cmd.brief,
+                        doc: cmd.doc,
                         keys: vec![],
                         action: entry.action.clone(),
                         menubar: cmd.menubar,
@@ -434,7 +432,7 @@ impl CommandDef {
                     continue;
                 }
 
-                let mut submenu = main_menu.get_or_create_sub_menu(&cmd.menubar[0], |menu| {
+                let mut submenu = main_menu.get_or_create_sub_menu(cmd.menubar[0], |menu| {
                     if cmd.menubar[0] == "Window" {
                         menu.assign_as_windows_menu();
                         // macOS will insert stuff at the top and bottom, so we add
@@ -532,7 +530,7 @@ impl CommandDef {
                         ordering => return ordering,
                     }
 
-                    a_key.cmp(&b_key)
+                    a_key.cmp(b_key)
                 });
 
                 fn key_code_to_equivalent(key: &KeyCode) -> String {
@@ -549,10 +547,9 @@ impl CommandDef {
                     }
                 }
 
-                let short_cut = candidate
-                    .get(0)
+                let short_cut = candidate.first()
                     .map(|(key, _)| key_code_to_equivalent(key))
-                    .unwrap_or_else(String::new);
+                    .unwrap_or_default();
 
                 let represented_item = RepresentedItem::KeyAssignment(cmd.action.clone());
                 let item = match submenu.get_item_with_represented_item(&represented_item) {
@@ -607,7 +604,7 @@ impl CommandDef {
         // Now sweep away any items that were not updated
         for item in candidates_for_removal {
             if item.get_tag() == 0 {
-                item.get_menu().map(|menu| menu.remove_item(&item));
+                if let Some(menu) = item.get_menu() { menu.remove_item(&item) }
             }
         }
     }
@@ -1042,7 +1039,7 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
         ActivateTab(n) => {
             let n = *n;
             let ordinal = english_ordinal(n + 1);
-            let keys = if n >= 0 && n <= 7 {
+            let keys = if (0..=7).contains(&n) {
                 vec![(Modifiers::SUPER, (n + 1).to_string())]
             } else {
                 vec![]
@@ -1069,11 +1066,9 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
             }
         }
         SetPaneZoomState(true) => CommandDef {
-            brief: format!("Zooms the current Pane").into(),
-            doc: format!(
-                "Places the current pane into the zoomed state, \
-                             filling all of the space in the tab"
-            )
+            brief: "Zooms the current Pane".to_string().into(),
+            doc: "Places the current pane into the zoomed state, \
+                             filling all of the space in the tab".to_string()
             .into(),
             keys: vec![],
             args: &[ArgType::ActiveWindow],
@@ -1081,8 +1076,8 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
             icon: Some("md_fullscreen"),
         },
         SetPaneZoomState(false) => CommandDef {
-            brief: format!("Un-Zooms the current Pane").into(),
-            doc: format!("Takes the current pane out of the zoomed state").into(),
+            brief: "Un-Zooms the current Pane".to_string().into(),
+            doc: "Takes the current pane out of the zoomed state".to_string().into(),
             keys: vec![],
             args: &[ArgType::ActiveWindow],
             menubar: &[],
@@ -1090,10 +1085,8 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
         },
         EmitEvent(name) => CommandDef {
             brief: format!("Emit event `{name}`").into(),
-            doc: format!(
-                "Emits the named event, causing any \
-                             associated event handler(s) to trigger"
-            )
+            doc: "Emits the named event, causing any \
+                             associated event handler(s) to trigger".to_string()
             .into(),
             keys: vec![],
             args: &[ArgType::ActiveWindow],
@@ -1890,15 +1883,11 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
             name: None,
             spawn: None,
         } => CommandDef {
-            brief: format!(
-                "Spawn the default program into a new \
-                           workspace and switch to it"
-            )
+            brief: "Spawn the default program into a new \
+                           workspace and switch to it".to_string()
             .into(),
-            doc: format!(
-                "Spawn the default program into a new \
-                         workspace and switch to it"
-            )
+            doc: "Spawn the default program into a new \
+                         workspace and switch to it".to_string()
             .into(),
             keys: vec![],
             args: &[],
@@ -2055,7 +2044,7 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
 /// included in the default key assignments and command palette.
 fn compute_default_actions() -> Vec<KeyAssignment> {
     // These are ordered by their position within the various menus
-    return vec![
+    vec![
         // ----------------- Arb
         ReloadConfiguration,
         #[cfg(target_os = "macos")]
@@ -2179,5 +2168,5 @@ fn compute_default_actions() -> Vec<KeyAssignment> {
         ShowDebugOverlay,
         // ----------------- Misc
         OpenLinkAtMouseCursor,
-    ];
+    ]
 }

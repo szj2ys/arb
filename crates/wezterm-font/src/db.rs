@@ -11,6 +11,12 @@ pub struct FontDatabase {
     by_full_name: HashMap<String, Vec<ParsedFont>>,
 }
 
+impl Default for FontDatabase {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl FontDatabase {
     pub fn new() -> Self {
         Self {
@@ -23,12 +29,12 @@ impl FontDatabase {
             if let Some(path) = parsed.handle.path_str() {
                 self.by_full_name
                     .entry(path.to_string())
-                    .or_insert_with(Vec::new)
+                    .or_default()
                     .push(parsed.clone());
             }
             self.by_full_name
                 .entry(parsed.names().full_name.clone())
-                .or_insert_with(Vec::new)
+                .or_default()
                 .push(parsed);
         }
     }

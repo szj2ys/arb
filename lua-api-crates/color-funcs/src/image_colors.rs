@@ -178,8 +178,8 @@ fn extract_distinct_colors_lab(
     }
 }
 
-pub fn extract_colors_from_image<'lua>(
-    _: &'lua Lua,
+pub fn extract_colors_from_image(
+    _: &Lua,
     (file_name, params): (String, Option<ExtractColorParams>),
 ) -> mlua::Result<Vec<ColorWrap>> {
     let params = params.unwrap_or_default();

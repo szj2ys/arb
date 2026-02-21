@@ -5154,9 +5154,9 @@ impl GlyphCache {
                 descender_plus_two: 0,
                 underline_height: *underline_height,
                 strike_row: 0,
-                cell_size: cell_size.clone(),
+                cell_size: *cell_size,
             },
-            _ => render_metrics.clone(),
+            _ => *render_metrics,
         };
 
         let mut buffer = Image::new(
@@ -5233,7 +5233,7 @@ impl GlyphCache {
                         &[Poly {
                             path: cmd,
                             intensity: alpha,
-                            style: style,
+                            style,
                         }],
                         &mut buffer,
                         if config::configuration().anti_alias_custom_block_glyphs {
@@ -5465,7 +5465,7 @@ impl GlyphCache {
                         &[Poly {
                             path: cmd,
                             intensity: BlockAlpha::Full,
-                            style: style,
+                            style,
                         }],
                         &mut buffer,
                         if config::configuration().anti_alias_custom_block_glyphs {
@@ -5597,7 +5597,7 @@ impl GlyphCache {
                             &[Poly {
                                 path: cmd,
                                 intensity: BlockAlpha::Full,
-                                style: style,
+                                style,
                             }],
                             &mut buffer,
                             if config::configuration().anti_alias_custom_block_glyphs {
@@ -5766,7 +5766,7 @@ impl GlyphCache {
                             &[Poly {
                                 path: cmd,
                                 intensity: BlockAlpha::Full,
-                                style: style,
+                                style,
                             }],
                             &mut buffer,
                             if config::configuration().anti_alias_custom_block_glyphs {

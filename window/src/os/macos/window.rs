@@ -451,9 +451,9 @@ const MIN_RESTORE_WIDTH: usize = 200;
 const MIN_RESTORE_HEIGHT: usize = 120;
 
 thread_local! {
-    static LAST_CLOSED_WINDOW_POSITION: RefCell<Option<ScreenPoint>> = RefCell::new(None);
+    static LAST_CLOSED_WINDOW_POSITION: RefCell<Option<ScreenPoint>> = const { RefCell::new(None) };
     // Sync drag flag: set by request_drag_move(), checked by mouse_down to execute performWindowDragWithEvent:
-    static PENDING_DRAG_MOVE: Cell<bool> = Cell::new(false);
+    static PENDING_DRAG_MOVE: Cell<bool> = const { Cell::new(false) };
 }
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
@@ -658,7 +658,6 @@ pub(crate) fn on_app_terminating() {
 
         if let Some(window) = preferred {
             if persist_window_size(window) {
-                return;
             }
         }
     }
@@ -798,7 +797,7 @@ impl Window {
                 window.center();
             }
 
-            window.setTitle_(*nsstring(&name));
+            window.setTitle_(*nsstring(name));
             window.setAcceptsMouseMovedEvents_(YES);
 
             let view = WindowView::init_with_frame(&inner, rect)?;
@@ -1552,10 +1551,8 @@ impl WindowInner {
             if !self.exit_simple_fullscreen() {
                 self.toggle_native_fullscreen();
             }
-        } else {
-            if !self.exit_native_fullscreen() {
-                self.toggle_simple_fullscreen();
-            }
+        } else if !self.exit_native_fullscreen() {
+            self.toggle_simple_fullscreen();
         }
     }
 
@@ -2013,7 +2010,7 @@ impl Inner {
             // We treat that the same as the dead key disabled state:
             // we want to clock through a space keypress so that we clear
             // the state and output the original keypress.
-            let generate_space = !use_dead_keys || result.text.len() == 0;
+            let generate_space = !use_dead_keys || result.text.is_empty();
 
             if generate_space {
                 // synthesize a SPACE press to
@@ -2980,7 +2977,7 @@ impl WindowView {
                             // that last action.
                             if is_a_repeat {
                                 if let Some(event) =
-                                    inner.ime_last_event.as_ref().map(|e| e.clone())
+                                    inner.ime_last_event.clone()
                                 {
                                     inner.events.dispatch(WindowEvent::KeyEvent(event));
                                     return;
@@ -3256,7 +3253,7 @@ impl WindowView {
             // higher up the callstack already has a mutable
             // reference and we'd panic.
             let is_full_screen = inner.fullscreen.is_some()
-                || inner.window.as_ref().map_or(false, |window| {
+                || inner.window.as_ref().is_some_and(|window| {
                     let window = window.load();
                     let style_mask = unsafe { NSWindow::styleMask(*window) };
                     style_mask.contains(NSWindowStyleMask::NSFullScreenWindowMask)
@@ -3268,7 +3265,7 @@ impl WindowView {
             // Zoom animation typically takes ~0.2s, use 0.3s as buffer.
             let in_zoom_transition = inner
                 .last_zoom_time
-                .map_or(false, |t| t.elapsed().as_secs_f32() < 0.3);
+                .is_some_and(|t| t.elapsed().as_secs_f32() < 0.3);
             let live_resizing =
                 inner.live_resizing || in_fullscreen_transition || in_zoom_transition;
 
@@ -3278,7 +3275,7 @@ impl WindowView {
             // wezterm-gui/src/termwindow/resize.rs.
             // <https://github.com/wezterm/wezterm/issues/3503>
             let is_zoomed = !is_full_screen
-                && inner.window.as_ref().map_or(false, |window| {
+                && inner.window.as_ref().is_some_and(|window| {
                     let window = window.load();
                     unsafe { msg_send![*window, isZoomed] }
                 });
@@ -3414,7 +3411,7 @@ impl WindowView {
                 let window_id = inner.window_id;
                 let max_fps = inner.config.max_fps;
                 promise::spawn::spawn(async move {
-                    async_io::Timer::after(std::time::Duration::from_millis(1000 / max_fps as u64))
+                    async_io::Timer::after(std::time::Duration::from_millis(1000 / max_fps))
                         .await;
                     Connection::with_window_inner(window_id, move |inner| {
                         if let Some(window_view) = WindowView::get_this(unsafe { &**inner.view }) {
@@ -3505,7 +3502,7 @@ impl WindowView {
         inner.borrow_mut().view_id.replace(view_id.weak());
 
         let view = Box::into_raw(Box::new(Self {
-            inner: Rc::clone(&inner),
+            inner: Rc::clone(inner),
         }));
 
         unsafe {
