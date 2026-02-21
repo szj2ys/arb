@@ -111,6 +111,7 @@ mod imp {
         results.push(check_user_config());
         results.push(check_app_bundle());
         results.push(check_version());
+        results.push(check_homebrew_cask());
         results.extend(check_zsh_plugins());
         results
     }
@@ -415,6 +416,57 @@ mod imp {
             .collect()
     }
 
+    // -- Check 8: Homebrew installation --
+
+    pub(crate) fn check_homebrew_cask() -> CheckResult {
+        if !crate::paths::command_exists("brew") {
+            return CheckResult {
+                name: "Homebrew".into(),
+                status: CheckStatus::Pass,
+                message: "Homebrew not installed (skipped)".into(),
+                fix: None,
+            };
+        }
+
+        // Check if arb is installed via the correct tap
+        let tap_output = std::process::Command::new("brew")
+            .args(["info", "--json=v2", "szj2ys/arb/arb"])
+            .output();
+
+        match tap_output {
+            Ok(output) if output.status.success() => CheckResult {
+                name: "Homebrew".into(),
+                status: CheckStatus::Pass,
+                message: "installed via szj2ys/arb tap".into(),
+                fix: None,
+            },
+            _ => {
+                // Check if there's a different 'arb' cask/formula
+                let generic_output = std::process::Command::new("brew")
+                    .args(["list", "arb"])
+                    .output();
+
+                match generic_output {
+                    Ok(output) if output.status.success() => CheckResult {
+                        name: "Homebrew".into(),
+                        status: CheckStatus::Warn,
+                        message: "found conflicting 'arb' package (not from szj2ys/arb tap)"
+                            .into(),
+                        fix: Some(
+                            "Run: brew uninstall arb && brew install szj2ys/arb/arb".into(),
+                        ),
+                    },
+                    _ => CheckResult {
+                        name: "Homebrew".into(),
+                        status: CheckStatus::Pass,
+                        message: "no conflicting packages found".into(),
+                        fix: None,
+                    },
+                }
+            }
+        }
+    }
+
     // -- Helpers --
 
     fn git_config_get(key: &str) -> Option<String> {
@@ -501,10 +553,17 @@ mod tests {
         }
 
         #[test]
+        fn should_return_check_result_for_homebrew_cask() {
+            let result = check_homebrew_cask();
+            assert_eq!(result.name, "Homebrew");
+            assert!(!result.message.is_empty());
+        }
+
+        #[test]
         fn should_run_all_checks_without_panicking() {
             let results = run_all_checks();
-            // 1 shell + 1 starship + 1 delta + 1 config + 1 bundle + 1 version + 4 plugins = 10
-            assert!(results.len() >= 10);
+            // 1 shell + 1 starship + 1 delta + 1 config + 1 bundle + 1 version + 1 homebrew + 4 plugins = 11
+            assert!(results.len() >= 11);
         }
 
         #[test]
