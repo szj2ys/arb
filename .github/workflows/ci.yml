@@ -47,8 +47,7 @@ jobs:
 
       - name: Run tests
         run: |
-          cargo nextest run
-          cargo nextest run -p wezterm-escape-parser
+          cargo nextest run --profile ci
 
   check:
     name: Cargo Check
@@ -69,10 +68,31 @@ jobs:
       - name: Check key crates
         run: cargo check -p arb -p arb-gui
 
+  clippy:
+    name: Clippy Lints
+    runs-on: macos-latest
+    needs: fmt
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - name: Cache Cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Run clippy
+        run: cargo clippy -p arb -p arb-gui -- -D warnings
+
   universal-build:
     name: Universal Build Validation
     runs-on: macos-latest
-    needs: [check, test]
+    needs: [check, test, clippy]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
