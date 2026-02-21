@@ -2,7 +2,7 @@
 name = "arb-gui"
 version = "0.3.2"
 authors = ["szj2ys"]
-edition = "2018"
+edition = "2021"
 build = "build.rs"
 resolver = "2"
 publish = false
