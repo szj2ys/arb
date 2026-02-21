@@ -22,6 +22,7 @@ mod config_cmd;
 mod doctor;
 mod init;
 mod reset;
+pub(crate) mod paths;
 pub mod update;
 
 #[derive(Debug, Parser)]

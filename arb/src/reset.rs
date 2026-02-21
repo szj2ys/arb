@@ -3,7 +3,7 @@ use clap::Parser;
 use std::io::{self, IsTerminal, Write};
 use std::os::unix::process::CommandExt;
 use std::path::{Path, PathBuf};
-use std::process::{Command, Stdio};
+use std::process::Command;
 
 #[derive(Debug, Parser, Clone, Default)]
 pub struct ResetCommand {
@@ -91,17 +91,17 @@ mod imp {
         cleanup_git_delta_defaults(&mut report)?;
         cleanup_theme_block(&mut report)?;
         remove_file_if_exists(
-            config_home().join(".arb_config_version"),
+            crate::paths::config_home().join(".arb_config_version"),
             "removed config version marker",
             &mut report,
         )?;
         remove_file_if_exists(
-            config_home().join(".arb_window_geometry"),
+            crate::paths::config_home().join(".arb_window_geometry"),
             "removed persisted window geometry",
             &mut report,
         )?;
         remove_dir_if_exists(
-            config_home().join("backups"),
+            crate::paths::config_home().join("backups"),
             "removed Arb backup directory",
             &mut report,
         )?;
@@ -165,24 +165,8 @@ mod imp {
         }
     }
 
-    fn home_dir() -> PathBuf {
-        config::HOME_DIR.clone()
-    }
-
-    fn config_home() -> PathBuf {
-        home_dir().join(".config").join("arb")
-    }
-
-    fn zshrc_path() -> PathBuf {
-        if let Some(zdotdir) = std::env::var_os("ZDOTDIR") {
-            PathBuf::from(zdotdir).join(".zshrc")
-        } else {
-            home_dir().join(".zshrc")
-        }
-    }
-
     fn remove_zsh_integration(report: &mut ResetReport) -> anyhow::Result<()> {
-        let zshrc = zshrc_path();
+        let zshrc = crate::paths::zshrc_path();
         if !zshrc.exists() {
             report.skipped(format!("{} not found", zshrc.display()));
             return Ok(());
@@ -211,7 +195,7 @@ mod imp {
     }
 
     fn remove_arb_shell_dir(report: &mut ResetReport) -> anyhow::Result<()> {
-        let arb_init = config_home().join("zsh").join("arb.zsh");
+        let arb_init = crate::paths::config_home().join("zsh").join("arb.zsh");
         if arb_init.exists() {
             std::fs::remove_file(&arb_init)
                 .with_context(|| format!("remove {}", arb_init.display()))?;
@@ -223,7 +207,7 @@ mod imp {
     }
 
     fn cleanup_git_delta_defaults(report: &mut ResetReport) -> anyhow::Result<()> {
-        if !command_exists("git") {
+        if !crate::paths::command_exists("git") {
             report.skipped("git not found; skipped git config cleanup");
             return Ok(());
         }
@@ -280,18 +264,8 @@ mod imp {
         Ok(status.success())
     }
 
-    fn command_exists(name: &str) -> bool {
-        Command::new(name)
-            .arg("--version")
-            .stdout(Stdio::null())
-            .stderr(Stdio::null())
-            .status()
-            .map(|status| status.success())
-            .unwrap_or(false)
-    }
-
     fn cleanup_theme_block(report: &mut ResetReport) -> anyhow::Result<()> {
-        let config_path = config_home().join("arb.lua");
+        let config_path = crate::paths::config_home().join("arb.lua");
         if !config_path.exists() {
             report.skipped(format!("{} not found", config_path.display()));
             return Ok(());
@@ -382,7 +356,7 @@ mod imp {
     }
 
     fn remove_empty_arb_config_dir(report: &mut ResetReport) -> anyhow::Result<()> {
-        let dir = config_home();
+        let dir = crate::paths::config_home();
         if !dir.exists() {
             return Ok(());
         }

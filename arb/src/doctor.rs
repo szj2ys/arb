@@ -1,6 +1,6 @@
 use clap::Parser;
 use std::path::PathBuf;
-use std::process::{Command, Stdio};
+use std::process::Command;
 
 #[derive(Debug, Parser, Clone, Default)]
 pub struct DoctorCommand {}
@@ -115,23 +115,11 @@ mod imp {
         results
     }
 
-    fn home_dir() -> PathBuf {
-        config::HOME_DIR.clone()
-    }
-
     fn config_home() -> PathBuf {
         config::CONFIG_DIRS
             .first()
             .cloned()
-            .unwrap_or_else(|| home_dir().join(".config").join("arb"))
-    }
-
-    fn zshrc_path() -> PathBuf {
-        if let Some(zdotdir) = std::env::var_os("ZDOTDIR") {
-            PathBuf::from(zdotdir).join(".zshrc")
-        } else {
-            home_dir().join(".zshrc")
-        }
+            .unwrap_or_else(|| crate::paths::home_dir().join(".config").join("arb"))
     }
 
     // -- Check 1: Shell integration --
@@ -147,7 +135,7 @@ mod imp {
             };
         }
 
-        let zshrc = zshrc_path();
+        let zshrc = crate::paths::zshrc_path();
         if !zshrc.exists() {
             return CheckResult {
                 name: "Shell integration".into(),
@@ -240,7 +228,7 @@ mod imp {
     // -- Check 3: Delta --
 
     pub(crate) fn check_delta() -> CheckResult {
-        let in_path = command_exists("delta");
+        let in_path = crate::paths::command_exists("delta");
         let git_pager = git_config_get("core.pager")
             .map(|v| v.trim().to_string())
             .unwrap_or_default();
@@ -353,7 +341,7 @@ mod imp {
     pub(crate) fn check_app_bundle() -> CheckResult {
         let candidates = [
             PathBuf::from("/Applications/Arb.app"),
-            home_dir().join("Applications").join("Arb.app"),
+            crate::paths::home_dir().join("Applications").join("Arb.app"),
         ];
 
         for candidate in &candidates {
@@ -428,16 +416,6 @@ mod imp {
     }
 
     // -- Helpers --
-
-    fn command_exists(name: &str) -> bool {
-        Command::new(name)
-            .arg("--version")
-            .stdout(Stdio::null())
-            .stderr(Stdio::null())
-            .status()
-            .map(|s| s.success())
-            .unwrap_or(false)
-    }
 
     fn git_config_get(key: &str) -> Option<String> {
         Command::new("git")
