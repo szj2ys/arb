@@ -827,6 +827,13 @@
       font-size: 18px;
     }
 
+    .comparison-table .partial {
+      color: var(--yellow, #e5c07b);
+      font-size: 12px;
+      font-weight: 600;
+      opacity: 0.85;
+    }
+
     .comparison-table .value {
       color: var(--fg);
       font-family: var(--font-mono);
@@ -1862,7 +1869,7 @@
             <tr>
               <td>GPU Rendering</td>
               <td class="arb-col"><span class="check" aria-label="Yes">&#10003;</span></td>
-              <td><span class="dash" aria-label="No">&mdash;</span></td>
+              <td><span class="partial" aria-label="Partial" title="Experimental Metal renderer available">Partial</span></td>
               <td><span class="check" aria-label="Yes">&#10003;</span></td>
               <td><span class="check" aria-label="Yes">&#10003;</span></td>
               <td><span class="check" aria-label="Yes">&#10003;</span></td>
@@ -1898,9 +1905,9 @@
             <tr>
               <td>Binary Size</td>
               <td class="arb-col"><span class="value best">~40 MB</span></td>
-              <td><span class="value">~52 MB</span></td>
-              <td><span class="value">~9 MB</span></td>
-              <td><span class="value">~31 MB</span></td>
+              <td><span class="value">~55 MB</span></td>
+              <td><span class="value">~15 MB</span></td>
+              <td><span class="value">~30 MB</span></td>
               <td><span class="value">~15 MB</span></td>
               <td><span class="value">~90 MB</span></td>
             </tr>
@@ -2126,6 +2133,7 @@
         <a href="https://github.com/szj2ys/arb" target="_blank" rel="noopener">GitHub</a>
         <a href="https://github.com/szj2ys/arb/issues" target="_blank" rel="noopener">Issues</a>
         <a href="https://github.com/szj2ys/arb/blob/main/LICENSE" target="_blank" rel="noopener">License</a>
+        <a href="best-terminal-for-claude-code.html">Best Terminal for Claude Code</a>
       </div>
     </div>
   </footer>
