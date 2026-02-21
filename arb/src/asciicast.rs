@@ -610,9 +610,7 @@ impl PlayCommand {
 
         if self.explain || self.explain_only {
             println!("> SENT");
-            for s in summarize(sent_actions) {
-                println!("\t{:?}", s);
-            }
+            print_summarized(sent_actions);
         }
 
         if !self.explain_only {
@@ -640,30 +638,21 @@ impl PlayCommand {
     }
 }
 
-#[allow(dead_code)]
-#[derive(Debug)]
-enum Summarized {
-    Action(Action),
-    Print(String),
-}
-
-fn summarize(actions: Vec<Action>) -> Vec<Summarized> {
+fn print_summarized(actions: Vec<Action>) {
     let mut print = String::new();
-    let mut res = vec![];
     for act in actions {
         match act {
             Action::Print(c) => print.push(c),
             act => {
                 if !print.is_empty() {
-                    res.push(Summarized::Print(print.escape_default().to_string()));
+                    println!("\tPrint({:?})", print.escape_default().to_string());
                     print.clear();
                 }
-                res.push(Summarized::Action(act));
+                println!("\t{:?}", act);
             }
         }
     }
     if !print.is_empty() {
-        res.push(Summarized::Print(print.escape_default().to_string()));
+        println!("\tPrint({:?})", print.escape_default().to_string());
     }
-    res
 }
