@@ -231,4 +231,58 @@ exit 127
 
         candidates
     }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+
+        #[test]
+        fn escape_should_handle_normal_path() {
+            assert_eq!(
+                escape_for_double_quotes("/Applications/Arb.app/Contents/MacOS/arb"),
+                "/Applications/Arb.app/Contents/MacOS/arb"
+            );
+        }
+
+        #[test]
+        fn escape_should_escape_backslash() {
+            assert_eq!(escape_for_double_quotes("a\\b"), "a\\\\b");
+        }
+
+        #[test]
+        fn escape_should_escape_double_quote() {
+            assert_eq!(escape_for_double_quotes("a\"b"), "a\\\"b");
+        }
+
+        #[test]
+        fn escape_should_escape_dollar_sign() {
+            assert_eq!(escape_for_double_quotes("a$b"), "a\\$b");
+        }
+
+        #[test]
+        fn escape_should_escape_backtick() {
+            assert_eq!(escape_for_double_quotes("a`b"), "a\\`b");
+        }
+
+        #[test]
+        fn escape_should_handle_path_with_spaces() {
+            assert_eq!(
+                escape_for_double_quotes("/path/with spaces/file"),
+                "/path/with spaces/file"
+            );
+        }
+
+        #[test]
+        fn escape_should_handle_multiple_special_chars() {
+            assert_eq!(
+                escape_for_double_quotes("$HOME/`test`/\"file\""),
+                "\\$HOME/\\`test\\`/\\\"file\\\""
+            );
+        }
+
+        #[test]
+        fn escape_should_handle_empty_string() {
+            assert_eq!(escape_for_double_quotes(""), "");
+        }
+    }
 }

@@ -374,4 +374,94 @@ mod imp {
             std::fs::read_dir(path).with_context(|| format!("read {}", path.display()))?;
         Ok(iter.next().is_none())
     }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+
+        #[test]
+        fn strip_theme_block_should_return_unchanged_when_no_marker() {
+            let content = "local config = {}\nconfig.font_size = 14\nreturn config\n";
+            let (result, changed) =
+                strip_theme_block(content, "-- ===== Arb Theme Defaults (managed) =====");
+            assert!(!changed);
+            assert_eq!(result, content);
+        }
+
+        #[test]
+        fn strip_theme_block_should_strip_block_between_marker_and_return() {
+            let content = "local config = {}\n-- ===== Arb Theme Defaults (managed) =====\nconfig.color_scheme = 'Arb Dark'\nreturn config\n";
+            let (result, changed) =
+                strip_theme_block(content, "-- ===== Arb Theme Defaults (managed) =====");
+            assert!(changed);
+            assert!(result.contains("local config = {}"));
+            assert!(!result.contains("Arb Theme Defaults"));
+            assert!(!result.contains("color_scheme"));
+            assert!(result.contains("return config"));
+        }
+
+        #[test]
+        fn strip_theme_block_should_preserve_content_before_marker() {
+            let content = "local config = {}\nconfig.font_size = 14\n-- ===== Arb Theme Defaults (managed) =====\nconfig.color_scheme = 'Arb Dark'\nreturn config\n";
+            let (result, changed) =
+                strip_theme_block(content, "-- ===== Arb Theme Defaults (managed) =====");
+            assert!(changed);
+            assert!(result.contains("config.font_size = 14"));
+        }
+
+        #[test]
+        fn strip_theme_block_should_preserve_content_after_return() {
+            let content = "local config = {}\n-- ===== Arb Theme Defaults (managed) =====\nconfig.color_scheme = 'Arb Dark'\nreturn config\n-- trailing comment\n";
+            let (result, changed) =
+                strip_theme_block(content, "-- ===== Arb Theme Defaults (managed) =====");
+            assert!(changed);
+            assert!(result.contains("-- trailing comment"));
+        }
+
+        #[test]
+        fn strip_theme_block_should_add_return_if_missing_before_marker() {
+            let content = "local config = {}\n-- ===== Arb Theme Defaults (managed) =====\nconfig.color_scheme = 'Arb Dark'\nreturn config\n";
+            let (result, changed) =
+                strip_theme_block(content, "-- ===== Arb Theme Defaults (managed) =====");
+            assert!(changed);
+            // Should have exactly one "return config"
+            let count = result.matches("return config").count();
+            assert_eq!(count, 1);
+        }
+
+        #[test]
+        fn strip_theme_block_should_not_strip_when_no_return_after_marker() {
+            let content = "local config = {}\n-- ===== Arb Theme Defaults (managed) =====\nconfig.color_scheme = 'Arb Dark'\n";
+            let (result, changed) =
+                strip_theme_block(content, "-- ===== Arb Theme Defaults (managed) =====");
+            assert!(!changed);
+            assert_eq!(result, content);
+        }
+
+        #[test]
+        fn strip_theme_block_should_handle_empty_content() {
+            let (result, changed) =
+                strip_theme_block("", "-- ===== Arb Theme Defaults (managed) =====");
+            assert!(!changed);
+            assert_eq!(result, "");
+        }
+
+        #[test]
+        fn strip_theme_block_should_handle_legacy_marker() {
+            let content = "local config = {}\n-- ===== Arb Theme =====\nconfig.color_scheme = 'Arb Dark'\nreturn config\n";
+            let (result, changed) = strip_theme_block(content, "-- ===== Arb Theme =====");
+            assert!(changed);
+            assert!(!result.contains("Arb Theme ====="));
+        }
+
+        #[test]
+        fn strip_theme_block_should_keep_return_if_already_before_marker() {
+            let content = "local config = {}\nreturn config\n-- ===== Arb Theme Defaults (managed) =====\nconfig.color_scheme = 'Arb Dark'\nreturn config\n";
+            let (result, changed) =
+                strip_theme_block(content, "-- ===== Arb Theme Defaults (managed) =====");
+            assert!(changed);
+            let count = result.matches("return config").count();
+            assert_eq!(count, 1, "should not duplicate return config");
+        }
+    }
 }
