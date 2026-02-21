@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#15141b"/>
+      <stop offset="100%" stop-color="#1c1b22"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#a277ff"/>
+      <stop offset="100%" stop-color="#61ffca"/>
+    </linearGradient>
+    <linearGradient id="glowGrad" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#a277ff" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#a277ff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="20" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="640" fill="url(#bgGrad)"/>
+
+  <!-- Subtle radial glow behind content -->
+  <ellipse cx="640" cy="240" rx="500" ry="300" fill="url(#glowGrad)"/>
+
+  <!-- Top accent line -->
+  <rect x="340" y="0" width="600" height="2" fill="url(#accentGrad)" rx="1"/>
+
+  <!-- Prompt symbol -->
+  <text x="640" y="160" text-anchor="middle" font-family="'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace" font-size="72" font-weight="700" fill="#a277ff">></text>
+
+  <!-- Brand name -->
+  <text x="640" y="240" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, sans-serif" font-size="96" font-weight="800" fill="#edecee" letter-spacing="-4">arb</text>
+
+  <!-- Tagline -->
+  <text x="640" y="300" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, sans-serif" font-size="24" font-weight="500" fill="#9e9ba5">Fast by default. Deep when you need it.</text>
+
+  <!-- Terminal preview box -->
+  <rect x="340" y="350" width="600" height="200" rx="12" fill="#1c1b22" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+
+  <!-- Terminal titlebar -->
+  <rect x="340" y="350" width="600" height="36" rx="12" fill="#1c1b22"/>
+  <rect x="340" y="374" width="600" height="12" fill="#1c1b22"/>
+  <line x1="340" y1="386" x2="940" y2="386" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+  <!-- Dots -->
+  <circle cx="362" cy="368" r="6" fill="#ff6767"/>
+  <circle cx="382" cy="368" r="6" fill="#ffca85"/>
+  <circle cx="402" cy="368" r="6" fill="#61ffca"/>
+  <!-- Title text -->
+  <text x="640" y="373" text-anchor="middle" font-family="'SF Mono', Menlo, monospace" font-size="11" fill="#9e9ba5">arb</text>
+
+  <!-- Terminal content -->
+  <text x="368" y="416" font-family="'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace" font-size="14" font-weight="600">
+    <tspan fill="#a277ff">~ arb</tspan>
+    <tspan fill="#61ffca"> on</tspan>
+    <tspan fill="#ffca85"> main</tspan>
+  </text>
+  <text x="368" y="440" font-family="'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace" font-size="14">
+    <tspan fill="#a277ff">$ </tspan>
+    <tspan fill="#61ffca">brew install</tspan>
+    <tspan fill="#edecee"> szj2ys/tap/arb</tspan>
+  </text>
+  <text x="368" y="464" font-family="'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace" font-size="14" fill="#9e9ba5">Installing arb...</text>
+  <text x="368" y="488" font-family="'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace" font-size="14">
+    <tspan fill="#61ffca">Done.</tspan>
+    <tspan fill="#9e9ba5"> GPU-accelerated terminal ready.</tspan>
+  </text>
+  <text x="368" y="524" font-family="'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace" font-size="14">
+    <tspan fill="#a277ff">$ </tspan>
+    <tspan fill="#61ffca">claude</tspan>
+    <tspan fill="#9e9ba5"> # AI coding, zero config</tspan>
+  </text>
+
+  <!-- Bottom subtitle -->
+  <text x="640" y="600" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, sans-serif" font-size="16" font-weight="500" fill="#9e9ba5">GPU-accelerated macOS terminal built for AI coding</text>
+
+  <!-- Bottom accent line -->
+  <rect x="440" y="618" width="400" height="1" fill="url(#accentGrad)" rx="1" opacity="0.4"/>
+</svg>

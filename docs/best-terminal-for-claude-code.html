@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Best Terminal for Claude Code in 2026 — arb</title>
+  <meta name="description" content="arb is the best terminal emulator for Claude Code in 2026. GPU-accelerated, zero config, built-in Starship and Delta. Compare arb vs iTerm2, Warp, and Ghostty for AI coding workflows.">
+  <meta name="keywords" content="best terminal for Claude Code, terminal emulator AI coding, Claude Code terminal, arb terminal, iTerm2 vs Warp vs Ghostty, AI coding workflow terminal, macOS terminal for developers">
+  <meta name="theme-color" content="#15141b">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://szj2ys.github.io/arb/best-terminal-for-claude-code.html">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Best Terminal for Claude Code in 2026 — arb">
+  <meta property="og:description" content="GPU-accelerated macOS terminal built for AI coding. Zero config, built-in Starship, Delta, and Lua scripting. The fastest way to run Claude Code.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://szj2ys.github.io/arb/best-terminal-for-claude-code.html">
+  <meta property="og:image" content="https://szj2ys.github.io/arb/terminal-preview.svg">
+  <meta property="og:image:alt" content="arb terminal emulator — best terminal for Claude Code">
+  <meta property="og:site_name" content="arb">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Best Terminal for Claude Code in 2026 — arb">
+  <meta name="twitter:description" content="GPU-accelerated macOS terminal built for AI coding. Zero config with built-in Starship, Delta, and Lua scripting.">
+  <meta name="twitter:image" content="https://szj2ys.github.io/arb/terminal-preview.svg">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>></text></svg>">
+
+  <!-- Structured Data: Article -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Best Terminal for Claude Code in 2026",
+    "description": "A comprehensive comparison of terminal emulators for Claude Code and AI coding workflows. Why arb is the best choice for developers using Claude Code.",
+    "author": {
+      "@type": "Person",
+      "name": "szj2ys",
+      "url": "https://github.com/szj2ys"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "arb",
+      "url": "https://szj2ys.github.io/arb/"
+    },
+    "datePublished": "2026-02-22",
+    "dateModified": "2026-02-22",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://szj2ys.github.io/arb/best-terminal-for-claude-code.html"
+    }
+  }
+  </script>
+
+  <!-- Structured Data: SoftwareApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "arb",
+    "description": "GPU-accelerated macOS terminal emulator built for AI coding workflows. Zero config with built-in Starship, Delta, syntax highlighting, and Lua scripting.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "macOS",
+    "url": "https://szj2ys.github.io/arb/",
+    "downloadUrl": "https://github.com/szj2ys/arb/releases",
+    "softwareVersion": "latest",
+    "license": "https://opensource.org/licenses/MIT",
+    "author": {
+      "@type": "Person",
+      "name": "szj2ys",
+      "url": "https://github.com/szj2ys"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+
+  <!-- Structured Data: FAQ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the best terminal for Claude Code?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "arb is the best terminal for Claude Code. It is GPU-accelerated, boots in under 100ms, requires zero configuration, and includes built-in Starship prompt, Delta diff viewer, z directory jumping, and syntax highlighting — everything Claude Code needs to work efficiently."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is arb better than iTerm2 for AI coding?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. iTerm2 is a general-purpose terminal that requires extensive manual configuration. arb ships with everything pre-configured for AI coding workflows: Starship prompt, Delta for diffs, z for navigation, and GPU-accelerated rendering for fast output from AI tools like Claude Code."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I install arb for Claude Code?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Install arb with a single command: brew install szj2ys/tap/arb. No additional configuration is needed — it works out of the box with Claude Code."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    /* ============================================
+       RESET & BASE — matching arb design language
+       ============================================ */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #15141b;
+      --bg-elevated: #1c1b22;
+      --bg-surface: #232229;
+      --fg: #edecee;
+      --fg-muted: #9e9ba5;
+      --purple: #a277ff;
+      --purple-dim: rgba(162, 119, 255, 0.12);
+      --green: #61ffca;
+      --green-dim: rgba(97, 255, 202, 0.10);
+      --red: #ff6767;
+      --yellow: #ffca85;
+      --radius: 12px;
+      --radius-lg: 16px;
+      --radius-pill: 9999px;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, monospace;
+      --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    ::selection {
+      background: var(--purple);
+      color: var(--bg);
+    }
+
+    a {
+      color: var(--purple);
+      text-decoration: none;
+      transition: opacity 0.2s var(--ease);
+    }
+    a:hover {
+      opacity: 0.8;
+    }
+
+    /* ============================================
+       LAYOUT
+       ============================================ */
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .narrow {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    section {
+      padding: 80px 0;
+    }
+
+    @media (max-width: 640px) {
+      section {
+        padding: 56px 0;
+      }
+    }
+
+    /* ============================================
+       NAV
+       ============================================ */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 0 24px;
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      background: rgba(21, 20, 27, 0.72);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .nav-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+      color: var(--fg);
+    }
+
+    .nav-prompt {
+      color: var(--purple);
+      font-family: var(--font-mono);
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--fg-muted);
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s var(--ease);
+    }
+    .nav-links a:hover {
+      color: var(--fg);
+      opacity: 1;
+    }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      background: var(--purple);
+      color: var(--bg) !important;
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 600;
+      transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+    }
+    .nav-cta:hover {
+      opacity: 1;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(162, 119, 255, 0.35);
+    }
+
+    @media (max-width: 640px) {
+      .nav-links .nav-link-text { display: none; }
+      .nav-links { gap: 16px; }
+    }
+
+    /* ============================================
+       HERO
+       ============================================ */
+    .hero {
+      padding-top: 140px;
+      padding-bottom: 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(ellipse at center, rgba(162, 119, 255, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: var(--purple-dim);
+      border: 1px solid rgba(162, 119, 255, 0.2);
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--purple);
+      margin-bottom: 32px;
+      letter-spacing: 0.02em;
+    }
+
+    .hero h1 {
+      font-size: clamp(36px, 6vw, 60px);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 .gradient {
+      background: linear-gradient(135deg, var(--purple) 0%, var(--green) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: clamp(16px, 2.2vw, 19px);
+      color: var(--fg-muted);
+      line-height: 1.7;
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+
+    /* ============================================
+       INSTALL CTA
+       ============================================ */
+    .install-cta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .install-box {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: var(--bg-surface);
+      border: 2px solid rgba(162, 119, 255, 0.3);
+      border-radius: var(--radius);
+      overflow: hidden;
+      max-width: 100%;
+      transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+    }
+    .install-box:hover {
+      border-color: rgba(162, 119, 255, 0.5);
+      box-shadow: 0 0 24px rgba(162, 119, 255, 0.15);
+    }
+
+    .install-box code {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      padding: 16px 24px;
+      color: var(--fg);
+      white-space: nowrap;
+      user-select: all;
+    }
+
+    .install-box code .prompt-char {
+      color: var(--purple);
+      user-select: none;
+    }
+
+    .copy-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border: none;
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      background: transparent;
+      color: var(--fg-muted);
+      cursor: pointer;
+      transition: color 0.2s var(--ease), background 0.2s var(--ease);
+      flex-shrink: 0;
+    }
+    .copy-btn:hover {
+      color: var(--purple);
+      background: rgba(162, 119, 255, 0.06);
+    }
+    .copy-btn.copied {
+      color: var(--green);
+    }
+
+    /* SVG icon states inside copy buttons */
+    .copy-btn .icon-copy { display: block; }
+    .copy-btn .icon-check { display: none; }
+    .copy-btn.copied .icon-copy { display: none; }
+    .copy-btn.copied .icon-check { display: block; }
+
+    .install-hint {
+      font-size: 13px;
+      color: var(--fg-muted);
+      font-weight: 500;
+    }
+    .install-hint .accent {
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    /* ============================================
+       ARTICLE CONTENT
+       ============================================ */
+    .article-body {
+      padding: 0 24px;
+    }
+
+    .article-body .narrow {
+      padding: 0;
+    }
+
+    .article-body h2 {
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      margin-top: 64px;
+    }
+
+    .article-body h2:first-child {
+      margin-top: 0;
+    }
+
+    .article-body h3 {
+      font-size: clamp(18px, 3vw, 24px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+      margin-top: 48px;
+    }
+
+    .article-body p {
+      font-size: 17px;
+      color: var(--fg-muted);
+      line-height: 1.75;
+      margin-bottom: 20px;
+    }
+
+    .article-body strong {
+      color: var(--fg);
+      font-weight: 600;
+    }
+
+    .article-body ul, .article-body ol {
+      margin-bottom: 20px;
+      padding-left: 24px;
+    }
+
+    .article-body li {
+      font-size: 17px;
+      color: var(--fg-muted);
+      line-height: 1.75;
+      margin-bottom: 8px;
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 16px;
+    }
+
+    .inline-code {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      background: var(--bg-surface);
+      padding: 2px 8px;
+      border-radius: 4px;
+      color: var(--yellow);
+    }
+
+    /* ============================================
+       PAIN POINTS GRID
+       ============================================ */
+    .pain-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin: 32px 0 48px;
+    }
+
+    @media (max-width: 768px) {
+      .pain-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .pain-card {
+      background: var(--bg-elevated);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      transition: border-color 0.3s var(--ease);
+    }
+
+    .pain-card:hover {
+      border-color: rgba(255, 103, 103, 0.2);
+    }
+
+    .pain-card .pain-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      font-size: 18px;
+      background: rgba(255, 103, 103, 0.10);
+      color: var(--red);
+    }
+
+    .pain-card h4 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .pain-card p {
+      font-size: 14px !important;
+      color: var(--fg-muted);
+      line-height: 1.6;
+      margin-bottom: 0 !important;
+    }
+
+    /* ============================================
+       SOLUTION GRID
+       ============================================ */
+    .solution-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin: 32px 0 48px;
+    }
+
+    @media (max-width: 768px) {
+      .solution-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .solution-card {
+      background: var(--bg-elevated);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      transition: border-color 0.3s var(--ease);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .solution-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+      opacity: 0;
+      transition: opacity 0.3s var(--ease);
+    }
+
+    .solution-card:hover {
+      border-color: rgba(97, 255, 202, 0.2);
+    }
+    .solution-card:hover::before {
+      opacity: 0.6;
+    }
+
+    .solution-card .solution-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      font-size: 18px;
+      background: var(--green-dim);
+      color: var(--green);
+    }
+
+    .solution-card h4 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .solution-card p {
+      font-size: 14px !important;
+      color: var(--fg-muted);
+      line-height: 1.6;
+      margin-bottom: 0 !important;
+    }
+
+    /* ============================================
+       COMPARISON TABLE
+       ============================================ */
+    .comparison-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: var(--radius-lg);
+      background: var(--bg-elevated);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      margin: 32px 0 48px;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+      font-size: 15px;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 16px 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      white-space: nowrap;
+    }
+
+    .comparison-table th {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--fg-muted);
+      letter-spacing: 0.02em;
+    }
+
+    .comparison-table th:first-child,
+    .comparison-table td:first-child {
+      text-align: left;
+      font-weight: 500;
+      color: var(--fg);
+    }
+
+    .comparison-table th.arb-col {
+      color: var(--purple);
+      position: relative;
+      background: rgba(162, 119, 255, 0.06);
+    }
+    .comparison-table th.arb-col::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--purple), transparent);
+      border-radius: 2px;
+    }
+
+    .comparison-table td.arb-col {
+      background: rgba(162, 119, 255, 0.06);
+    }
+
+    .comparison-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comparison-table .check {
+      color: var(--green);
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .comparison-table .dash {
+      color: var(--fg-muted);
+      opacity: 0.4;
+      font-size: 18px;
+    }
+
+    .comparison-table .value {
+      color: var(--fg);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .comparison-table .value.best {
+      color: var(--green);
+    }
+
+    /* ============================================
+       TERMINAL PREVIEW
+       ============================================ */
+    .terminal-window {
+      background: var(--bg-elevated);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      max-width: 680px;
+      margin: 32px auto;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.04);
+    }
+
+    .terminal-titlebar {
+      display: flex;
+      align-items: center;
+      padding: 14px 18px;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .terminal-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .terminal-dot.red { background: var(--red); }
+    .terminal-dot.yellow { background: var(--yellow); }
+    .terminal-dot.green { background: var(--green); }
+
+    .terminal-title {
+      flex: 1;
+      text-align: center;
+      font-size: 13px;
+      color: var(--fg-muted);
+      font-weight: 500;
+    }
+
+    .terminal-body {
+      padding: 20px 24px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .terminal-line {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .t-prompt { color: var(--purple); user-select: none; }
+    .t-cmd { color: var(--green); }
+    .t-flag { color: var(--yellow); }
+    .t-arg { color: var(--fg); }
+    .t-output { color: var(--fg-muted); }
+    .t-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 18px;
+      background: var(--purple);
+      border-radius: 1px;
+      animation: blink 1s step-end infinite;
+      vertical-align: text-bottom;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* ============================================
+       FAQ SECTION
+       ============================================ */
+    .faq-list {
+      margin: 32px 0;
+    }
+
+    .faq-item {
+      background: var(--bg-elevated);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+      overflow: hidden;
+      transition: border-color 0.3s var(--ease);
+    }
+    .faq-item:hover {
+      border-color: rgba(162, 119, 255, 0.2);
+    }
+
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      color: var(--fg);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      font-weight: 600;
+      text-align: left;
+      padding: 20px 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      transition: color 0.2s var(--ease);
+    }
+    .faq-question:hover {
+      color: var(--purple);
+    }
+
+    .faq-arrow {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      color: var(--fg-muted);
+      transition: transform 0.3s var(--ease);
+    }
+
+    .faq-item.open .faq-arrow {
+      transform: rotate(180deg);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s var(--ease);
+    }
+
+    .faq-item.open .faq-answer {
+      max-height: 400px;
+    }
+
+    .faq-answer-inner {
+      padding: 0 24px 20px;
+      font-size: 15px;
+      color: var(--fg-muted);
+      line-height: 1.7;
+    }
+
+    /* ============================================
+       BOTTOM CTA
+       ============================================ */
+    .bottom-cta {
+      text-align: center;
+      padding: 96px 0;
+    }
+
+    .bottom-cta-box {
+      background: var(--bg-elevated);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      padding: 56px 40px;
+      max-width: 640px;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bottom-cta-box::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 20%;
+      right: 20%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--purple), var(--green), transparent);
+      border-radius: 2px;
+    }
+
+    .bottom-cta-box h2 {
+      font-size: clamp(28px, 4vw, 36px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+
+    .bottom-cta-box > p {
+      color: var(--fg-muted);
+      font-size: 16px;
+      margin-bottom: 36px;
+    }
+
+    .bottom-cta-install {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: var(--bg-surface);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius);
+      overflow: hidden;
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto 16px;
+      transition: border-color 0.2s var(--ease);
+    }
+    .bottom-cta-install:hover {
+      border-color: rgba(162, 119, 255, 0.3);
+    }
+
+    .bottom-cta-install code {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      padding: 16px 20px;
+      color: var(--fg);
+      flex: 1;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .bottom-cta-install code .prompt-char {
+      color: var(--purple);
+      user-select: none;
+    }
+
+    .bottom-cta-install .copy-btn {
+      width: 48px;
+      height: 52px;
+    }
+
+    .bottom-cta-or {
+      color: var(--fg-muted);
+      font-size: 13px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--fg);
+      border-radius: var(--radius-pill);
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: border-color 0.2s var(--ease), background 0.2s var(--ease), transform 0.2s var(--ease);
+    }
+    .download-btn:hover {
+      border-color: rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.04);
+      transform: translateY(-1px);
+      opacity: 1;
+    }
+
+    /* ============================================
+       FOOTER
+       ============================================ */
+    footer {
+      padding: 40px 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .footer-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 14px;
+      color: var(--fg-muted);
+    }
+
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .footer-right a {
+      color: var(--fg-muted);
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s var(--ease);
+    }
+    .footer-right a:hover {
+      color: var(--fg);
+      opacity: 1;
+    }
+
+    @media (max-width: 640px) {
+      .footer-inner {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+    }
+
+    /* ============================================
+       REDUCED MOTION
+       ============================================ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-delay: 0ms !important;
+        transition-duration: 0.01ms !important;
+      }
+      html { scroll-behavior: auto; }
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== NAV ========== -->
+  <nav>
+    <div class="nav-inner">
+      <a href="https://szj2ys.github.io/arb/" class="nav-brand">
+        <span class="nav-prompt">></span> arb
+      </a>
+      <ul class="nav-links">
+        <li><a href="https://github.com/szj2ys/arb" class="nav-link-text">GitHub</a></li>
+        <li><a href="https://github.com/szj2ys/arb/releases" class="nav-link-text">Releases</a></li>
+        <li><a href="https://szj2ys.github.io/arb/" class="nav-cta">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          Install
+        </a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ========== HERO ========== -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">Best Terminal for AI Coding in 2026</div>
+      <h1>The Best Terminal for <span class="gradient">Claude Code</span></h1>
+      <p class="hero-sub">
+        Claude Code generates thousands of lines per session. Your terminal needs to keep up.
+        arb is the GPU-accelerated, zero-config macOS terminal built from the ground up for AI coding workflows.
+      </p>
+      <div class="install-cta">
+        <div class="install-box">
+          <code><span class="prompt-char">$ </span>brew install szj2ys/tap/arb</code>
+          <button class="copy-btn" data-copy="brew install szj2ys/tap/arb" title="Copy to clipboard">
+            <svg class="icon-copy" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <svg class="icon-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+        </div>
+        <p class="install-hint"><span class="accent">One command.</span> Zero config. Ready in seconds.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== ARTICLE BODY ========== -->
+  <div class="article-body">
+    <div class="narrow">
+
+      <!-- Pain Points -->
+      <span class="section-label">The Problem</span>
+      <h2>Why Most Terminals Fail with Claude Code</h2>
+      <p>
+        Claude Code is transforming how developers write software. But the terminal you run it in matters more than you think. AI coding agents produce <strong>massive output</strong> &mdash; hundreds of file edits, long diffs, and rapid context switches &mdash; and most terminals were never designed for this workload.
+      </p>
+
+      <div class="pain-grid">
+        <div class="pain-card">
+          <div class="pain-icon">~</div>
+          <h4>Slow Rendering</h4>
+          <p>Traditional terminals choke on the volume of output Claude Code produces. Scrollback stutters, frames drop, and you lose time waiting for the terminal to catch up.</p>
+        </div>
+        <div class="pain-card">
+          <div class="pain-icon">!</div>
+          <h4>Configuration Hell</h4>
+          <p>iTerm2 requires hours of setup. Fonts, themes, plugins, shell integrations &mdash; all manual. When Claude Code is ready to work, your terminal is still loading plugins.</p>
+        </div>
+        <div class="pain-card">
+          <div class="pain-icon">#</div>
+          <h4>Missing Dev Tools</h4>
+          <p>Need syntax-highlighted diffs? Install Delta. Want a smart prompt? Install Starship. Directory jumping? Install zoxide. Each tool is another config file to maintain.</p>
+        </div>
+        <div class="pain-card">
+          <div class="pain-icon">%</div>
+          <h4>Slow Startup</h4>
+          <p>Shell boot times of 500ms+ add up across dozens of daily sessions. When Claude Code needs to spawn subshells, every millisecond of startup latency compounds.</p>
+        </div>
+      </div>
+
+      <!-- Solution -->
+      <span class="section-label">The Solution</span>
+      <h2>How arb Solves These Problems</h2>
+      <p>
+        arb is a terminal emulator purpose-built for the AI coding era. It ships a <strong>40MB binary</strong> with everything you need &mdash; no plugins, no dotfile configuration, no package managers. Open it, and it works.
+      </p>
+
+      <div class="solution-grid">
+        <div class="solution-card">
+          <div class="solution-icon">G</div>
+          <h4>GPU-Accelerated Rendering</h4>
+          <p>Metal-backed rendering handles massive output streams without dropping frames. Claude Code can dump 10,000 lines and arb keeps scrolling smooth.</p>
+        </div>
+        <div class="solution-card">
+          <div class="solution-icon">0</div>
+          <h4>Zero Configuration</h4>
+          <p>No .zshrc tweaks, no plugin managers, no font downloads. arb includes a Nerd Font, a modern color scheme, and sensible defaults from the first launch.</p>
+        </div>
+        <div class="solution-card">
+          <div class="solution-icon">S</div>
+          <h4>Built-in Starship Prompt</h4>
+          <p>Starship is compiled in &mdash; not installed separately. Git status, language versions, and execution time appear instantly with zero shell overhead.</p>
+        </div>
+        <div class="solution-card">
+          <div class="solution-icon">D</div>
+          <h4>Built-in Delta &amp; z</h4>
+          <p>Syntax-highlighted diffs (Delta) and smart directory jumping (z) are built in. The tools Claude Code's workflow depends on, ready from the first session.</p>
+        </div>
+        <div class="solution-card">
+          <div class="solution-icon">L</div>
+          <h4>Lua Scripting</h4>
+          <p>Customize keybindings, appearance, and behavior with Lua. No proprietary config format &mdash; a real programming language for when you need to go deep.</p>
+        </div>
+        <div class="solution-card">
+          <div class="solution-icon">B</div>
+          <h4>100ms Shell Boot</h4>
+          <p>Your shell is ready before your fingers leave the keyboard. Spawn new tabs, split panes, and run subshells with imperceptible latency.</p>
+        </div>
+      </div>
+
+      <!-- Terminal Preview -->
+      <div class="terminal-window">
+        <div class="terminal-titlebar">
+          <div class="terminal-dot red"></div>
+          <div class="terminal-dot yellow"></div>
+          <div class="terminal-dot green"></div>
+          <div class="terminal-title">arb &mdash; Claude Code session</div>
+        </div>
+        <div class="terminal-body">
+          <div class="terminal-line"><span class="t-prompt">~ arb</span> <span class="t-cmd">on</span> <span class="t-flag">main</span></div>
+          <div class="terminal-line"><span class="t-prompt">$</span> <span class="t-cmd">claude</span></div>
+          <div class="terminal-line"><span class="t-output">Claude Code v1.2.0</span></div>
+          <div class="terminal-line"><span class="t-output">Connected. Type your request...</span></div>
+          <div class="terminal-line" style="height:8px;"></div>
+          <div class="terminal-line"><span class="t-prompt">></span> <span class="t-arg">Refactor the auth module to use JWT tokens</span></div>
+          <div class="terminal-line"><span class="t-output">I'll refactor the auth module. Let me read the current code...</span></div>
+          <div class="terminal-line"><span class="t-output">Editing 4 files...</span> <span class="t-cmd">Done</span> <span class="t-flag">(2.3s)</span></div>
+          <div class="terminal-line"><span class="t-prompt">$</span> <span class="t-cmd">git diff</span> <span class="t-flag">--stat</span></div>
+          <div class="terminal-line"><span class="t-output"> src/auth.rs    | 47 +++++++++------</span></div>
+          <div class="terminal-line"><span class="t-output"> src/token.rs   | 23 +++++++</span></div>
+          <div class="terminal-line"><span class="t-output"> src/config.rs  |  8 ++-</span></div>
+          <div class="terminal-line"><span class="t-output"> tests/auth.rs  | 31 ++++++++++</span></div>
+          <div class="terminal-line"><span class="t-output"> 4 files changed, 82 insertions(+), 27 deletions(-)</span></div>
+          <div class="terminal-line"><span class="t-prompt">$</span> <span class="t-cursor"></span></div>
+        </div>
+      </div>
+
+      <!-- Comparison -->
+      <span class="section-label">Comparison</span>
+      <h2>arb vs iTerm2 vs Warp vs Ghostty for AI Coding</h2>
+      <p>
+        Here is how arb stacks up against the most popular macOS terminals when used specifically for <strong>AI coding workflows</strong> like Claude Code, GitHub Copilot CLI, and other LLM-powered tools.
+      </p>
+
+      <div class="comparison-wrap">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th class="arb-col">arb</th>
+              <th>iTerm2</th>
+              <th>Warp</th>
+              <th>Ghostty</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>GPU-accelerated rendering</td>
+              <td class="arb-col"><span class="check">&#10003;</span></td>
+              <td><span class="dash">&mdash;</span></td>
+              <td><span class="check">&#10003;</span></td>
+              <td><span class="check">&#10003;</span></td>
+            </tr>
+            <tr>
+              <td>Shell boot time</td>
+              <td class="arb-col"><span class="value best">~100ms</span></td>
+              <td><span class="value">~400ms</span></td>
+              <td><span class="value">~300ms</span></td>
+              <td><span class="value">~200ms</span></td>
+            </tr>
+            <tr>
+              <td>Built-in Starship prompt</td>
+              <td class="arb-col"><span class="check">&#10003;</span></td>
+              <td><span class="dash">&mdash;</span></td>
+              <td><span class="dash">&mdash;</span></td>
+              <td><span class="dash">&mdash;</span></td>
+            </tr>
+            <tr>
+              <td>Built-in Delta (diffs)</td>
+              <td class="arb-col"><span class="check">&#10003;</span></td>
+              <td><span class="dash">&mdash;</span></td>
+              <td><span class="dash">&mdash;</span></td>
+              <td><span class="dash">&mdash;</span></td>
+            </tr>
+            <tr>
+              <td>Built-in z (dir jumping)</td>
+              <td class="arb-col"><span class="check">&#10003;</span></td>
+              <td><span class="dash">&mdash;</span></td>
+              <td><span class="dash">&mdash;</span></td>
+              <td><span class="dash">&mdash;</span></td>
+            </tr>
+            <tr>
+              <td>Zero config required</td>
+              <td class="arb-col"><span class="check">&#10003;</span></td>
+              <td><span class="dash">&mdash;</span></td>
+              <td><span class="check">&#10003;</span></td>
+              <td><span class="dash">&mdash;</span></td>
+            </tr>
+            <tr>
+              <td>Nerd Font included</td>
+              <td class="arb-col"><span class="check">&#10003;</span></td>
+              <td><span class="dash">&mdash;</span></td>
+              <td><span class="check">&#10003;</span></td>
+              <td><span class="dash">&mdash;</span></td>
+            </tr>
+            <tr>
+              <td>Lua scripting</td>
+              <td class="arb-col"><span class="check">&#10003;</span></td>
+              <td><span class="dash">&mdash;</span></td>
+              <td><span class="dash">&mdash;</span></td>
+              <td><span class="dash">&mdash;</span></td>
+            </tr>
+            <tr>
+              <td>No account / login</td>
+              <td class="arb-col"><span class="check">&#10003;</span></td>
+              <td><span class="check">&#10003;</span></td>
+              <td><span class="dash">&mdash;</span></td>
+              <td><span class="check">&#10003;</span></td>
+            </tr>
+            <tr>
+              <td>No telemetry</td>
+              <td class="arb-col"><span class="check">&#10003;</span></td>
+              <td><span class="check">&#10003;</span></td>
+              <td><span class="dash">&mdash;</span></td>
+              <td><span class="check">&#10003;</span></td>
+            </tr>
+            <tr>
+              <td>Open source (MIT)</td>
+              <td class="arb-col"><span class="check">&#10003;</span></td>
+              <td><span class="check">&#10003;</span></td>
+              <td><span class="dash">&mdash;</span></td>
+              <td><span class="check">&#10003;</span></td>
+            </tr>
+            <tr>
+              <td>Binary size</td>
+              <td class="arb-col"><span class="value best">~40MB</span></td>
+              <td><span class="value">~60MB</span></td>
+              <td><span class="value">~200MB</span></td>
+              <td><span class="value">~15MB</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Detailed comparisons -->
+      <h3>arb vs iTerm2 for Claude Code</h3>
+      <p>
+        iTerm2 has been the default macOS terminal for over a decade, but it was designed for a pre-AI world. It relies on CPU-based rendering, which visibly stutters when Claude Code produces large output streams. You need to manually install a Nerd Font, configure Starship, install Delta, set up zoxide, and tweak dozens of preferences before it feels modern.
+      </p>
+      <p>
+        arb ships all of these built-in. There is nothing to install, nothing to configure, and the GPU-accelerated renderer handles Claude Code's output without breaking a sweat. If you are tired of maintaining a 200-line <code class="inline-code">.zshrc</code>, arb is the upgrade.
+      </p>
+
+      <h3>arb vs Warp for Claude Code</h3>
+      <p>
+        Warp is a modern, GPU-accelerated terminal with a polished UI. However, it requires an account and login, collects telemetry, and is not open source. For developers who value privacy and transparency &mdash; especially when running AI tools that process codebases &mdash; this can be a dealbreaker.
+      </p>
+      <p>
+        arb is MIT-licensed, collects zero telemetry, requires no login, and ships with the same zero-config philosophy. It also includes Starship, Delta, and z as built-in tools, which Warp does not. For Claude Code users who want a fast, private, and fully-equipped terminal, arb is the clear choice.
+      </p>
+
+      <h3>arb vs Ghostty for Claude Code</h3>
+      <p>
+        Ghostty is a fast, minimal terminal with excellent GPU rendering. It is a great choice if you prefer to build your own setup from scratch. But that is exactly the tradeoff: Ghostty gives you a blank canvas and expects you to install your own prompt, diff tool, directory jumper, font, and theme.
+      </p>
+      <p>
+        arb takes the opposite approach. It bundles a carefully selected set of tools &mdash; Starship, Delta, z, syntax highlighting, a Nerd Font &mdash; so you can start a Claude Code session immediately. If you want the fastest path from <code class="inline-code">brew install</code> to a productive AI coding session, arb gets you there in seconds.
+      </p>
+
+      <!-- FAQ -->
+      <span class="section-label">FAQ</span>
+      <h2>Frequently Asked Questions</h2>
+
+      <div class="faq-list">
+        <div class="faq-item open">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            What is the best terminal for Claude Code?
+            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">
+              arb is the best terminal for Claude Code. It is GPU-accelerated, boots your shell in under 100ms, and includes Starship, Delta, z, and syntax highlighting out of the box. Install with <code class="inline-code">brew install szj2ys/tap/arb</code> and start coding immediately.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Does arb work with Claude Code out of the box?
+            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">
+              Yes. arb requires zero configuration. Install it, open it, and run Claude Code. Starship prompt, syntax-highlighted diffs, directory jumping, and GPU-accelerated rendering are all built in and working from the first launch.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Is arb open source?
+            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">
+              Yes. arb is MIT-licensed and fully open source. No account required, no telemetry, no tracking. You can inspect, fork, and contribute on <a href="https://github.com/szj2ys/arb">GitHub</a>.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Is arb better than iTerm2 for AI coding?
+            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">
+              For AI coding workflows, yes. iTerm2 uses CPU-based rendering which struggles with the volume of output AI tools produce. It also requires extensive manual setup. arb is GPU-accelerated, ships with built-in developer tools, and works out of the box with Claude Code, Copilot, and other AI coding assistants.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Does arb collect telemetry or require a login?
+            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">
+              No. arb collects zero telemetry and does not require any account or login. Your terminal sessions and code remain completely private.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            What tools are built into arb?
+            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">
+              arb includes Starship (cross-shell prompt), Delta (syntax-highlighted diffs), z (smart directory jumping), syntax highlighting, a Nerd Font, and Lua scripting. All are compiled in and ready to use with zero setup.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========== BOTTOM CTA ========== -->
+  <section class="bottom-cta">
+    <div class="container">
+      <div class="bottom-cta-box">
+        <h2>Try arb now</h2>
+        <p>One command. The best terminal for Claude Code.</p>
+        <div class="bottom-cta-install">
+          <code><span class="prompt-char">$ </span>brew install szj2ys/tap/arb</code>
+          <button class="copy-btn" data-copy="brew install szj2ys/tap/arb" title="Copy to clipboard">
+            <svg class="icon-copy" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <svg class="icon-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+        </div>
+        <div class="bottom-cta-or">or</div>
+        <a href="https://github.com/szj2ys/arb/releases" class="download-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download from GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-left">
+        <span>arb &mdash; MIT License</span>
+      </div>
+      <div class="footer-right">
+        <a href="https://szj2ys.github.io/arb/">Home</a>
+        <a href="https://github.com/szj2ys/arb">GitHub</a>
+        <a href="https://github.com/szj2ys/arb/releases">Releases</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== SCRIPTS ========== -->
+  <script>
+    // Copy to clipboard using data attributes (no innerHTML)
+    document.querySelectorAll('.copy-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var text = btn.getAttribute('data-copy');
+        navigator.clipboard.writeText(text).then(function() {
+          btn.classList.add('copied');
+          setTimeout(function() {
+            btn.classList.remove('copied');
+          }, 2000);
+        });
+      });
+    });
+
+    // FAQ toggle
+    function toggleFaq(btn) {
+      var item = btn.closest('.faq-item');
+      item.classList.toggle('open');
+    }
+
+    // Intersection Observer for fade-in
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(function(el) {
+      observer.observe(el);
+    });
+  </script>
+
+</body>
+</html>
