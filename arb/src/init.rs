@@ -236,6 +236,8 @@ exit 127
     mod tests {
         use super::*;
 
+        // ── escape_for_double_quotes ─────────────────────────────────
+
         #[test]
         fn escape_should_handle_normal_path() {
             assert_eq!(
@@ -283,6 +285,92 @@ exit 127
         #[test]
         fn escape_should_handle_empty_string() {
             assert_eq!(escape_for_double_quotes(""), "");
+        }
+
+        // ── setup_script_candidates ──────────────────────────────────
+
+        #[test]
+        fn should_return_at_least_two_static_candidates() {
+            // The function always appends the two well-known static paths
+            // regardless of environment.
+            let candidates = setup_script_candidates();
+            assert!(
+                candidates.len() >= 2,
+                "expected at least 2 candidates, got {}",
+                candidates.len()
+            );
+        }
+
+        #[test]
+        fn should_include_global_applications_candidate() {
+            let candidates = setup_script_candidates();
+            let global = PathBuf::from(
+                "/Applications/Arb.app/Contents/Resources/setup_zsh.sh",
+            );
+            assert!(
+                candidates.contains(&global),
+                "candidates should include the global /Applications path"
+            );
+        }
+
+        #[test]
+        fn should_include_user_applications_candidate() {
+            let candidates = setup_script_candidates();
+            let user = config::HOME_DIR
+                .join("Applications/Arb.app/Contents/Resources/setup_zsh.sh");
+            assert!(
+                candidates.contains(&user),
+                "candidates should include the ~/Applications path"
+            );
+        }
+
+        #[test]
+        fn should_include_cwd_candidate_when_cwd_is_available() {
+            // current_dir() normally succeeds in test environments.
+            if let Ok(cwd) = std::env::current_dir() {
+                let expected = cwd
+                    .join("assets")
+                    .join("shell-integration")
+                    .join("setup_zsh.sh");
+                let candidates = setup_script_candidates();
+                assert!(
+                    candidates.contains(&expected),
+                    "candidates should include the cwd-relative path"
+                );
+            }
+        }
+
+        #[test]
+        fn should_have_all_candidates_ending_with_setup_zsh_sh() {
+            let candidates = setup_script_candidates();
+            for c in &candidates {
+                assert!(
+                    c.ends_with("setup_zsh.sh"),
+                    "every candidate should end with setup_zsh.sh, got: {}",
+                    c.display()
+                );
+            }
+        }
+
+        // ── wrapper_path ─────────────────────────────────────────────
+
+        #[test]
+        fn should_place_wrapper_under_config_arb_zsh_bin() {
+            let path = wrapper_path();
+            assert!(
+                path.ends_with(".config/arb/zsh/bin/arb"),
+                "wrapper path should end with .config/arb/zsh/bin/arb, got: {}",
+                path.display()
+            );
+        }
+
+        #[test]
+        fn should_derive_wrapper_path_from_home_dir() {
+            let path = wrapper_path();
+            assert!(
+                path.starts_with(config::HOME_DIR.as_path()),
+                "wrapper path should start with HOME_DIR"
+            );
         }
     }
 }
