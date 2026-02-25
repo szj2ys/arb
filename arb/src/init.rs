@@ -98,12 +98,7 @@ mod imp {
         eprintln!();
     }
 
-    // ANSI color codes (matching doctor.rs conventions)
-    const GREEN: &str = "\x1b[32m";
-    const YELLOW: &str = "\x1b[33m";
-    const BOLD: &str = "\x1b[1m";
-    const GRAY: &str = "\x1b[90m";
-    const RESET: &str = "\x1b[0m";
+    use crate::paths::{BOLD, GRAY, GREEN, RESET, YELLOW};
 
     /// Summary line descriptor: (user-facing label, success hint text).
     const SUMMARY_ITEMS: &[(&str, &str)] = &[
