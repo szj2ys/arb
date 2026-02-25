@@ -24,13 +24,7 @@ pub(crate) mod imp {
 pub(crate) mod imp {
     use super::*;
 
-    // ANSI color codes
-    const GREEN: &str = "\x1b[32m";
-    const RED: &str = "\x1b[31m";
-    const YELLOW: &str = "\x1b[33m";
-    const BOLD: &str = "\x1b[1m";
-    const GRAY: &str = "\x1b[90m";
-    const RESET: &str = "\x1b[0m";
+    use crate::paths::{BOLD, GRAY, GREEN, RED, RESET, YELLOW};
 
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
     pub(crate) enum CheckStatus {
@@ -118,10 +112,7 @@ pub(crate) mod imp {
     }
 
     pub(crate) fn config_home() -> PathBuf {
-        config::CONFIG_DIRS
-            .first()
-            .cloned()
-            .unwrap_or_else(|| crate::paths::home_dir().join(".config").join("arb"))
+        crate::paths::config_home()
     }
 
     // -- Check 1: Shell integration --

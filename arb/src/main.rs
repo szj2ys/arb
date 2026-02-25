@@ -805,15 +805,7 @@ fn is_shell_integration_initialized() -> bool {
 }
 
 fn select_main_menu_command() -> anyhow::Result<SubCommand> {
-    const PURPLE_BOLD: &str = "\x1b[1;35m";
-    const BLUE: &str = "\x1b[34m";
-    const GRAY: &str = "\x1b[90m";
-    const DIM: &str = "\x1b[2m";
-    const GREEN: &str = "\x1b[32m";
-    const YELLOW: &str = "\x1b[33m";
-    const RED: &str = "\x1b[31m";
-    const BOLD: &str = "\x1b[1m";
-    const RESET: &str = "\x1b[0m";
+    use crate::paths::{BLUE, BOLD, DIM, GRAY, GREEN, PURPLE_BOLD, RED, RESET, YELLOW};
 
     let shell_ready = is_shell_integration_initialized();
     let version = config::arb_version();

@@ -1,16 +1,30 @@
-//! Shared filesystem path helpers used across arb CLI modules (doctor, reset, init).
+//! Shared helpers used across arb CLI modules (doctor, reset, init, bench).
 
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
+
+// ANSI escape codes — single source of truth for CLI output styling.
+pub const BOLD: &str = "\x1b[1m";
+pub const DIM: &str = "\x1b[2m";
+pub const GREEN: &str = "\x1b[32m";
+pub const RED: &str = "\x1b[31m";
+pub const YELLOW: &str = "\x1b[33m";
+pub const BLUE: &str = "\x1b[34m";
+pub const PURPLE_BOLD: &str = "\x1b[1;35m";
+pub const GRAY: &str = "\x1b[90m";
+pub const RESET: &str = "\x1b[0m";
 
 /// Returns the user's home directory.
 pub fn home_dir() -> PathBuf {
     config::HOME_DIR.clone()
 }
 
-/// Returns the default arb config directory (`~/.config/arb`).
+/// Returns the arb config directory, preferring `config::CONFIG_DIRS` if available.
 pub fn config_home() -> PathBuf {
-    home_dir().join(".config").join("arb")
+    config::CONFIG_DIRS
+        .first()
+        .cloned()
+        .unwrap_or_else(|| home_dir().join(".config").join("arb"))
 }
 
 /// Returns the path to `.zshrc`, respecting the `ZDOTDIR` environment variable.

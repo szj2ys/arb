@@ -35,12 +35,7 @@ mod imp {
 
     const ITERATIONS: usize = 10;
 
-    // ANSI color codes
-    const BOLD: &str = "\x1b[1m";
-    const GREEN: &str = "\x1b[32m";
-    const GRAY: &str = "\x1b[90m";
-    const DIM: &str = "\x1b[2m";
-    const RESET: &str = "\x1b[0m";
+    use crate::paths::{BOLD, DIM, GRAY, GREEN, RESET};
 
     /// Terminal application info for detection.
     pub(crate) struct TerminalInfo {

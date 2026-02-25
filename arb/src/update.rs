@@ -105,7 +105,7 @@ mod imp {
         println!("Current version: {}", current_version_display);
         println!("Checking latest release...");
 
-        let release = match curl_get_text(RELEASE_API_URL, &current_version)
+        let release = match http_get_text(RELEASE_API_URL, &current_version)
             .context("request release metadata")
             .and_then(|raw| {
                 serde_json::from_str::<GitHubRelease>(&raw).context("parse release metadata")
@@ -201,7 +201,7 @@ mod imp {
             spinner.set_message("Downloading checksum...");
             spinner.enable_steady_tick(Duration::from_millis(100));
 
-            match curl_get_text(sha_url, &current_version) {
+            match http_get_text(sha_url, &current_version) {
                 Ok(checksum_text) => {
                     spinner.finish_and_clear();
                     println!("Verifying package checksum...");
@@ -614,29 +614,14 @@ mod imp {
     }
 
     fn resolve_latest_tag_from_redirect(current_version: &str) -> anyhow::Result<Option<String>> {
-        let output = run_output(
-            Command::new("/usr/bin/curl")
-                .arg("--fail")
-                .arg("--location")
-                .arg("--silent")
-                .arg("--show-error")
-                .arg("--retry")
-                .arg("2")
-                .arg("--connect-timeout")
-                .arg("10")
-                .arg("--user-agent")
-                .arg(format!("arb/{}", current_version))
-                .arg("--write-out")
-                .arg("%{url_effective}")
-                .arg("--output")
-                .arg("/dev/null")
-                .arg(RELEASE_LATEST_URL),
-            "resolve latest release tag via redirect",
-        )?;
-        let effective_url = String::from_utf8(output)
-            .context("latest redirect url is not valid UTF-8")?
-            .trim()
-            .to_string();
+        let user_agent = format!("arb/{}", current_version);
+        let resp = ureq::agent()
+            .get(RELEASE_LATEST_URL)
+            .set("User-Agent", &user_agent)
+            .call()
+            .context("resolve latest release tag via redirect")?;
+
+        let effective_url = resp.get_url().to_string();
         if effective_url.is_empty() {
             return Ok(None);
         }
@@ -672,23 +657,16 @@ mod imp {
             .as_secs()
     }
 
-    fn curl_get_text(url: &str, current_version: &str) -> anyhow::Result<String> {
-        let output = run_output(
-            Command::new("/usr/bin/curl")
-                .arg("--fail")
-                .arg("--location")
-                .arg("--silent")
-                .arg("--show-error")
-                .arg("--retry")
-                .arg("3")
-                .arg("--connect-timeout")
-                .arg("15")
-                .arg("--user-agent")
-                .arg(format!("arb/{}", current_version))
-                .arg(url),
-            "request update metadata",
-        )?;
-        String::from_utf8(output).context("curl returned non-utf8 response")
+    fn http_get_text(url: &str, current_version: &str) -> anyhow::Result<String> {
+        let user_agent = format!("arb/{}", current_version);
+        let body = ureq::agent()
+            .get(url)
+            .set("User-Agent", &user_agent)
+            .call()
+            .context("HTTP request failed")?
+            .into_string()
+            .context("response body is not valid UTF-8")?;
+        Ok(body)
     }
 
     fn download_to_file_with_progress(
