@@ -23,16 +23,13 @@ pub struct CliAdjustPaneSize {
 impl CliAdjustPaneSize {
     pub async fn run(&self, client: Client) -> anyhow::Result<()> {
         let pane_id = client.resolve_pane_id(self.pane_id).await?;
-        match client
+        client
             .adjust_pane_size(AdjustPaneSize {
                 pane_id,
                 direction: self.direction,
                 amount: self.amount.unwrap_or(1),
             })
-            .await
-        {
-            Ok(_) => Ok(()),
-            Err(err) => Err(err),
-        }
+            .await?;
+        Ok(())
     }
 }

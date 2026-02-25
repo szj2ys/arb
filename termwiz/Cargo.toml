@@ -22,7 +22,7 @@ fnv = {workspace=true, optional=true}
 image = {workspace=true, optional=true}
 libc.workspace = true
 log.workspace = true
-memmem.workspace = true
+memchr.workspace = true
 num-derive.workspace = true
 num-traits.workspace = true
 ordered-float = {workspace = true, features=["std"]}

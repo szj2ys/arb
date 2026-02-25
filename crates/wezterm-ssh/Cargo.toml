@@ -24,7 +24,7 @@ camino.workspace = true
 dirs-next.workspace = true
 filedescriptor.workspace = true
 filenamegen.workspace = true
-gethostname.workspace = true
+hostname.workspace = true
 hex = { workspace = true, features = ["std"] }
 libc.workspace = true
 libssh-rs = {workspace=true, features=["vendored"], optional = true}

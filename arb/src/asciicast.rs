@@ -467,9 +467,10 @@ impl RecordCommand {
                         }
                         Err(error) => {
                             let valid_len = error.valid_up_to();
-                            Event::log_output(&mut cast_file, elapsed, unsafe {
-                                std::str::from_utf8_unchecked(&buffer[0..valid_len])
-                            })?;
+                            // valid_up_to() guarantees buffer[..valid_len] is valid UTF-8
+                            let valid = std::str::from_utf8(&buffer[0..valid_len])
+                                .expect("valid_up_to guarantees valid UTF-8");
+                            Event::log_output(&mut cast_file, elapsed, valid)?;
 
                             buffer.drain(0..valid_len);
 
@@ -488,9 +489,8 @@ impl RecordCommand {
         }
 
         tty.set_cooked()?;
-        eprintln!("Child status: {:?}", child_status);
         cast_file.flush()?;
-        eprintln!("*** Finished recording to {}", cast_file_name.display());
+        eprintln!("Recording saved to {}", cast_file_name.display());
 
         Ok(())
     }

@@ -25,4 +25,4 @@ wezterm-term = { workspace=true, features=["use_serde"] }
 zstd.workspace = true
 
 [dev-dependencies]
-base91.workspace = true
+base91 = { path = "../base91" }
