@@ -15,7 +15,7 @@ use std::collections::{BTreeMap, HashSet};
 use std::path::Path;
 use std::process::{Command, Stdio};
 use std::rc::Rc;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, LazyLock, Mutex};
 use wezterm_term::{Alert, ClipboardSelection};
 use wezterm_toast_notification::*;
 
@@ -34,9 +34,7 @@ impl Drop for GuiFrontEnd {
     }
 }
 
-lazy_static::lazy_static! {
-    static ref FAST_CONFIG_SNAPSHOT: Mutex<Option<config::ConfigHandle>> = Mutex::new(None);
-}
+static FAST_CONFIG_SNAPSHOT: LazyLock<Mutex<Option<config::ConfigHandle>>> = LazyLock::new(|| Mutex::new(None));
 
 fn fast_config_snapshot() -> config::ConfigHandle {
     if let Some(cfg) = FAST_CONFIG_SNAPSHOT.lock().unwrap().as_ref().cloned() {

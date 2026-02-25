@@ -41,7 +41,7 @@ use std::io::{Read, Write};
 #[cfg(windows)]
 use std::os::raw::c_int;
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
-use std::sync::{Arc, Weak};
+use std::sync::{Arc, LazyLock, Weak};
 use std::thread;
 use std::time::{Duration, Instant};
 use termwiz::escape::csi::{DecPrivateMode, DecPrivateModeCode, Device, Mode};
@@ -381,9 +381,7 @@ fn read_from_pane_pty(
     dead.store(true, Ordering::Relaxed);
 }
 
-lazy_static::lazy_static! {
-    static ref MUX: Mutex<Option<Arc<Mux>>> = Mutex::new(None);
-}
+static MUX: LazyLock<Mutex<Option<Arc<Mux>>>> = LazyLock::new(|| Mutex::new(None));
 
 pub struct MuxWindowBuilder {
     window_id: WindowId,

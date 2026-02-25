@@ -8,7 +8,7 @@
 //! Configuration for the gui portion of the terminal
 
 use anyhow::{anyhow, bail, Context, Error};
-use lazy_static::lazy_static;
+use std::sync::LazyLock;
 use mlua::Lua;
 use ordered_float::NotNan;
 use parking_lot::RwLock;
@@ -73,21 +73,22 @@ pub use wsl::*;
 
 type ErrorCallback = fn(&str);
 
-lazy_static! {
-    pub static ref HOME_DIR: PathBuf = dirs_next::home_dir().expect("can't find HOME dir");
-    pub static ref CONFIG_DIRS: Vec<PathBuf> = config_dirs();
-    pub static ref RUNTIME_DIR: PathBuf = compute_runtime_dir().unwrap();
-    pub static ref DATA_DIR: PathBuf = compute_data_dir().unwrap();
-    pub static ref CACHE_DIR: PathBuf = compute_cache_dir().unwrap();
-    static ref CONFIG: Configuration = Configuration::new();
-    static ref CONFIG_FILE_OVERRIDE: Mutex<Option<PathBuf>> = Mutex::new(None);
-    static ref CONFIG_SKIP: AtomicBool = AtomicBool::new(false);
-    static ref CONFIG_OVERRIDES: Mutex<Vec<(String, String)>> = Mutex::new(vec![]);
-    static ref SHOW_ERROR: Mutex<Option<ErrorCallback>> =
-        Mutex::new(Some(|e| log::error!("{}", e)));
-    static ref LUA_PIPE: LuaPipe = LuaPipe::new();
-    pub static ref COLOR_SCHEMES: ColorSchemeRegistry = ColorSchemeRegistry::new();
-}
+pub static HOME_DIR: LazyLock<PathBuf> =
+    LazyLock::new(|| dirs_next::home_dir().expect("can't find HOME dir"));
+pub static CONFIG_DIRS: LazyLock<Vec<PathBuf>> = LazyLock::new(config_dirs);
+pub static RUNTIME_DIR: LazyLock<PathBuf> = LazyLock::new(|| compute_runtime_dir().unwrap());
+pub static DATA_DIR: LazyLock<PathBuf> = LazyLock::new(|| compute_data_dir().unwrap());
+pub static CACHE_DIR: LazyLock<PathBuf> = LazyLock::new(|| compute_cache_dir().unwrap());
+static CONFIG: LazyLock<Configuration> = LazyLock::new(Configuration::new);
+static CONFIG_FILE_OVERRIDE: LazyLock<Mutex<Option<PathBuf>>> = LazyLock::new(|| Mutex::new(None));
+static CONFIG_SKIP: LazyLock<AtomicBool> = LazyLock::new(|| AtomicBool::new(false));
+static CONFIG_OVERRIDES: LazyLock<Mutex<Vec<(String, String)>>> =
+    LazyLock::new(|| Mutex::new(vec![]));
+static SHOW_ERROR: LazyLock<Mutex<Option<ErrorCallback>>> =
+    LazyLock::new(|| Mutex::new(Some(|e| log::error!("{}", e))));
+static LUA_PIPE: LazyLock<LuaPipe> = LazyLock::new(LuaPipe::new);
+pub static COLOR_SCHEMES: LazyLock<ColorSchemeRegistry> =
+    LazyLock::new(ColorSchemeRegistry::new);
 
 thread_local! {
     static LUA_CONFIG: RefCell<Option<LuaConfigState>> = const { RefCell::new(None) };

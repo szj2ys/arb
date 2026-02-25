@@ -245,23 +245,21 @@ fn permute_any_or_no_mods<'lua>(
     permute_mods(lua, item, true)
 }
 
-lazy_static::lazy_static! {
-    static ref CAPS: Capabilities = {
-        let data = include_bytes!("../../../termwiz/data/xterm-256color");
-        let db = terminfo::Database::from_buffer(&data[..]).unwrap();
-        Capabilities::new_with_hints(
-            ProbeHints::new_from_env()
-                .term(Some("xterm-256color".into()))
-                .terminfo_db(Some(db))
-                .color_level(Some(ColorLevel::TrueColor))
-                .colorterm(None)
-                .colorterm_bce(None)
-                .term_program(Some("Arb".into()))
-                .term_program_version(Some(config::arb_version().into())),
-        )
-        .expect("cannot fail to make internal Capabilities")
-    };
-}
+static CAPS: std::sync::LazyLock<Capabilities> = std::sync::LazyLock::new(|| {
+    let data = include_bytes!("../../../termwiz/data/xterm-256color");
+    let db = terminfo::Database::from_buffer(&data[..]).unwrap();
+    Capabilities::new_with_hints(
+        ProbeHints::new_from_env()
+            .term(Some("xterm-256color".into()))
+            .terminfo_db(Some(db))
+            .color_level(Some(ColorLevel::TrueColor))
+            .colorterm(None)
+            .colorterm_bce(None)
+            .term_program(Some("Arb".into()))
+            .term_program_version(Some(config::arb_version().into())),
+    )
+    .expect("cannot fail to make internal Capabilities")
+});
 
 pub fn new_arb_terminfo_renderer() -> TerminfoRenderer {
     TerminfoRenderer::new(CAPS.clone())

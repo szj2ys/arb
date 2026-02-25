@@ -1,6 +1,7 @@
 #![allow(non_upper_case_globals)]
 #![allow(dead_code)]
 use std::collections::HashMap;
+use std::sync::LazyLock;
 use wezterm_input_types::PhysKeyCode;
 
 fn build_map() -> HashMap<u16, PhysKeyCode> {
@@ -123,9 +124,7 @@ fn build_map() -> HashMap<u16, PhysKeyCode> {
     .collect()
 }
 
-lazy_static::lazy_static! {
-    static ref MAP: HashMap<u16, PhysKeyCode> = build_map();
-}
+static MAP: LazyLock<HashMap<u16, PhysKeyCode>> = LazyLock::new(build_map);
 
 pub fn vkey_to_phys(vkey: u16) -> Option<PhysKeyCode> {
     MAP.get(&vkey).copied()

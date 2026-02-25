@@ -15,10 +15,9 @@ use objc::*;
 use rangeset::RangeSet;
 use std::cmp::Ordering;
 use std::collections::HashSet;
+use std::sync::LazyLock;
 
-lazy_static::lazy_static! {
-    static ref FALLBACK: Vec<ParsedFont> = build_fallback_list();
-}
+static FALLBACK: LazyLock<Vec<ParsedFont>> = LazyLock::new(build_fallback_list);
 
 #[link(name = "CoreText", kind = "framework")]
 extern "C" {
