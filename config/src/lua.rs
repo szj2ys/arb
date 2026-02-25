@@ -11,7 +11,7 @@ use ordered_float::NotNan;
 use portable_pty::CommandBuilder;
 use std::convert::TryFrom;
 use std::path::Path;
-use std::sync::Mutex;
+use std::sync::{LazyLock, Mutex};
 use wezterm_dynamic::{
     FromDynamic, FromDynamicOptions, ToDynamic, UnknownFieldAction, Value as DynValue,
 };
@@ -22,9 +22,7 @@ static LUA_REGISTRY_USER_CALLBACK_COUNT: &str = "wezterm-user-callback-count";
 
 pub type SetupFunc = fn(&Lua) -> anyhow::Result<()>;
 
-lazy_static::lazy_static! {
-    static ref SETUP_FUNCS: Mutex<Vec<SetupFunc>> = Mutex::new(vec![]);
-}
+static SETUP_FUNCS: LazyLock<Mutex<Vec<SetupFunc>>> = LazyLock::new(|| Mutex::new(vec![]));
 
 pub fn add_context_setup_func(func: SetupFunc) {
     SETUP_FUNCS.lock().unwrap().push(func);

@@ -1,12 +1,10 @@
 #[cfg(unix)]
 use libc::{mode_t, umask};
 #[cfg(unix)]
-use std::sync::Mutex;
+use std::sync::{LazyLock, Mutex};
 
 #[cfg(unix)]
-lazy_static::lazy_static! {
-static ref SAVED_UMASK: Mutex<Option<libc::mode_t>> = Mutex::new(None);
-}
+static SAVED_UMASK: LazyLock<Mutex<Option<libc::mode_t>>> = LazyLock::new(|| Mutex::new(None));
 
 /// Unfortunately, novice unix users can sometimes be running
 /// with an overly permissive umask so we take care to install

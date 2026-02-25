@@ -7,7 +7,7 @@ use mlua::Value;
 use mux::termwiztermtab::TermWizTerminal;
 use std::io::Write;
 use std::path::PathBuf;
-use std::sync::Mutex;
+use std::sync::{LazyLock, Mutex};
 use termwiz::cell::{AttributeChange, CellAttributes, Intensity};
 use termwiz::color::AnsiColor;
 use termwiz::input::{InputEvent, KeyCode, KeyEvent};
@@ -15,9 +15,7 @@ use termwiz::lineedit::*;
 use termwiz::surface::Change;
 use termwiz::terminal::Terminal;
 
-lazy_static::lazy_static! {
-    static ref LATEST_LOG_ENTRY: Mutex<Option<DateTime<Local>>> = Mutex::new(None);
-}
+static LATEST_LOG_ENTRY: LazyLock<Mutex<Option<DateTime<Local>>>> = LazyLock::new(|| Mutex::new(None));
 
 struct LuaReplHost {
     history: BasicHistory,

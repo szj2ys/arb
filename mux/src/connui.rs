@@ -4,7 +4,7 @@ use crossbeam::channel::{unbounded, Receiver, Sender};
 use finl_unicode::grapheme_clusters::Graphemes;
 use promise::spawn::block_on;
 use promise::Promise;
-use std::sync::Mutex;
+use std::sync::{LazyLock, Mutex};
 use std::time::{Duration, Instant};
 use termwiz::cell::{unicode_column_width, CellAttributes};
 use termwiz::lineedit::*;
@@ -428,9 +428,7 @@ impl ConnectionUI {
     }
 }
 
-lazy_static::lazy_static! {
-    static ref ERROR_WINDOW: Mutex<Option<ConnectionUI>> = Mutex::new(None);
-}
+static ERROR_WINDOW: LazyLock<Mutex<Option<ConnectionUI>>> = LazyLock::new(|| Mutex::new(None));
 
 fn get_error_window() -> ConnectionUI {
     let mut err = ERROR_WINDOW.lock().unwrap();

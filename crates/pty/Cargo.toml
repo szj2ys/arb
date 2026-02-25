@@ -25,7 +25,6 @@ serde_support = ["serde"]
 
 [target."cfg(windows)".dependencies]
 bitflags.workspace = true
-lazy_static.workspace = true
 winapi = { workspace=true, features = [
     "winuser",
     "consoleapi",

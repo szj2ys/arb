@@ -21,7 +21,7 @@ use std::collections::{HashMap, HashSet};
 use std::ops::Range;
 use std::rc::{Rc, Weak};
 use std::sync::mpsc::{channel, Sender};
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, LazyLock, Mutex};
 use std::time::{Duration, Instant};
 use termwiz::cell::Presentation;
 use thiserror::Error;
@@ -55,9 +55,7 @@ pub fn alloc_font_id() -> LoadedFontId {
     FONT_ID.fetch_add(1, ::std::sync::atomic::Ordering::Relaxed)
 }
 
-lazy_static::lazy_static! {
-    static ref LAST_WARNING: Mutex<Option<(Instant, usize)>> = Mutex::new(None);
-}
+static LAST_WARNING: LazyLock<Mutex<Option<(Instant, usize)>>> = LazyLock::new(|| Mutex::new(None));
 
 pub struct LoadedFont {
     rasterizers: RefCell<HashMap<FallbackIdx, Box<dyn FontRasterizer>>>,
