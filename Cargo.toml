@@ -56,7 +56,6 @@ async-trait = "0.1"
 async_ossl = { path = "crates/async_ossl" }
 backtrace = "0.3"
 base64 = {version="0.22", default-features=false }
-base91 = { path = "crates/base91" }
 battery = { path = "lua-api-crates/battery" }
 benchmarking = "0.4"
 bintree = { path = "crates/bintree" }
@@ -112,7 +111,6 @@ fontconfig = { path = "deps/fontconfig" }
 frecency = { path = "crates/frecency" }
 freetype = { path = "deps/freetype" }
 futures = "0.3"
-gethostname = "0.5"
 getrandom = "0.3.1"
 git2 = { version = "0.20", default-features = false, features = ["https", "vendored-libgit2", "vendored-openssl"] }
 gl_generator = "0.14"
@@ -145,8 +143,8 @@ logging = { path = "lua-api-crates/logging" }
 lru = "0.16"
 luahelper = { path = "crates/luahelper" }
 maplit = "1.0"
+memchr = "2"
 memmap2 = "0.9"
-memmem = "0.1"
 metrics = "0.23"
 miniz_oxide = "0.7"
 mlua = "0.9"

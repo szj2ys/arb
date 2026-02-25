@@ -487,7 +487,7 @@ impl Config {
             // it is convenient and sufficient at the time of writing
             "localhost".to_string()
         } else {
-            gethostname::gethostname().to_string_lossy().to_string()
+            hostname::get().map(|h| h.to_string_lossy().to_string()).unwrap_or_else(|_| "localhost".to_string())
         };
 
         if include_domain_name {
