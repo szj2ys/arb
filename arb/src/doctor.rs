@@ -12,7 +12,7 @@ impl DoctorCommand {
 }
 
 #[cfg(not(target_os = "macos"))]
-mod imp {
+pub(crate) mod imp {
     use anyhow::bail;
 
     pub fn run() -> anyhow::Result<()> {
@@ -21,7 +21,7 @@ mod imp {
 }
 
 #[cfg(target_os = "macos")]
-mod imp {
+pub(crate) mod imp {
     use super::*;
 
     // ANSI color codes
