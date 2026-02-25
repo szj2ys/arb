@@ -47,7 +47,7 @@ jobs:
 
       - name: Run tests
         run: |
-          cargo nextest run --profile ci
+          cargo nextest run --locked --profile ci
 
   check:
     name: Cargo Check
@@ -66,7 +66,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Check key crates
-        run: cargo check -p arb -p arb-gui
+        run: cargo check --locked -p arb -p arb-gui
 
   clippy:
     name: Clippy Lints
@@ -87,12 +87,14 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Run clippy
-        run: cargo clippy -p arb -p arb-gui -- -D warnings
+        run: cargo clippy --locked -p arb -p arb-gui -- -D warnings
 
   universal-build:
     name: Universal Build Validation
     runs-on: macos-latest
     needs: [check, test, clippy]
+    # Only run the expensive dual-arch release build on main pushes, not PRs
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -110,13 +112,13 @@ jobs:
       - name: Build both targets
         run: |
           START=$(date +%s)
-          cargo build --release --target aarch64-apple-darwin -p arb -p arb-gui
-          cargo build --release --target x86_64-apple-darwin -p arb -p arb-gui
+          cargo build --locked --release --target aarch64-apple-darwin -p arb -p arb-gui
+          cargo build --locked --release --target x86_64-apple-darwin -p arb -p arb-gui
           END=$(date +%s)
           DURATION=$((END - START))
-          echo "## Build Time" >> $GITHUB_STEP_SUMMARY
-          echo "Release build (both architectures): ${DURATION}s" >> $GITHUB_STEP_SUMMARY
-          echo "build_seconds=$DURATION" >> $GITHUB_OUTPUT
+          echo "## Build Time" >> "$GITHUB_STEP_SUMMARY"
+          echo "Release build (both architectures): ${DURATION}s" >> "$GITHUB_STEP_SUMMARY"
+          echo "build_seconds=$DURATION" >> "$GITHUB_OUTPUT"
 
       - name: Lipo merge and verify
         run: |
@@ -136,13 +138,13 @@ jobs:
 
       - name: Smoke test binaries
         run: |
-          echo "## Smoke Tests" >> $GITHUB_STEP_SUMMARY
+          echo "## Smoke Tests" >> "$GITHUB_STEP_SUMMARY"
 
           # Test --version: verify binary starts and outputs a version number
           VERSION_OUTPUT=$(target/universal/release/arb --version)
           echo "arb --version: $VERSION_OUTPUT"
           echo "$VERSION_OUTPUT" | grep -qE '[0-9]+\.[0-9]+\.[0-9]+'
-          echo "- \`arb --version\` -> \`$VERSION_OUTPUT\` ✅" >> $GITHUB_STEP_SUMMARY
+          echo "- \`arb --version\` -> \`$VERSION_OUTPUT\` ✅" >> "$GITHUB_STEP_SUMMARY"
 
           # Test --help: verify help output contains expected subcommands
           HELP_OUTPUT=$(target/universal/release/arb --help)
@@ -152,14 +154,14 @@ jobs:
           echo "$HELP_OUTPUT" | grep -q "doctor"
           echo "$HELP_OUTPUT" | grep -q "update"
           echo "$HELP_OUTPUT" | grep -q "config"
-          echo "- \`arb --help\` contains expected subcommands (init, doctor, update, config) ✅" >> $GITHUB_STEP_SUMMARY
+          echo "- \`arb --help\` contains expected subcommands (init, doctor, update, config) ✅" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Report binary sizes
         run: |
-          echo "## Binary Sizes" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          ls -lh target/universal/release/arb target/universal/release/arb-gui >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "## Binary Sizes" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          ls -lh target/universal/release/arb target/universal/release/arb-gui >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
           # Also output raw bytes for machine parsing
-          echo "arb_bytes=$(stat -f%z target/universal/release/arb)" >> $GITHUB_OUTPUT
-          echo "arb_gui_bytes=$(stat -f%z target/universal/release/arb-gui)" >> $GITHUB_OUTPUT
+          echo "arb_bytes=$(stat -f%z target/universal/release/arb)" >> "$GITHUB_OUTPUT"
+          echo "arb_gui_bytes=$(stat -f%z target/universal/release/arb-gui)" >> "$GITHUB_OUTPUT"

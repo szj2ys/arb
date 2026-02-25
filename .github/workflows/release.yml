@@ -6,10 +6,26 @@ on:
       - "[vV]*"
   workflow_dispatch:
 
+# Ensure CI passes before releasing — the ci-gate job waits for
+# the CI workflow to succeed on the same commit.
 jobs:
+  ci-gate:
+    name: Wait for CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for CI workflow to succeed
+        uses: lewagon/wait-on-check-action@v1.3.4
+        with:
+          ref: ${{ github.sha }}
+          check-regexp: "^(Format Check|Unit Tests|Cargo Check|Clippy Lints)$"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 30
+          allowed-conclusions: success,skipped
+
   Release:
     name: Release
     runs-on: macos-latest
+    needs: ci-gate
     permissions:
       contents: write
     env:
@@ -34,18 +50,14 @@ jobs:
           ARB_CERTIFICATE_PASSWORD: ${{ secrets.ARB_CERTIFICATE_PASSWORD }}
         run: |
           echo "Setting up signing certificate..."
-          # Create temporary keychain
           KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
           KEYCHAIN_PASSWORD=$(openssl rand -base64 16)
           security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
           security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
-
-          # Import certificate
           echo "$ARB_CERTIFICATE_P12" | base64 --decode > "$RUNNER_TEMP/certificate.p12"
           security import "$RUNNER_TEMP/certificate.p12" -P "$ARB_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
           security list-keychain -d user -s "$KEYCHAIN_PATH"
-
           echo "Certificate imported successfully"
 
       - name: Build Arb
@@ -85,24 +97,25 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
           if [[ "${GITHUB_REF_TYPE:-}" == "tag" ]]; then
             version="${GITHUB_REF_NAME#V}"
             version="${version#v}"
           else
             version="$(grep '^version =' arb/Cargo.toml | head -n 1 | cut -d '"' -f2)"
           fi
-
           sha256="$(shasum -a 256 dist/Arb.dmg | awk '{print $1}')"
-
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "sha256=$sha256" >> "$GITHUB_OUTPUT"
 
       - name: Dispatch tap bump
-        if: ${{ env.HOMEBREW_TAP_TOKEN != '' }}
+        if: env.HOMEBREW_TAP_TOKEN != ''
+        env:
+          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          RELEASE_VERSION: ${{ steps.meta.outputs.version }}
+          RELEASE_SHA256: ${{ steps.meta.outputs.sha256 }}
         uses: peter-evans/repository-dispatch@v3
         with:
-          token: ${{ env.HOMEBREW_TAP_TOKEN }}
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
           repository: szj2ys/homebrew-arb
           event-type: arb_release_published
           client-payload: |
