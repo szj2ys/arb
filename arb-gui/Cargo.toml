@@ -56,7 +56,7 @@ finl_unicode.workspace = true
 frecency.workspace = true
 futures.workspace = true
 hdrhistogram.workspace = true
-http_req.workspace = true
+ureq.workspace = true
 image.workspace = true
 lazy_static.workspace = true
 lfucache.workspace = true
@@ -112,7 +112,6 @@ window.workspace = true
 cocoa.workspace = true
 
 [target.'cfg(windows)'.dependencies]
-shared_library.workspace = true
 winapi = { workspace=true, features = [
     "winuser",
     "consoleapi",

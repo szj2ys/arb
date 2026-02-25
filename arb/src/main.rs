@@ -28,7 +28,7 @@ pub mod update;
 
 #[derive(Debug, Parser)]
 #[command(
-    about = "Arb Terminal Emulator\nhttp://github.com/szj2ys/arb",
+    about = "Arb Terminal Emulator\nhttps://github.com/szj2ys/arb",
     version = arb_version()
 )]
 pub struct Opt {

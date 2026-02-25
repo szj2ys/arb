@@ -1,10 +1,6 @@
-use anyhow::anyhow;
 use arb_version::is_newer_version;
 use config::{arb_version, configuration};
-use http_req::request::{HttpVersion, Request};
-use http_req::uri::Uri;
 use serde::*;
-use std::convert::TryFrom;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
 use wezterm_toast_notification::*;
@@ -26,17 +22,15 @@ pub struct Asset {
     pub browser_download_url: String,
 }
 
-fn get_github_release_info(uri: &str) -> anyhow::Result<Release> {
-    let uri = Uri::try_from(uri)?;
+fn get_github_release_info(url: &str) -> anyhow::Result<Release> {
+    let body = ureq::agent()
+        .get(url)
+        .set("User-Agent", &format!("arb/{}", arb_version()))
+        .call()
+        .map_err(|e| anyhow::anyhow!("failed to query github releases: {}", e))?
+        .into_string()?;
 
-    let mut latest = Vec::new();
-    let _res = Request::new(&uri)
-        .version(HttpVersion::Http10)
-        .header("User-Agent", &format!("arb/{}", arb_version()))
-        .send(&mut latest)
-        .map_err(|e| anyhow!("failed to query github releases: {}", e))?;
-
-    let latest: Release = serde_json::from_slice(&latest)?;
+    let latest: Release = serde_json::from_str(&body)?;
     Ok(latest)
 }
 
