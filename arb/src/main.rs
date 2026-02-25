@@ -107,23 +107,24 @@ enum SubCommand {
     #[command(short_flag_alias = 'e', hide = true)]
     BlockingStart(StartCommand),
 
-    #[command(name = "cli", about = "Interact with experimental mux server")]
+    #[command(name = "cli", about = "Interact with experimental mux server", hide = true)]
     Cli(cli::CliCommand),
 
-    #[command(name = "imgcat", about = "Output an image to the terminal")]
+    #[command(name = "imgcat", about = "Output an image to the terminal", hide = true)]
     ImageCat(ImgCatCommand),
 
     #[command(
         name = "set-working-directory",
         about = "Advise the terminal of the current working directory by \
-                 emitting an OSC 7 escape sequence"
+                 emitting an OSC 7 escape sequence",
+        hide = true
     )]
     SetCwd(SetCwdCommand),
 
-    #[command(name = "record", about = "Record a terminal session as an asciicast")]
+    #[command(name = "record", about = "Record a terminal session as an asciicast", hide = true)]
     Record(asciicast::RecordCommand),
 
-    #[command(name = "replay", about = "Replay an asciicast terminal session")]
+    #[command(name = "replay", about = "Replay an asciicast terminal session", hide = true)]
     Replay(asciicast::PlayCommand),
 
     /// Generate shell completion information
