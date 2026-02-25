@@ -117,7 +117,7 @@ pub(crate) mod imp {
         results
     }
 
-    fn config_home() -> PathBuf {
+    pub(crate) fn config_home() -> PathBuf {
         config::CONFIG_DIRS
             .first()
             .cloned()
@@ -229,30 +229,83 @@ pub(crate) mod imp {
 
     // -- Check 3: Delta --
 
+    /// Return the path to the bundled delta binary managed by `arb init`.
+    pub(crate) fn bundled_delta_path() -> PathBuf {
+        config_home().join("zsh").join("bin").join("delta")
+    }
+
+    /// Check whether the bundled delta binary exists and is executable.
+    pub(crate) fn bundled_delta_exists() -> bool {
+        let path = bundled_delta_path();
+        if !path.exists() {
+            return false;
+        }
+        // Verify it is executable (consistent with the starship check)
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            if let Ok(meta) = std::fs::metadata(&path) {
+                return meta.permissions().mode() & 0o111 != 0;
+            }
+            false
+        }
+        #[cfg(not(unix))]
+        {
+            true
+        }
+    }
+
     pub(crate) fn check_delta() -> CheckResult {
         let in_path = crate::paths::command_exists("delta");
+        let bundled = bundled_delta_exists();
+
         let git_pager = git_config_get("core.pager")
             .map(|v| v.trim().to_string())
             .unwrap_or_default();
-        let has_git_config = git_pager == "delta";
+        // Accept either bare "delta" or the full bundled path as a valid pager config.
+        let bundled_str = bundled_delta_path().to_string_lossy().to_string();
+        let has_git_config = git_pager == "delta" || git_pager == bundled_str;
 
-        match (in_path, has_git_config) {
-            (true, true) => CheckResult {
+        match (in_path, bundled, has_git_config) {
+            // In PATH and git pager configured -- best case
+            (true, _, true) => CheckResult {
                 name: "Delta".into(),
                 status: CheckStatus::Pass,
                 message: "delta is in PATH and configured as git pager".into(),
                 fix: None,
             },
-            (true, false) => CheckResult {
+            // Not in PATH but bundled binary exists and git pager configured
+            (false, true, true) => CheckResult {
+                name: "Delta".into(),
+                status: CheckStatus::Pass,
+                message: format!(
+                    "delta installed at {}, will be available in new shells",
+                    bundled_delta_path().display()
+                ),
+                fix: None,
+            },
+            // In PATH but git pager not configured
+            (true, _, false) => CheckResult {
                 name: "Delta".into(),
                 status: CheckStatus::Warn,
                 message: "delta is in PATH but not set as git core.pager".into(),
                 fix: Some("Run `arb init` to configure delta as git pager".into()),
             },
-            (false, _) => CheckResult {
+            // Not in PATH but bundled binary exists, git pager not configured
+            (false, true, false) => CheckResult {
                 name: "Delta".into(),
                 status: CheckStatus::Warn,
-                message: "delta not found in PATH".into(),
+                message: format!(
+                    "delta installed at {} but not set as git core.pager",
+                    bundled_delta_path().display()
+                ),
+                fix: Some("Run `arb init` to configure delta as git pager".into()),
+            },
+            // Not available anywhere
+            (false, false, _) => CheckResult {
+                name: "Delta".into(),
+                status: CheckStatus::Warn,
+                message: "delta not found in PATH or bundled location".into(),
                 fix: Some("Run `arb init` to install delta via shell integration".into()),
             },
         }
@@ -520,6 +573,50 @@ mod tests {
             let result = check_delta();
             assert_eq!(result.name, "Delta");
             assert!(!result.message.is_empty());
+        }
+
+        #[test]
+        fn should_pass_delta_check_when_bundled_binary_exists_even_if_not_in_path() {
+            // Verify the bundled path helper returns a sensible location
+            let bundled = bundled_delta_path();
+            assert!(
+                bundled.ends_with("zsh/bin/delta"),
+                "bundled delta path should end with zsh/bin/delta, got: {}",
+                bundled.display()
+            );
+            // If the bundled binary actually exists on this machine,
+            // check_delta must not return a "not found" warning.
+            if bundled_delta_exists() {
+                let result = check_delta();
+                assert_ne!(
+                    result.status,
+                    CheckStatus::Warn,
+                    "delta check should not warn when bundled binary exists"
+                );
+                // The message should acknowledge the bundled location when not in PATH
+                if !crate::paths::command_exists("delta") {
+                    assert!(
+                        result.message.contains("installed at")
+                            || result.message.contains("bundled"),
+                        "message should mention bundled path, got: {}",
+                        result.message
+                    );
+                }
+            }
+        }
+
+        #[test]
+        fn should_check_bundled_delta_path_as_fallback() {
+            // bundled_delta_exists should not panic regardless of environment
+            let _ = bundled_delta_exists();
+            // bundled_delta_path should always return a path under config_home
+            let path = bundled_delta_path();
+            let config = config_home();
+            assert!(
+                path.starts_with(&config),
+                "bundled delta path should be under config_home: {}",
+                path.display()
+            );
         }
 
         #[test]
