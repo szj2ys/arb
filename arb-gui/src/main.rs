@@ -782,6 +782,68 @@ fn maybe_show_configuration_error_window() {
     }
 }
 
+fn maybe_auto_init() {
+    let shell_integration = config::HOME_DIR.join(".config/arb/zsh/arb.zsh");
+    if shell_integration.exists() {
+        return;
+    }
+
+    let marker = config::HOME_DIR.join(".config/arb/.auto_init_done");
+    if marker.exists() {
+        return;
+    }
+
+    let arb_bin = resolve_arb_bin();
+    let Some(bin) = arb_bin else {
+        return;
+    };
+
+    std::thread::Builder::new()
+        .name("auto-init".into())
+        .spawn(move || {
+            log::info!("auto-init: running `{} init --update-only`", bin.display());
+            let result = std::process::Command::new(&bin)
+                .args(["init", "--update-only"])
+                .stdout(std::process::Stdio::null())
+                .stderr(std::process::Stdio::null())
+                .status();
+            match result {
+                Ok(status) if status.success() => {
+                    log::info!("auto-init: shell integration installed successfully");
+                }
+                Ok(status) => {
+                    log::warn!("auto-init: `arb init --update-only` exited with {status}");
+                }
+                Err(e) => {
+                    log::warn!("auto-init: failed to run `arb init --update-only`: {e}");
+                }
+            }
+            if let Some(parent) = marker.parent() {
+                let _ = std::fs::create_dir_all(parent);
+            }
+            let _ = std::fs::write(&marker, "done\n");
+        })
+        .ok();
+}
+
+fn resolve_arb_bin() -> Option<PathBuf> {
+    if let Ok(exe) = std::env::current_exe() {
+        let dir = exe.parent()?;
+        let arb = dir.join("arb");
+        if arb.exists() {
+            return Some(arb);
+        }
+    }
+
+    let candidates = [
+        PathBuf::from("/Applications/Arb.app/Contents/MacOS/arb"),
+        config::HOME_DIR
+            .join("Applications/Arb.app/Contents/MacOS/arb"),
+        config::HOME_DIR.join(".config/arb/zsh/bin/arb"),
+    ];
+    candidates.into_iter().find(|p| p.exists())
+}
+
 fn run() -> anyhow::Result<()> {
     // Inform the system of our AppUserModelID.
     // Without this, our toast notifications won't be correctly
@@ -864,16 +926,7 @@ fn run() -> anyhow::Result<()> {
         }
     };
 
-    // First-run hint: if shell integration hasn't been installed yet, nudge
-    // the user so they know how to finish setup.
-    if !config::HOME_DIR
-        .join(".config/arb/zsh/arb.zsh")
-        .exists()
-    {
-        eprintln!(
-            "Welcome to arb! Run `arb init` to set up Starship, Delta, and syntax highlighting."
-        );
-    }
+    maybe_auto_init();
 
     match sub {
         SubCommand::Start(start) => {
