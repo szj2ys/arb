@@ -17,6 +17,7 @@
   <meta name="twitter:image" content="https://szj2ys.github.io/arb/social-preview.png">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://szj2ys.github.io/arb/blog.html">
+  <link rel="stylesheet" href="shared.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>></text></svg>">
 
   <script type="application/ld+json">
@@ -46,115 +47,24 @@
   </script>
 
   <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    :root {
-      --bg: #15141b;
-      --bg-elevated: #1c1b22;
-      --bg-surface: #232229;
-      --fg: #edecee;
-      --fg-muted: #9e9ba5;
-      --purple: #a277ff;
-      --purple-dim: rgba(162, 119, 255, 0.12);
-      --green: #61ffca;
-      --green-dim: rgba(97, 255, 202, 0.10);
-      --yellow: #ffca85;
-      --radius: 12px;
-      --radius-lg: 16px;
-      --radius-pill: 9999px;
-      --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', Menlo, Consolas, monospace;
-      --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    html { font-size: 16px; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
-    body { font-family: var(--font-sans); background: var(--bg); color: var(--fg); line-height: 1.6; }
-    ::selection { background: var(--purple); color: var(--bg); }
-    a { color: var(--purple); text-decoration: none; transition: opacity 0.2s var(--ease); }
-    a:hover { opacity: 0.8; }
-
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 0 24px;
-      backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
-      background: rgba(21, 20, 27, 0.72); border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    }
-    .nav-inner { max-width: 1120px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 56px; }
-    .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; color: var(--fg); text-decoration: none; }
-    .nav-prompt { color: var(--purple); font-family: var(--font-mono); font-size: 20px; font-weight: 700; }
-    .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
-    .nav-links a { color: var(--fg-muted); font-size: 14px; font-weight: 500; transition: color 0.2s var(--ease); }
-    .nav-links a:hover { color: var(--fg); opacity: 1; }
-    .nav-links a.active { color: var(--purple); }
-    .nav-cta {
-      display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px;
-      background: var(--purple); color: var(--bg) !important; border-radius: var(--radius-pill);
-      font-size: 14px; font-weight: 600; transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
-    }
-    .nav-cta:hover { opacity: 1; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(162, 119, 255, 0.35); }
-
-    .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
-
-    .page-header {
-      padding: 120px 0 64px; text-align: center;
-    }
-    .page-header h1 {
-      font-size: clamp(32px, 5vw, 48px); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 16px;
-    }
-    .page-header h1 .gradient {
-      background: linear-gradient(135deg, var(--purple) 0%, var(--green) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    }
+    .container { max-width: 900px; }
+    .page-header { padding: 120px 0 64px; text-align: center; }
+    .page-header h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 16px; }
+    .page-header h1 .gradient { background: linear-gradient(135deg, var(--purple) 0%, var(--green) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .page-header p { color: var(--fg-muted); font-size: 18px; max-width: 560px; margin: 0 auto; }
-
-    .breadcrumb {
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      font-size: 13px; color: var(--fg-muted); margin-bottom: 24px;
-    }
-    .breadcrumb a { color: var(--fg-muted); }
-    .breadcrumb a:hover { color: var(--purple); }
-    .breadcrumb span { opacity: 0.4; }
-
-    .articles-grid {
-      display: grid; gap: 20px; padding-bottom: 96px;
-    }
-
-    .article-card {
-      display: block; padding: 32px; background: var(--bg-elevated);
-      border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius-lg);
-      transition: border-color 0.2s var(--ease), transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
-      color: var(--fg);
-    }
-    .article-card:hover {
-      border-color: rgba(162, 119, 255, 0.3); transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3); opacity: 1;
-    }
-    .article-meta {
-      display: flex; align-items: center; gap: 16px; margin-bottom: 12px;
-      font-size: 13px; color: var(--fg-muted);
-    }
-    .article-tag {
-      padding: 3px 10px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 500;
-    }
+    .breadcrumb { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: var(--fg-muted); margin-bottom: 24px; }
+    .breadcrumb a { color: var(--fg-muted); } .breadcrumb a:hover { color: var(--purple); } .breadcrumb span { opacity: 0.4; }
+    .articles-grid { display: grid; gap: 20px; padding-bottom: 96px; }
+    .article-card { display: block; padding: 32px; background: var(--bg-elevated); border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius-lg); transition: border-color 0.2s var(--ease), transform 0.2s var(--ease), box-shadow 0.2s var(--ease); color: var(--fg); }
+    .article-card:hover { border-color: rgba(162, 119, 255, 0.3); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); opacity: 1; }
+    .article-meta { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; font-size: 13px; color: var(--fg-muted); }
+    .article-tag { padding: 3px 10px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 500; }
     .tag-guide { background: var(--purple-dim); color: var(--purple); }
     .tag-comparison { background: var(--green-dim); color: var(--green); }
     .article-card h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; color: var(--fg); }
     .article-card p { color: var(--fg-muted); font-size: 15px; line-height: 1.6; margin-bottom: 16px; }
     .read-more { color: var(--purple); font-size: 14px; font-weight: 500; }
-
-    footer {
-      border-top: 1px solid rgba(255,255,255,0.06); padding: 32px 24px;
-    }
-    .footer-inner {
-      max-width: 1120px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;
-      font-size: 13px; color: var(--fg-muted); flex-wrap: wrap; gap: 16px;
-    }
-    .footer-right { display: flex; gap: 24px; flex-wrap: wrap; }
-    .footer-right a { color: var(--fg-muted); }
-    .footer-right a:hover { color: var(--purple); }
-
-    @media (max-width: 640px) {
-      .nav-links .nav-link-text { display: none; }
-      .nav-links { gap: 16px; }
-      .article-card { padding: 24px; }
-    }
+    @media (max-width: 640px) { .article-card { padding: 24px; } }
   </style>
 
   <script defer data-domain="szj2ys.github.io" src="https://plausible.io/js/script.js"></script>
@@ -287,14 +197,18 @@
 
   <footer>
     <div class="footer-inner">
-      <div>
+      <div class="footer-left">
         <span style="color:var(--purple);font-family:var(--font-mono);font-weight:700;">></span>
         <span>arb &middot; MIT License</span>
       </div>
       <div class="footer-right">
         <a href="https://github.com/szj2ys/arb" target="_blank" rel="noopener">GitHub</a>
         <a href="https://github.com/szj2ys/arb/issues" target="_blank" rel="noopener">Issues</a>
-        <a href="./">Home</a>
+        <a href="https://github.com/szj2ys/arb/blob/main/LICENSE" target="_blank" rel="noopener">License</a>
+        <a href="blog.html">Blog</a>
+        <a href="best-terminal-for-claude-code.html">Best Terminal for Claude Code</a>
+        <a href="ai-coding-terminal-setup.html">AI Coding Setup</a>
+        <a href="wezterm-alternative-arb.html">WezTerm Alternative</a>
       </div>
     </div>
   </footer>
