@@ -71,10 +71,10 @@
       },
       {
         "@type": "Question",
-        "name": "Does Aider need a separate terminal?",
+        "name": "Does Aider work better with a GPU-accelerated terminal?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Aider has a built-in terminal, but a dedicated external terminal like arb provides GPU-accelerated rendering, built-in dev tools, and better performance for heavy AI coding output. Many developers use arb alongside Aider for git operations, test running, and AI agent sessions."
+          "text": "Yes. Aider streams tokens in real time and auto-commits to git frequently. A GPU-accelerated terminal like arb renders streaming output smoothly without lag, and its built-in Delta diff viewer makes reviewing Aider's auto-committed changes fast and readable."
         }
       },
       {
@@ -223,8 +223,8 @@
       <div class="hero-badge">Best Terminal for Aider in 2026</div>
       <h1>The Best Terminal for <span class="gradient">Aider</span></h1>
       <p class="hero-sub">
-        Aider generates code at blazing speed. Your external terminal needs to keep up with git operations, test runs, and AI agent sessions.
-        arb is the GPU-accelerated, zero-config macOS terminal built for aider workflows.
+        Aider is a command-line AI coding assistant that lives in your terminal. The terminal you choose directly affects how fast you can review diffs, scroll through multi-turn conversations, and run tests.
+        arb is the GPU-accelerated, zero-config macOS terminal built for Aider workflows.
       </p>
       <div class="install-cta">
         <div class="install-box">
@@ -243,76 +243,96 @@
     <div class="narrow">
 
       <span class="section-label">The Problem</span>
-      <h2>Why Aider Users Need a Better External Terminal</h2>
+      <h2>Why Your Terminal Choice Matters for Aider</h2>
       <p>
-        Aider has a built-in terminal, but serious aider users quickly hit its limits. When you are running tests in one pane, watching logs in another, and reviewing <code class="inline-code">git diff</code> output from AI-generated changes, the built-in terminal simply is not enough. You need a dedicated external terminal &mdash; and most options were not designed for AI-speed workflows.
+        Aider is a command-line AI pair programming tool. Unlike IDE-based AI assistants, Aider runs directly in your terminal &mdash; which means your terminal <strong>is</strong> your Aider interface. The quality of your terminal directly affects how you experience multi-turn conversations, streaming code output, and the constant stream of git diffs that Aider produces.
+      </p>
+      <p>
+        Most terminal emulators were not designed for the output patterns that Aider creates. Here are the pain points Aider users hit with traditional terminals:
       </p>
 
       <div class="pain-grid">
         <div class="pain-card">
           <div class="pain-icon">~</div>
-          <h4>Built-in Terminal Limits</h4>
-          <p>AiderAider&rsquo;srsquo;s integrated terminal shares resources with the editor. Heavy output from test suites or build tools can slow down your entire IDE.</p>
+          <h4>Streaming Token Lag</h4>
+          <p>Aider streams tokens from the LLM in real time. Slow terminals create visible lag between when tokens arrive and when they render, breaking your flow as you watch code being written.</p>
         </div>
         <div class="pain-card">
           <div class="pain-icon">!</div>
-          <h4>Configuration Tax</h4>
-          <p>Setting up iTerm2 with a decent prompt, diff viewer, and syntax highlighting takes hours. That is time you could spend shipping features with Aider.</p>
+          <h4>Git Diff Overload</h4>
+          <p>Aider auto-commits every change to git. After a long session you may have dozens of commits to review. Without a built-in diff viewer, raw <code class="inline-code">git diff</code> output is hard to parse quickly.</p>
         </div>
         <div class="pain-card">
           <div class="pain-icon">#</div>
-          <h4>Missing Dev Tools</h4>
-          <p>Most terminals give you a blank shell. You need to separately install Starship, Delta, zoxide, syntax highlighting, and a Nerd Font. Each one is another config file.</p>
+          <h4>Long Conversation Scrollback</h4>
+          <p>Multi-turn Aider sessions produce hundreds of lines of conversation. You need smooth, fast scrollback to revisit earlier context without the terminal stuttering or freezing.</p>
         </div>
         <div class="pain-card">
           <div class="pain-icon">%</div>
-          <h4>Context Switching Friction</h4>
-          <p>When AiderAider&rsquo;srsquo;s AI agent generates 20 files of changes, you need fast pane splitting and smooth scrollback to review diffs without losing your place.</p>
+          <h4>Configuration Tax</h4>
+          <p>Setting up iTerm2 with a decent prompt, syntax highlighting, and a diff viewer takes hours of dotfile work. That is time you could spend actually coding with Aider.</p>
         </div>
       </div>
 
       <span class="section-label">The Solution</span>
-      <h2>How arb Complements Aider</h2>
+      <h2>How arb Makes Aider Better</h2>
       <p>
-        arb is a terminal emulator purpose-built for the AI coding era. It ships a <strong>40MB binary</strong> with everything you need &mdash; no plugins, no dotfile configuration, no package managers. Open it alongside Aider and your entire dev environment is ready.
+        arb is a GPU-accelerated macOS terminal purpose-built for AI coding workflows. It ships a <strong>40MB binary</strong> with everything you need &mdash; no plugins, no dotfile configuration, no package managers. Run Aider inside arb and immediately benefit from faster rendering, better diffs, and a fully-equipped shell environment.
       </p>
 
       <div class="solution-grid">
         <div class="solution-card">
           <div class="solution-icon">G</div>
-          <h4>GPU-Accelerated Rendering</h4>
-          <p>Metal-backed rendering handles massive test output and build logs without dropping frames. Aider generates changes fast; arb shows them faster.</p>
-        </div>
-        <div class="solution-card">
-          <div class="solution-icon">0</div>
-          <h4>Zero Configuration</h4>
-          <p>No .zshrc tweaks, no plugin managers, no font downloads. arb includes a Nerd Font, a modern color scheme, and sensible defaults from the first launch.</p>
+          <h4>Smooth Token Streaming</h4>
+          <p>Metal-backed GPU rendering means Aider&rsquo;s streamed tokens appear instantly without lag. No dropped frames, no rendering delays, even during long code generation sequences.</p>
         </div>
         <div class="solution-card">
           <div class="solution-icon">D</div>
           <h4>Built-in Delta for Diffs</h4>
-          <p>AiderAider&rsquo;srsquo;s AI generates code changes constantly. arb&rsquo;s built-in Delta shows syntax-highlighted, side-by-side diffs so you can review every change quickly.</p>
+          <p>Aider auto-commits constantly. arb&rsquo;s built-in Delta turns every <code class="inline-code">git diff</code> and <code class="inline-code">git log -p</code> into syntax-highlighted, line-numbered output you can actually read at speed.</p>
         </div>
         <div class="solution-card">
           <div class="solution-icon">S</div>
-          <h4>Built-in Starship &amp; z</h4>
-          <p>Git status in your prompt, smart directory jumping between projects &mdash; the shell tools that make aider workflows seamless, ready from the first session.</p>
+          <h4>Starship Shows Git State</h4>
+          <p>Aider changes your git state with every auto-commit. arb&rsquo;s built-in Starship prompt shows the current branch, commit count, and dirty state so you always know where you are.</p>
+        </div>
+        <div class="solution-card">
+          <div class="solution-icon">0</div>
+          <h4>Zero Configuration</h4>
+          <p>No .zshrc tweaks, no plugin managers, no font downloads. arb includes JetBrains Mono, a dark theme, syntax highlighting, autosuggestions, and completions from the first launch.</p>
         </div>
       </div>
 
       <h3>The Aider + arb Workflow</h3>
       <p>
-        The ideal Aider setup uses Aider for editing and arb as a dedicated terminal window. Use arb for: running test suites, reviewing <code class="inline-code">git diff</code> output with Delta&rsquo;s syntax highlighting, navigating project directories with <code class="inline-code">z</code>, and running background processes. This separation keeps your IDE responsive while giving you a fully-equipped shell environment.
+        Here is how experienced Aider users work with arb:
+      </p>
+      <ol>
+        <li><strong>Open arb, navigate with z</strong> &mdash; Launch arb and type <code class="inline-code">z myproject</code> to jump to your project directory instantly. Starship shows your branch and Node/Python version.</li>
+        <li><strong>Start Aider</strong> &mdash; Run <code class="inline-code">aider</code> in arb. The GPU-accelerated renderer handles Aider&rsquo;s streaming token output smoothly, even for long code blocks.</li>
+        <li><strong>Review auto-committed diffs</strong> &mdash; After Aider makes changes, open a split pane and run <code class="inline-code">git diff HEAD~1</code>. Delta renders syntax-highlighted diffs with line numbers automatically.</li>
+        <li><strong>Run tests with /run</strong> &mdash; Use Aider&rsquo;s <code class="inline-code">/run pytest</code> command. Test output renders at full GPU speed in arb, no matter how large the suite.</li>
+        <li><strong>Add files with /add</strong> &mdash; When you need to add more context, use <code class="inline-code">/add src/auth.py</code>. arb&rsquo;s tab completions autocomplete file paths, speeding up the <code class="inline-code">/add</code> workflow.</li>
+      </ol>
+
+      <h3>Why Aider Users Specifically Benefit from GPU Rendering</h3>
+      <p>
+        Aider&rsquo;s output pattern is unique among AI coding tools. It streams tokens one at a time from the LLM, interleaved with search/replace blocks and git operations. This creates a high-frequency, small-batch rendering workload that exposes terminal performance bottlenecks. Traditional terminals like Terminal.app and iTerm2 use CPU-based rendering that introduces visible lag during token streaming. arb&rsquo;s Metal-backed GPU rendering eliminates this lag entirely.
       </p>
 
       <h3>arb vs iTerm2 for Aider Users</h3>
       <p>
-        iTerm2 requires extensive manual setup to reach baseline productivity. You need to install a Nerd Font, configure Starship, install Delta, set up zoxide, and tweak preferences. arb ships all of these built-in. For aider users who want to start coding immediately after <code class="inline-code">brew install</code>, arb eliminates the setup tax.
+        iTerm2 requires extensive manual setup to reach baseline productivity with Aider. You need to install a Nerd Font for Starship, configure a shell prompt, install Delta for readable diffs, set up zoxide for directory jumping, and tweak color schemes. arb ships all of these built-in. For Aider users who want to start coding immediately after <code class="inline-code">brew install</code>, arb eliminates the setup tax entirely.
       </p>
 
       <h3>arb vs Warp for Aider Users</h3>
       <p>
-        Warp is a solid modern terminal, but it requires an account, collects telemetry, and is not open source. For developers already using AiderAider&rsquo;srsquo;s AI-powered editor, adding another closed-source tool with login requirements adds friction. arb is MIT-licensed, requires no login, collects zero telemetry, and ships with more built-in dev tools than Warp.
+        Warp is a modern terminal with its own AI features, but it requires an account, collects telemetry, and is not open source. Aider users who value privacy &mdash; already choosing a local-first, open-source AI tool &mdash; often want their terminal to match those values. arb is MIT-licensed, requires no login, collects zero telemetry, and ships with more built-in dev tools than Warp.
+      </p>
+
+      <h3>arb vs Ghostty for Aider Users</h3>
+      <p>
+        Ghostty is a fast, GPU-accelerated terminal but ships as a blank shell. You still need to install and configure Starship, Delta, syntax highlighting, and autosuggestions separately. arb matches Ghostty&rsquo;s rendering performance while including all these tools out of the box &mdash; a significant advantage for Aider users who want a productive environment immediately.
       </p>
 
       <span class="section-label">FAQ</span>
@@ -326,19 +346,31 @@
           </button>
           <div class="faq-answer">
             <div class="faq-answer-inner">
-              arb is the best external terminal for Aider. It is GPU-accelerated, boots your shell in under 100ms, and includes Starship, Delta, z, and syntax highlighting out of the box. Install with <code class="inline-code">brew install szj2ys/arb/arb</code> and use it alongside Aider.
+              arb is the best terminal for Aider on macOS. It is GPU-accelerated for smooth token streaming, boots in under 100ms, and includes Starship, Delta, z, syntax highlighting, and autosuggestions out of the box. Install with <code class="inline-code">brew install szj2ys/arb/arb</code> and run Aider inside it.
             </div>
           </div>
         </div>
 
         <div class="faq-item">
           <button class="faq-question" onclick="toggleFaq(this)">
-            Should I use AiderAider&rsquo;srsquo;s built-in terminal or an external one?
+            Does Aider work better with a GPU-accelerated terminal?
             <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="faq-answer">
             <div class="faq-answer-inner">
-              Both. Use AiderAider&rsquo;srsquo;s built-in terminal for quick commands, and arb for heavy tasks like test suites, build processes, and git diff review. This keeps your IDE responsive while giving you a fully-equipped shell with GPU rendering.
+              Yes. Aider streams tokens from the LLM in real time, creating a high-frequency rendering workload. GPU-accelerated terminals like arb render each token instantly without the lag that CPU-based terminals introduce. This makes the Aider experience noticeably smoother, especially during long code generation.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            How do I use Aider with arb?
+            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">
+              Install arb with <code class="inline-code">brew install szj2ys/arb/arb</code>, open it, and run <code class="inline-code">aider</code>. That is it. arb&rsquo;s built-in tools (Delta for diffs, Starship for git status, z for navigation) enhance your Aider workflow automatically. No configuration needed.
             </div>
           </div>
         </div>
@@ -357,12 +389,12 @@
 
         <div class="faq-item">
           <button class="faq-question" onclick="toggleFaq(this)">
-            Does arb work with AiderAider&rsquo;srsquo;s AI agent?
+            Can I review Aider&rsquo;s auto-commits with arb?
             <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="faq-answer">
             <div class="faq-answer-inner">
-              Yes. When AiderAider&rsquo;srsquo;s AI agent generates multi-file changes, use arb to review diffs with Delta&rsquo;s syntax highlighting, run tests, and manage git operations. arb&rsquo;s GPU rendering handles large output streams from CI and build tools without stuttering.
+              Yes. Aider auto-commits every change to git. In arb, every <code class="inline-code">git diff</code>, <code class="inline-code">git log -p</code>, and <code class="inline-code">git show</code> command is automatically rendered with Delta&rsquo;s syntax highlighting, line numbers, and color-coded additions/deletions. No configuration needed &mdash; Delta is built into arb.
             </div>
           </div>
         </div>
