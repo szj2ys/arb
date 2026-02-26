@@ -6,7 +6,7 @@ use block2::{Block, RcBlock};
 use objc2::rc::Retained;
 use objc2::runtime::{Bool, NSObject, NSObjectProtocol, ProtocolObject};
 use objc2::{define_class, msg_send, AllocAnyThread};
-use objc2_foundation::{ns_string, NSArray, NSDictionary, NSError, NSSet, NSString};
+use objc2_foundation::{ns_string, NSArray, NSBundle, NSDictionary, NSError, NSSet, NSString};
 use objc2_user_notifications::{
     UNAuthorizationOptions, UNMutableNotificationContent, UNNotification, UNNotificationAction,
     UNNotificationActionOptions, UNNotificationCategory, UNNotificationCategoryOptions,
@@ -95,13 +95,46 @@ impl Drop for NotifDelegate {
     }
 }
 
-const CENTER: LazyLock<Retained<UNUserNotificationCenter>> =
-    LazyLock::new(UNUserNotificationCenter::currentNotificationCenter);
+/// Wrapper to make `Option<Retained<UNUserNotificationCenter>>` usable in a
+/// `static`.  `Retained<UNUserNotificationCenter>` is `Send` but not `Sync`;
+/// however the notification center is effectively a process-wide singleton and
+/// all Cocoa calls are dispatched through the main thread anyway.
+struct NotifCenter(Option<Retained<UNUserNotificationCenter>>);
+
+// SAFETY: UNUserNotificationCenter is a process-wide singleton managed by the
+// OS.  All calls into it go through the Objective-C runtime which serialises
+// them on the appropriate queue.
+unsafe impl Send for NotifCenter {}
+unsafe impl Sync for NotifCenter {}
+
+impl NotifCenter {
+    fn get(&self) -> Option<&UNUserNotificationCenter> {
+        self.0.as_deref()
+    }
+}
+
+/// Returns `Some` when running inside a proper app bundle, `None` in test
+/// binaries or other contexts where `NSBundle.mainBundle.bundleIdentifier`
+/// is nil.  Calling `currentNotificationCenter()` without a bundle identifier
+/// throws an unrecoverable `NSException`, so we must guard against that.
+static CENTER: LazyLock<NotifCenter> = LazyLock::new(|| {
+    if NSBundle::mainBundle().bundleIdentifier().is_none() {
+        log::debug!("No bundle identifier – notification center unavailable (test binary?)");
+        return NotifCenter(None);
+    }
+    NotifCenter(Some(
+        UNUserNotificationCenter::currentNotificationCenter(),
+    ))
+});
 
 pub fn initialize() {
     static INIT: Once = Once::new();
     INIT.call_once(|| {
-        CENTER.requestAuthorizationWithOptions_completionHandler(
+        let Some(center) = CENTER.get() else {
+            return;
+        };
+
+        center.requestAuthorizationWithOptions_completionHandler(
             UNAuthorizationOptions::Alert
                 | UNAuthorizationOptions::Provisional
                 | UNAuthorizationOptions::Sound,
@@ -127,15 +160,15 @@ pub fn initialize() {
                 &NSArray::from_slice(&[]),
                 UNNotificationCategoryOptions::CustomDismissAction,
             );
-        CENTER.setNotificationCategories(&NSSet::from_retained_slice(&[show_url_cat]));
+        center.setNotificationCategories(&NSSet::from_retained_slice(&[show_url_cat]));
 
         let delegate = NotifDelegate::new();
         let delegate_proto = ProtocolObject::from_retained(delegate.clone());
-        CENTER.setDelegate(Some(&delegate_proto));
+        center.setDelegate(Some(&delegate_proto));
         log::debug!(
             "after setDelegate {:?}, center.delegate={:?}",
             delegate,
-            CENTER.delegate()
+            center.delegate()
         );
 
         // Intentionally "leak" the delegate.
@@ -151,8 +184,14 @@ pub fn initialize() {
 
 pub fn show_notif(toast: ToastNotification) -> Result<(), Box<dyn std::error::Error>> {
     initialize();
+
+    let Some(center) = CENTER.get() else {
+        log::debug!("show_notif: no notification center available – skipping");
+        return Ok(());
+    };
+
     unsafe {
-        log::debug!("show_notif center.delegate is {:?}", CENTER.delegate());
+        log::debug!("show_notif center.delegate is {:?}", center.delegate());
 
         let notif = UNMutableNotificationContent::new();
         notif.setTitle(&NSString::from_str(&toast.title));
@@ -175,7 +214,7 @@ pub fn show_notif(toast: ToastNotification) -> Result<(), Box<dyn std::error::Er
             None,
         );
 
-        CENTER.addNotificationRequest_withCompletionHandler(
+        center.addNotificationRequest_withCompletionHandler(
             &request,
             Some(&RcBlock::new(move |err: *mut NSError| {
                 if err.is_null() {
@@ -191,7 +230,9 @@ pub fn show_notif(toast: ToastNotification) -> Result<(), Box<dyn std::error::Er
                             // Remove this notification
                             let ident_array =
                                 NSArray::from_retained_slice(&[NSString::from_str(&identifier)]);
-                            CENTER.removeDeliveredNotificationsWithIdentifiers(&ident_array);
+                            if let Some(c) = CENTER.get() {
+                                c.removeDeliveredNotificationsWithIdentifiers(&ident_array);
+                            }
                         });
                     }
                 } else {
