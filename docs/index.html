@@ -18,6 +18,7 @@
   <meta name="twitter:image" content="https://szj2ys.github.io/arb/social-preview.png">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://szj2ys.github.io/arb/">
+  <link rel="stylesheet" href="shared.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>></text></svg>">
   <link rel="preconnect" href="https://img.shields.io" crossorigin>
   <link rel="preconnect" href="https://plausible.io" crossorigin>
@@ -100,167 +101,11 @@
   </script>
 
   <style>
-    /* ============================================
-       RESET & BASE
-       ============================================ */
-    *, *::before, *::after {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    :root {
-      --bg: #15141b;
-      --bg-elevated: #1c1b22;
-      --bg-surface: #232229;
-      --fg: #edecee;
-      --fg-muted: #9e9ba5;
-      --purple: #a277ff;
-      --purple-dim: rgba(162, 119, 255, 0.12);
-      --green: #61ffca;
-      --green-dim: rgba(97, 255, 202, 0.10);
-      --red: #ff6767;
-      --yellow: #ffca85;
-      --radius: 12px;
-      --radius-lg: 16px;
-      --radius-pill: 9999px;
-      --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, monospace;
-      --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    html {
-      font-size: 16px;
-      scroll-behavior: smooth;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-
-    body {
-      font-family: var(--font-sans);
-      background: var(--bg);
-      color: var(--fg);
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
-
-    ::selection {
-      background: var(--purple);
-      color: var(--bg);
-    }
-
-    a {
-      color: var(--purple);
-      text-decoration: none;
-      transition: opacity 0.2s var(--ease);
-    }
-    a:hover {
-      opacity: 0.8;
-    }
-
-    /* ============================================
-       LAYOUT
-       ============================================ */
-    .container {
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    section {
-      padding: 96px 0;
-    }
-
-    @media (max-width: 640px) {
-      section {
-        padding: 64px 0;
-      }
-    }
-
-    /* ============================================
-       NAV
-       ============================================ */
-    nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 100;
-      padding: 0 24px;
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      background: rgba(21, 20, 27, 0.72);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      transition: background 0.3s var(--ease);
-    }
-
-    .nav-inner {
-      max-width: 1120px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 56px;
-    }
-
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 700;
-      font-size: 18px;
-      letter-spacing: -0.02em;
-      color: var(--fg);
-    }
-
-    .nav-prompt {
-      color: var(--purple);
-      font-family: var(--font-mono);
-      font-size: 20px;
-      font-weight: 700;
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 32px;
-      list-style: none;
-    }
-
-    .nav-links a {
-      color: var(--fg-muted);
-      font-size: 14px;
-      font-weight: 500;
-      transition: color 0.2s var(--ease);
-    }
-    .nav-links a:hover {
-      color: var(--fg);
-      opacity: 1;
-    }
-
-    .nav-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 18px;
-      background: var(--purple);
-      color: var(--bg) !important;
-      border-radius: var(--radius-pill);
-      font-size: 14px;
-      font-weight: 600;
-      transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
-    }
-    .nav-cta:hover {
-      opacity: 1;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 20px rgba(162, 119, 255, 0.35);
-    }
+    
 
     @media (max-width: 640px) {
       .nav-links .nav-link-text { display: none; }
-      .nav-links { gap: 16px; }
-    }
+      }
 
     /* ============================================
        HERO
@@ -1002,15 +847,7 @@
       font-weight: 500;
     }
 
-    .terminal-body {
-      padding: 24px;
-      font-family: var(--font-mono);
-      font-size: 14px;
-      line-height: 1.8;
-      min-height: 200px;
-    }
-
-    .terminal-line {
+    .terminal-.terminal-line {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
@@ -1372,12 +1209,6 @@
        ANIMATIONS (reduced motion respected)
        ============================================ */
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-delay: 0ms !important;
-        transition-duration: 0.01ms !important;
-      }
-      html { scroll-behavior: auto; }
       .terminal-anim .terminal-line,
       .terminal-anim .terminal-spacer {
         opacity: 1;
@@ -1414,14 +1245,7 @@
       text-align: left;
     }
 
-    .hero-terminal .terminal-body {
-      padding: 20px 24px;
-      font-size: 13px;
-      line-height: 1.7;
-      min-height: auto;
-    }
-
-    /* Starship-style prompt */
+    .hero-terminal .terminal-/* Starship-style prompt */
     .t-starship-dir {
       color: #61ffca;
       font-weight: 700;
@@ -1512,12 +1336,7 @@
     }
 
     @media (max-width: 640px) {
-      .hero-terminal .terminal-body {
-        padding: 16px;
-        font-size: 11px;
-        line-height: 1.6;
-      }
-      .hero-terminal {
+      .hero-terminal .terminal-.hero-terminal {
         margin-top: 32px;
       }
     }
