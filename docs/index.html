@@ -1211,10 +1211,16 @@
 
     .resources-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 20px;
-      max-width: 800px;
+      max-width: 1000px;
       margin: 0 auto;
+    }
+
+    @media (max-width: 900px) {
+      .resources-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
     @media (max-width: 640px) {
@@ -2279,6 +2285,21 @@
         <a href="best-terminal-for-claude-code.html" class="resource-card">
           <h3>Best Terminal for Claude Code in 2026</h3>
           <p>Why your terminal choice matters for AI coding, and how arb delivers GPU acceleration, built-in tools, and zero config out of the box.</p>
+          <span class="read-more">Read the guide &rarr;</span>
+        </a>
+        <a href="best-terminal-for-cursor.html" class="resource-card">
+          <h3>Best Terminal for Cursor IDE in 2026</h3>
+          <p>How to pair Cursor IDE with a dedicated GPU-accelerated terminal for faster test runs, diff reviews, and AI agent sessions.</p>
+          <span class="read-more">Read the guide &rarr;</span>
+        </a>
+        <a href="best-terminal-for-aider.html" class="resource-card">
+          <h3>Best Terminal for Aider in 2026</h3>
+          <p>Aider streams tokens and auto-commits to git. Learn why GPU rendering and built-in Delta make arb the ideal Aider terminal.</p>
+          <span class="read-more">Read the guide &rarr;</span>
+        </a>
+        <a href="wezterm-alternative-arb.html" class="resource-card">
+          <h3>arb: The Best WezTerm Alternative</h3>
+          <p>Same Lua scripting, same GPU rendering, half the binary size. Migration guide and feature comparison included.</p>
           <span class="read-more">Read the guide &rarr;</span>
         </a>
         <a href="ai-coding-terminal-setup.html" class="resource-card">
