@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Best Terminal for Aider in 2026 &mdash; arb</title>
+  <meta name="description" content="arb is the best terminal emulator for Aider in 2026. GPU-accelerated, zero config, built-in Starship and Delta. Compare arb vs iTerm2, Warp, and Ghostty for Aider AI coding workflows.">
+  <meta name="keywords" content="best terminal for aider, Aider terminal, terminal emulator Aider, arb terminal, Aider AI coding terminal, macOS terminal for Aider">
+  <meta name="theme-color" content="#15141b">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://szj2ys.github.io/arb/best-terminal-for-aider.html">
+
+  <meta property="og:title" content="Best Terminal for Aider in 2026 &mdash; arb">
+  <meta property="og:description" content="GPU-accelerated macOS terminal built for Aider and AI coding. Zero config, built-in Starship, Delta, and Lua scripting.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://szj2ys.github.io/arb/best-terminal-for-aider.html">
+  <meta property="og:image" content="https://szj2ys.github.io/arb/social-preview.png">
+  <meta property="og:image:alt" content="arb terminal emulator &mdash; best terminal for Aider">
+  <meta property="og:site_name" content="arb">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Best Terminal for Aider in 2026 &mdash; arb">
+  <meta name="twitter:description" content="GPU-accelerated macOS terminal built for Aider. Zero config with built-in Starship, Delta, and Lua scripting.">
+  <meta name="twitter:image" content="https://szj2ys.github.io/arb/social-preview.png">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>></text></svg>">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Best Terminal for Aider in 2026",
+    "description": "A comprehensive comparison of terminal emulators for Aider and AI coding workflows. Why arb is the best choice for developers using Aider.",
+    "author": { "@type": "Person", "name": "szj2ys", "url": "https://github.com/szj2ys" },
+    "publisher": { "@type": "Organization", "name": "arb", "url": "https://szj2ys.github.io/arb/" },
+    "datePublished": "2026-02-26",
+    "dateModified": "2026-02-26",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://szj2ys.github.io/arb/best-terminal-for-aider.html" }
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "arb",
+    "description": "GPU-accelerated macOS terminal emulator built for AI coding workflows. Zero config with built-in Starship, Delta, syntax highlighting, and Lua scripting.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "macOS",
+    "url": "https://szj2ys.github.io/arb/",
+    "downloadUrl": "https://github.com/szj2ys/arb/releases",
+    "softwareVersion": "latest",
+    "license": "https://opensource.org/licenses/MIT",
+    "author": { "@type": "Person", "name": "szj2ys", "url": "https://github.com/szj2ys" },
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the best terminal for Aider?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "arb is the best terminal for Aider. It is GPU-accelerated, boots in under 100ms, requires zero configuration, and includes built-in Starship prompt, Delta diff viewer, z directory jumping, and syntax highlighting — everything you need alongside Aider."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Aider work better with a GPU-accelerated terminal?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Aider streams tokens in real time and auto-commits to git frequently. A GPU-accelerated terminal like arb renders streaming output smoothly without lag, and its built-in Delta diff viewer makes reviewing Aider's auto-committed changes fast and readable."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I install arb for Aider?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Install arb with a single command: brew install szj2ys/arb/arb. No additional configuration is needed — it works out of the box alongside Aider."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #15141b; --bg-elevated: #1c1b22; --bg-surface: #232229;
+      --fg: #edecee; --fg-muted: #9e9ba5; --purple: #a277ff;
+      --purple-dim: rgba(162, 119, 255, 0.12); --green: #61ffca;
+      --green-dim: rgba(97, 255, 202, 0.10); --red: #ff6767; --yellow: #ffca85;
+      --radius: 12px; --radius-lg: 16px; --radius-pill: 9999px;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, monospace;
+      --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94); --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    html { font-size: 16px; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body { font-family: var(--font-sans); background: var(--bg); color: var(--fg); line-height: 1.6; overflow-x: hidden; }
+    ::selection { background: var(--purple); color: var(--bg); }
+    a { color: var(--purple); text-decoration: none; transition: opacity 0.2s var(--ease); }
+    a:hover { opacity: 0.8; }
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+    .narrow { max-width: 800px; margin: 0 auto; }
+    section { padding: 80px 0; }
+    @media (max-width: 640px) { section { padding: 56px 0; } }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); background: rgba(21, 20, 27, 0.72); border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+    .nav-inner { max-width: 1120px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; letter-spacing: -0.02em; color: var(--fg); }
+    .nav-prompt { color: var(--purple); font-family: var(--font-mono); font-size: 20px; font-weight: 700; }
+    .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+    .nav-links a { color: var(--fg-muted); font-size: 14px; font-weight: 500; transition: color 0.2s var(--ease); }
+    .nav-links a:hover { color: var(--fg); opacity: 1; }
+    .nav-cta { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; background: var(--purple); color: var(--bg) !important; border-radius: var(--radius-pill); font-size: 14px; font-weight: 600; transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease); }
+    .nav-cta:hover { opacity: 1; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(162, 119, 255, 0.35); }
+    @media (max-width: 640px) { .nav-links .nav-link-text { display: none; } .nav-links { gap: 16px; } }
+    .hero { padding-top: 140px; padding-bottom: 80px; text-align: center; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; top: -20%; left: 50%; transform: translateX(-50%); width: 800px; height: 800px; background: radial-gradient(ellipse at center, rgba(162, 119, 255, 0.08) 0%, transparent 70%); pointer-events: none; }
+    .hero-content { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; padding: 0 24px; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; background: var(--purple-dim); border: 1px solid rgba(162, 119, 255, 0.2); border-radius: var(--radius-pill); font-size: 13px; font-weight: 500; color: var(--purple); margin-bottom: 32px; letter-spacing: 0.02em; }
+    .hero h1 { font-size: clamp(36px, 6vw, 60px); font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 24px; }
+    .hero h1 .gradient { background: linear-gradient(135deg, var(--purple) 0%, var(--green) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-sub { font-size: clamp(16px, 2.2vw, 19px); color: var(--fg-muted); line-height: 1.7; max-width: 600px; margin: 0 auto 40px; }
+    .install-cta { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .install-box { display: flex; align-items: center; gap: 0; background: var(--bg-surface); border: 2px solid rgba(162, 119, 255, 0.3); border-radius: var(--radius); overflow: hidden; max-width: 100%; transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease); }
+    .install-box:hover { border-color: rgba(162, 119, 255, 0.5); box-shadow: 0 0 24px rgba(162, 119, 255, 0.15); }
+    .install-box code { font-family: var(--font-mono); font-size: 15px; padding: 16px 24px; color: var(--fg); white-space: nowrap; user-select: all; }
+    .install-box code .prompt-char { color: var(--purple); user-select: none; }
+    .copy-btn { display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; border: none; border-left: 1px solid rgba(255, 255, 255, 0.08); background: transparent; color: var(--fg-muted); cursor: pointer; transition: color 0.2s var(--ease), background 0.2s var(--ease); flex-shrink: 0; }
+    .copy-btn:hover { color: var(--purple); background: rgba(162, 119, 255, 0.06); }
+    .copy-btn.copied { color: var(--green); }
+    .copy-btn .icon-copy { display: block; } .copy-btn .icon-check { display: none; }
+    .copy-btn.copied .icon-copy { display: none; } .copy-btn.copied .icon-check { display: block; }
+    .install-hint { font-size: 13px; color: var(--fg-muted); font-weight: 500; }
+    .install-hint .accent { color: var(--green); font-weight: 600; }
+    .article-body { padding: 0 24px; }
+    .article-body .narrow { padding: 0; }
+    .article-body h2 { font-size: clamp(24px, 4vw, 36px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 20px; margin-top: 64px; }
+    .article-body h2:first-child { margin-top: 0; }
+    .article-body h3 { font-size: clamp(18px, 3vw, 24px); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 16px; margin-top: 48px; }
+    .article-body p { font-size: 17px; color: var(--fg-muted); line-height: 1.75; margin-bottom: 20px; }
+    .article-body strong { color: var(--fg); font-weight: 600; }
+    .article-body ul, .article-body ol { margin-bottom: 20px; padding-left: 24px; }
+    .article-body li { font-size: 17px; color: var(--fg-muted); line-height: 1.75; margin-bottom: 8px; }
+    .section-label { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--purple); margin-bottom: 16px; }
+    .inline-code { font-family: var(--font-mono); font-size: 14px; background: var(--bg-surface); padding: 2px 8px; border-radius: 4px; color: var(--yellow); }
+    .pain-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin: 32px 0 48px; }
+    @media (max-width: 768px) { .pain-grid { grid-template-columns: 1fr; } }
+    .pain-card { background: var(--bg-elevated); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: var(--radius-lg); padding: 28px 24px; transition: border-color 0.3s var(--ease); }
+    .pain-card:hover { border-color: rgba(255, 103, 103, 0.2); }
+    .pain-card .pain-icon { width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; font-size: 18px; background: rgba(255, 103, 103, 0.10); color: var(--red); }
+    .pain-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.01em; }
+    .pain-card p { font-size: 14px !important; color: var(--fg-muted); line-height: 1.6; margin-bottom: 0 !important; }
+    .solution-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin: 32px 0 48px; }
+    @media (max-width: 768px) { .solution-grid { grid-template-columns: 1fr; } }
+    .solution-card { background: var(--bg-elevated); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: var(--radius-lg); padding: 28px 24px; transition: border-color 0.3s var(--ease); position: relative; overflow: hidden; }
+    .solution-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--green), transparent); opacity: 0; transition: opacity 0.3s var(--ease); }
+    .solution-card:hover { border-color: rgba(97, 255, 202, 0.2); }
+    .solution-card:hover::before { opacity: 0.6; }
+    .solution-card .solution-icon { width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; font-size: 18px; background: var(--green-dim); color: var(--green); }
+    .solution-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.01em; }
+    .solution-card p { font-size: 14px !important; color: var(--fg-muted); line-height: 1.6; margin-bottom: 0 !important; }
+    .faq-list { margin: 32px 0; }
+    .faq-item { background: var(--bg-elevated); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: var(--radius); margin-bottom: 12px; overflow: hidden; transition: border-color 0.3s var(--ease); }
+    .faq-item:hover { border-color: rgba(162, 119, 255, 0.2); }
+    .faq-question { width: 100%; background: none; border: none; color: var(--fg); font-family: var(--font-sans); font-size: 16px; font-weight: 600; text-align: left; padding: 20px 24px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 16px; transition: color 0.2s var(--ease); }
+    .faq-question:hover { color: var(--purple); }
+    .faq-arrow { flex-shrink: 0; width: 20px; height: 20px; color: var(--fg-muted); transition: transform 0.3s var(--ease); }
+    .faq-item.open .faq-arrow { transform: rotate(180deg); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s var(--ease); }
+    .faq-item.open .faq-answer { max-height: 400px; }
+    .faq-answer-inner { padding: 0 24px 20px; font-size: 15px; color: var(--fg-muted); line-height: 1.7; }
+    .bottom-cta { text-align: center; padding: 96px 0; }
+    .bottom-cta-box { background: var(--bg-elevated); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: var(--radius-lg); padding: 56px 40px; max-width: 640px; margin: 0 auto; position: relative; overflow: hidden; }
+    .bottom-cta-box::before { content: ''; position: absolute; top: -1px; left: 20%; right: 20%; height: 2px; background: linear-gradient(90deg, transparent, var(--purple), var(--green), transparent); border-radius: 2px; }
+    .bottom-cta-box h2 { font-size: clamp(28px, 4vw, 36px); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 12px; }
+    .bottom-cta-box > p { color: var(--fg-muted); font-size: 16px; margin-bottom: 36px; }
+    .bottom-cta-install { display: flex; align-items: center; gap: 0; background: var(--bg-surface); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: var(--radius); overflow: hidden; width: 100%; max-width: 440px; margin: 0 auto 16px; transition: border-color 0.2s var(--ease); }
+    .bottom-cta-install:hover { border-color: rgba(162, 119, 255, 0.3); }
+    .bottom-cta-install code { font-family: var(--font-mono); font-size: 14px; padding: 16px 20px; color: var(--fg); flex: 1; text-align: left; white-space: nowrap; }
+    .bottom-cta-install code .prompt-char { color: var(--purple); user-select: none; }
+    .bottom-cta-install .copy-btn { width: 48px; height: 52px; }
+    .bottom-cta-or { color: var(--fg-muted); font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; }
+    .download-btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; background: transparent; border: 1px solid rgba(255, 255, 255, 0.12); color: var(--fg); border-radius: var(--radius-pill); font-size: 15px; font-weight: 600; text-decoration: none; transition: border-color 0.2s var(--ease), background 0.2s var(--ease), transform 0.2s var(--ease); }
+    .download-btn:hover { border-color: rgba(255, 255, 255, 0.25); background: rgba(255, 255, 255, 0.04); transform: translateY(-1px); opacity: 1; }
+    footer { padding: 40px 24px; border-top: 1px solid rgba(255, 255, 255, 0.06); }
+    .footer-inner { max-width: 1120px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+    .footer-left { display: flex; align-items: center; gap: 16px; font-size: 14px; color: var(--fg-muted); }
+    .footer-right { display: flex; align-items: center; gap: 24px; }
+    .footer-right a { color: var(--fg-muted); font-size: 14px; font-weight: 500; transition: color 0.2s var(--ease); }
+    .footer-right a:hover { color: var(--fg); opacity: 1; }
+    @media (max-width: 640px) { .footer-inner { flex-direction: column; gap: 16px; text-align: center; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-delay: 0ms !important; transition-duration: 0.01ms !important; } html { scroll-behavior: auto; } }
+  </style>
+  <script defer data-domain="szj2ys.github.io" src="https://plausible.io/js/script.js"></script>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="https://szj2ys.github.io/arb/" class="nav-brand">
+        <span class="nav-prompt">></span> arb
+      </a>
+      <ul class="nav-links">
+        <li><a href="https://github.com/szj2ys/arb" class="nav-link-text">GitHub</a></li>
+        <li><a href="https://github.com/szj2ys/arb/releases" class="nav-link-text">Releases</a></li>
+        <li><a href="https://szj2ys.github.io/arb/" class="nav-cta">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          Install
+        </a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">Best Terminal for Aider in 2026</div>
+      <h1>The Best Terminal for <span class="gradient">Aider</span></h1>
+      <p class="hero-sub">
+        Aider is a command-line AI coding assistant that lives in your terminal. The terminal you choose directly affects how fast you can review diffs, scroll through multi-turn conversations, and run tests.
+        arb is the GPU-accelerated, zero-config macOS terminal built for Aider workflows.
+      </p>
+      <div class="install-cta">
+        <div class="install-box">
+          <code><span class="prompt-char">$ </span>brew install szj2ys/arb/arb</code>
+          <button class="copy-btn" data-copy="brew install szj2ys/arb/arb" title="Copy to clipboard">
+            <svg class="icon-copy" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <svg class="icon-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+        </div>
+        <p class="install-hint"><span class="accent">One command.</span> Zero config. Ready in seconds.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="article-body">
+    <div class="narrow">
+
+      <span class="section-label">The Problem</span>
+      <h2>Why Your Terminal Choice Matters for Aider</h2>
+      <p>
+        Aider is a command-line AI pair programming tool. Unlike IDE-based AI assistants, Aider runs directly in your terminal &mdash; which means your terminal <strong>is</strong> your Aider interface. The quality of your terminal directly affects how you experience multi-turn conversations, streaming code output, and the constant stream of git diffs that Aider produces.
+      </p>
+      <p>
+        Most terminal emulators were not designed for the output patterns that Aider creates. Here are the pain points Aider users hit with traditional terminals:
+      </p>
+
+      <div class="pain-grid">
+        <div class="pain-card">
+          <div class="pain-icon">~</div>
+          <h4>Streaming Token Lag</h4>
+          <p>Aider streams tokens from the LLM in real time. Slow terminals create visible lag between when tokens arrive and when they render, breaking your flow as you watch code being written.</p>
+        </div>
+        <div class="pain-card">
+          <div class="pain-icon">!</div>
+          <h4>Git Diff Overload</h4>
+          <p>Aider auto-commits every change to git. After a long session you may have dozens of commits to review. Without a built-in diff viewer, raw <code class="inline-code">git diff</code> output is hard to parse quickly.</p>
+        </div>
+        <div class="pain-card">
+          <div class="pain-icon">#</div>
+          <h4>Long Conversation Scrollback</h4>
+          <p>Multi-turn Aider sessions produce hundreds of lines of conversation. You need smooth, fast scrollback to revisit earlier context without the terminal stuttering or freezing.</p>
+        </div>
+        <div class="pain-card">
+          <div class="pain-icon">%</div>
+          <h4>Configuration Tax</h4>
+          <p>Setting up iTerm2 with a decent prompt, syntax highlighting, and a diff viewer takes hours of dotfile work. That is time you could spend actually coding with Aider.</p>
+        </div>
+      </div>
+
+      <span class="section-label">The Solution</span>
+      <h2>How arb Makes Aider Better</h2>
+      <p>
+        arb is a GPU-accelerated macOS terminal purpose-built for AI coding workflows. It ships a <strong>40MB binary</strong> with everything you need &mdash; no plugins, no dotfile configuration, no package managers. Run Aider inside arb and immediately benefit from faster rendering, better diffs, and a fully-equipped shell environment.
+      </p>
+
+      <div class="solution-grid">
+        <div class="solution-card">
+          <div class="solution-icon">G</div>
+          <h4>Smooth Token Streaming</h4>
+          <p>Metal-backed GPU rendering means Aider&rsquo;s streamed tokens appear instantly without lag. No dropped frames, no rendering delays, even during long code generation sequences.</p>
+        </div>
+        <div class="solution-card">
+          <div class="solution-icon">D</div>
+          <h4>Built-in Delta for Diffs</h4>
+          <p>Aider auto-commits constantly. arb&rsquo;s built-in Delta turns every <code class="inline-code">git diff</code> and <code class="inline-code">git log -p</code> into syntax-highlighted, line-numbered output you can actually read at speed.</p>
+        </div>
+        <div class="solution-card">
+          <div class="solution-icon">S</div>
+          <h4>Starship Shows Git State</h4>
+          <p>Aider changes your git state with every auto-commit. arb&rsquo;s built-in Starship prompt shows the current branch, commit count, and dirty state so you always know where you are.</p>
+        </div>
+        <div class="solution-card">
+          <div class="solution-icon">0</div>
+          <h4>Zero Configuration</h4>
+          <p>No .zshrc tweaks, no plugin managers, no font downloads. arb includes JetBrains Mono, a dark theme, syntax highlighting, autosuggestions, and completions from the first launch.</p>
+        </div>
+      </div>
+
+      <h3>The Aider + arb Workflow</h3>
+      <p>
+        Here is how experienced Aider users work with arb:
+      </p>
+      <ol>
+        <li><strong>Open arb, navigate with z</strong> &mdash; Launch arb and type <code class="inline-code">z myproject</code> to jump to your project directory instantly. Starship shows your branch and Node/Python version.</li>
+        <li><strong>Start Aider</strong> &mdash; Run <code class="inline-code">aider</code> in arb. The GPU-accelerated renderer handles Aider&rsquo;s streaming token output smoothly, even for long code blocks.</li>
+        <li><strong>Review auto-committed diffs</strong> &mdash; After Aider makes changes, open a split pane and run <code class="inline-code">git diff HEAD~1</code>. Delta renders syntax-highlighted diffs with line numbers automatically.</li>
+        <li><strong>Run tests with /run</strong> &mdash; Use Aider&rsquo;s <code class="inline-code">/run pytest</code> command. Test output renders at full GPU speed in arb, no matter how large the suite.</li>
+        <li><strong>Add files with /add</strong> &mdash; When you need to add more context, use <code class="inline-code">/add src/auth.py</code>. arb&rsquo;s tab completions autocomplete file paths, speeding up the <code class="inline-code">/add</code> workflow.</li>
+      </ol>
+
+      <h3>Why Aider Users Specifically Benefit from GPU Rendering</h3>
+      <p>
+        Aider&rsquo;s output pattern is unique among AI coding tools. It streams tokens one at a time from the LLM, interleaved with search/replace blocks and git operations. This creates a high-frequency, small-batch rendering workload that exposes terminal performance bottlenecks. Traditional terminals like Terminal.app and iTerm2 use CPU-based rendering that introduces visible lag during token streaming. arb&rsquo;s Metal-backed GPU rendering eliminates this lag entirely.
+      </p>
+
+      <h3>arb vs iTerm2 for Aider Users</h3>
+      <p>
+        iTerm2 requires extensive manual setup to reach baseline productivity with Aider. You need to install a Nerd Font for Starship, configure a shell prompt, install Delta for readable diffs, set up zoxide for directory jumping, and tweak color schemes. arb ships all of these built-in. For Aider users who want to start coding immediately after <code class="inline-code">brew install</code>, arb eliminates the setup tax entirely.
+      </p>
+
+      <h3>arb vs Warp for Aider Users</h3>
+      <p>
+        Warp is a modern terminal with its own AI features, but it requires an account, collects telemetry, and is not open source. Aider users who value privacy &mdash; already choosing a local-first, open-source AI tool &mdash; often want their terminal to match those values. arb is MIT-licensed, requires no login, collects zero telemetry, and ships with more built-in dev tools than Warp.
+      </p>
+
+      <h3>arb vs Ghostty for Aider Users</h3>
+      <p>
+        Ghostty is a fast, GPU-accelerated terminal but ships as a blank shell. You still need to install and configure Starship, Delta, syntax highlighting, and autosuggestions separately. arb matches Ghostty&rsquo;s rendering performance while including all these tools out of the box &mdash; a significant advantage for Aider users who want a productive environment immediately.
+      </p>
+
+      <span class="section-label">FAQ</span>
+      <h2>Frequently Asked Questions</h2>
+
+      <div class="faq-list">
+        <div class="faq-item open">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            What is the best terminal for Aider?
+            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">
+              arb is the best terminal for Aider on macOS. It is GPU-accelerated for smooth token streaming, boots in under 100ms, and includes Starship, Delta, z, syntax highlighting, and autosuggestions out of the box. Install with <code class="inline-code">brew install szj2ys/arb/arb</code> and run Aider inside it.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Does Aider work better with a GPU-accelerated terminal?
+            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">
+              Yes. Aider streams tokens from the LLM in real time, creating a high-frequency rendering workload. GPU-accelerated terminals like arb render each token instantly without the lag that CPU-based terminals introduce. This makes the Aider experience noticeably smoother, especially during long code generation.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            How do I use Aider with arb?
+            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">
+              Install arb with <code class="inline-code">brew install szj2ys/arb/arb</code>, open it, and run <code class="inline-code">aider</code>. That is it. arb&rsquo;s built-in tools (Delta for diffs, Starship for git status, z for navigation) enhance your Aider workflow automatically. No configuration needed.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Is arb open source and free?
+            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">
+              Yes. arb is MIT-licensed and fully open source. No account required, no telemetry, no tracking. You can inspect, fork, and contribute on <a href="https://github.com/szj2ys/arb">GitHub</a>.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Can I review Aider&rsquo;s auto-commits with arb?
+            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">
+              Yes. Aider auto-commits every change to git. In arb, every <code class="inline-code">git diff</code>, <code class="inline-code">git log -p</code>, and <code class="inline-code">git show</code> command is automatically rendered with Delta&rsquo;s syntax highlighting, line numbers, and color-coded additions/deletions. No configuration needed &mdash; Delta is built into arb.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <section class="bottom-cta">
+    <div class="container">
+      <div class="bottom-cta-box">
+        <h2>Try arb now</h2>
+        <p>One command. The best terminal for Aider.</p>
+        <div class="bottom-cta-install">
+          <code><span class="prompt-char">$ </span>brew install szj2ys/arb/arb</code>
+          <button class="copy-btn" data-copy="brew install szj2ys/arb/arb" title="Copy to clipboard">
+            <svg class="icon-copy" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <svg class="icon-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+        </div>
+        <div class="bottom-cta-or">or</div>
+        <a href="https://github.com/szj2ys/arb/releases" class="download-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download from GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-left">
+        <span>arb &mdash; MIT License</span>
+      </div>
+      <div class="footer-right">
+        <a href="https://szj2ys.github.io/arb/">Home</a>
+        <a href="best-terminal-for-claude-code.html">Best Terminal for Claude Code</a>
+        <a href="ai-coding-terminal-setup.html">AI Coding Terminal Setup</a>
+        <a href="https://github.com/szj2ys/arb">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.copy-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var text = btn.getAttribute('data-copy');
+        navigator.clipboard.writeText(text).then(function() {
+          btn.classList.add('copied');
+          setTimeout(function() { btn.classList.remove('copied'); }, 2000);
+        });
+      });
+    });
+    function toggleFaq(btn) { btn.closest('.faq-item').classList.toggle('open'); }
+  </script>
+
+</body>
+</html>

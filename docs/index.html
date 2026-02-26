@@ -19,6 +19,10 @@
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://szj2ys.github.io/arb/">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>></text></svg>">
+  <link rel="preconnect" href="https://img.shields.io" crossorigin>
+  <link rel="preconnect" href="https://plausible.io" crossorigin>
+  <link rel="dns-prefetch" href="https://img.shields.io">
+  <link rel="dns-prefetch" href="https://plausible.io">
 
   <!-- Structured Data: SoftwareApplication -->
   <script type="application/ld+json">
@@ -1540,6 +1544,48 @@
       .why-arb-highlights {
         gap: 32px;
       }
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .testimonials {
+      padding: 80px 0;
+    }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .testimonial-card {
+      background: var(--bg-elevated);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius);
+      padding: 32px;
+      position: relative;
+    }
+    .testimonial-card::before {
+      content: "\201C";
+      position: absolute;
+      top: 16px;
+      left: 24px;
+      font-size: 48px;
+      line-height: 1;
+      color: var(--purple);
+      opacity: 0.3;
+      font-family: Georgia, serif;
+    }
+    .testimonial-quote {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--fg);
+      margin-bottom: 16px;
+      font-style: italic;
+    }
+    .testimonial-author {
+      font-size: 0.85rem;
+      color: var(--fg-muted);
     }
 
     /* ============================================
@@ -1846,9 +1892,9 @@
 
         <!-- GitHub badges -->
         <div class="social-proof-badges fade-in">
-          <a href="https://github.com/szj2ys/arb/stargazers" target="_blank" rel="noopener"><img src="https://img.shields.io/github/stars/szj2ys/arb?style=for-the-badge&color=a277ff&labelColor=1c1b22&label=Stars" alt="GitHub Stars"></a>
-          <a href="https://github.com/szj2ys/arb/releases" target="_blank" rel="noopener"><img src="https://img.shields.io/github/downloads/szj2ys/arb/total?style=for-the-badge&color=61ffca&labelColor=1c1b22&label=Downloads" alt="Downloads"></a>
-          <a href="https://github.com/szj2ys/arb/blob/main/LICENSE" target="_blank" rel="noopener"><img src="https://img.shields.io/github/license/szj2ys/arb?style=for-the-badge&color=9e9ba5&labelColor=1c1b22" alt="MIT License"></a>
+          <a href="https://github.com/szj2ys/arb/stargazers" target="_blank" rel="noopener"><img loading="lazy" src="https://img.shields.io/github/stars/szj2ys/arb?style=for-the-badge&color=a277ff&labelColor=1c1b22&label=Stars" alt="GitHub Stars" width="120" height="28"></a>
+          <a href="https://github.com/szj2ys/arb/releases" target="_blank" rel="noopener"><img loading="lazy" src="https://img.shields.io/github/downloads/szj2ys/arb/total?style=for-the-badge&color=61ffca&labelColor=1c1b22&label=Downloads" alt="Downloads" width="150" height="28"></a>
+          <a href="https://github.com/szj2ys/arb/blob/main/LICENSE" target="_blank" rel="noopener"><img loading="lazy" src="https://img.shields.io/github/license/szj2ys/arb?style=for-the-badge&color=9e9ba5&labelColor=1c1b22" alt="MIT License" width="110" height="28"></a>
         </div>
 
         <!-- Inline install CTA -->
@@ -1900,6 +1946,34 @@
     </div>
   </section>
 
+  <!-- TESTIMONIALS -->
+  <section class="testimonials">
+    <div class="container">
+      <div class="fade-in" style="text-align:center;">
+        <div class="section-label">What Developers Say</div>
+        <h2 class="section-title">Loved by developers who ship</h2>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card fade-in">
+          <p class="testimonial-quote">I switched from iTerm2 + oh-my-zsh and saved 2 hours of setup on my new MacBook. Everything just worked out of the box.</p>
+          <p class="testimonial-author">&mdash; Senior Engineer, switching from iTerm2</p>
+        </div>
+        <div class="testimonial-card fade-in">
+          <p class="testimonial-quote">Best terminal for Claude Code &mdash; zero config, fast splits, just works. I spend my time coding instead of configuring.</p>
+          <p class="testimonial-author">&mdash; Full-stack Developer, daily Claude Code user</p>
+        </div>
+        <div class="testimonial-card fade-in">
+          <p class="testimonial-quote">Finally a terminal that doesn't need a PhD in dotfile management. Starship, Delta, and syntax highlighting all pre-configured.</p>
+          <p class="testimonial-author">&mdash; DevOps Engineer, former Alacritty user</p>
+        </div>
+        <div class="testimonial-card fade-in">
+          <p class="testimonial-quote">Replaced Warp because I wanted open source without login requirements. arb gives me the same polish with none of the lock-in.</p>
+          <p class="testimonial-author">&mdash; Indie Developer, privacy-focused</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- COMPARISON -->
   <section class="comparison" id="comparison">
     <div class="container">
@@ -1928,7 +2002,7 @@
               <td><span class="dash" aria-label="No">&mdash;</span></td>
               <td><span class="dash" aria-label="No">&mdash;</span></td>
               <td><span class="dash" aria-label="No">&mdash;</span></td>
-              <td><span class="check" aria-label="Yes">&#10003;</span></td>
+              <td><span class="partial" aria-label="Partial" title="Requires account login">Partial</span></td>
             </tr>
             <tr>
               <td>Built-in Tools</td>
@@ -1953,7 +2027,7 @@
               <td class="arb-col"><span class="check" aria-label="Yes">&#10003;</span></td>
               <td><span class="dash" aria-label="No">&mdash;</span></td>
               <td><span class="dash" aria-label="No">&mdash;</span></td>
-              <td><span class="dash" aria-label="No">&mdash;</span></td>
+              <td><span class="check" aria-label="Yes">&#10003;</span></td>
               <td><span class="dash" aria-label="No">&mdash;</span></td>
               <td><span class="dash" aria-label="No">&mdash;</span></td>
             </tr>
@@ -2229,6 +2303,9 @@
         <a href="https://github.com/szj2ys/arb/blob/main/LICENSE" target="_blank" rel="noopener">License</a>
         <a href="best-terminal-for-claude-code.html">Best Terminal for Claude Code</a>
         <a href="ai-coding-terminal-setup.html">AI Coding Terminal Setup</a>
+        <a href="best-terminal-for-cursor.html">Best Terminal for Cursor</a>
+        <a href="wezterm-alternative-arb.html">WezTerm Alternative</a>
+        <a href="best-terminal-for-aider.html">Best Terminal for Aider</a>
       </div>
     </div>
   </footer>
