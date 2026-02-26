@@ -27,8 +27,9 @@ pub use level::Level;
 /// Placeholder codepoint index that corresponds to NO_LEVEL
 const DELETED: usize = usize::MAX;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, FromDynamic, ToDynamic)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, FromDynamic, ToDynamic, Default)]
 pub enum ParagraphDirectionHint {
+    #[default]
     LeftToRight,
     RightToLeft,
     /// Attempt to auto-detect but fall back to LTR
@@ -37,11 +38,6 @@ pub enum ParagraphDirectionHint {
     AutoRightToLeft,
 }
 
-impl Default for ParagraphDirectionHint {
-    fn default() -> Self {
-        Self::LeftToRight
-    }
-}
 
 impl ParagraphDirectionHint {
     /// Returns just the direction portion of the hint, independent
