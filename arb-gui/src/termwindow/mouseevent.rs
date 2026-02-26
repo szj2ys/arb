@@ -618,13 +618,14 @@ impl super::TermWindow {
                         if self.config.window_decorations
                             == window::WindowDecorations::INTEGRATED_BUTTONS
                                 | window::WindowDecorations::RESIZE
-                            && self.last_mouse_click.as_ref().map(|c| c.streak) == Some(2) {
-                                if maximized {
-                                    window.restore();
-                                } else {
-                                    window.maximize();
-                                }
+                            && self.last_mouse_click.as_ref().map(|c| c.streak) == Some(2)
+                        {
+                            if maximized {
+                                window.restore();
+                            } else {
+                                window.maximize();
                             }
+                        }
                     }
                     self.is_window_dragging = true;
                     if !maximized && !cfg!(target_os = "macos") {
@@ -690,9 +691,8 @@ impl super::TermWindow {
                     );
                     context.set_maximize_button_position(bounds);
                 }
-                TabBarItem::WindowButton(_)
-                | TabBarItem::Tab { .. }
-                | TabBarItem::NewTabButton => {}
+                TabBarItem::WindowButton(_) | TabBarItem::Tab { .. } | TabBarItem::NewTabButton => {
+                }
             },
             WMEK::VertWheel(n) => {
                 if self.config.mouse_wheel_scrolls_tabs {
@@ -825,7 +825,9 @@ impl super::TermWindow {
                     match &event.kind {
                         WMEK::Press(_) => {
                             let mux = Mux::get();
-                            if let Some(tab) = mux.get_active_tab_for_window(self.mux_window_id) { tab.set_active_idx(pos.index) }
+                            if let Some(tab) = mux.get_active_tab_for_window(self.mux_window_id) {
+                                tab.set_active_idx(pos.index)
+                            }
 
                             pane = Arc::clone(&pos.pane);
                             is_click_to_focus_pane = true;
@@ -833,7 +835,10 @@ impl super::TermWindow {
                         WMEK::Move => {
                             if self.config.pane_focus_follows_mouse {
                                 let mux = Mux::get();
-                                if let Some(tab) = mux.get_active_tab_for_window(self.mux_window_id) { tab.set_active_idx(pos.index) }
+                                if let Some(tab) = mux.get_active_tab_for_window(self.mux_window_id)
+                                {
+                                    tab.set_active_idx(pos.index)
+                                }
 
                                 pane = Arc::clone(&pos.pane);
                                 context.invalidate();
@@ -910,16 +915,17 @@ impl super::TermWindow {
             false
         };
 
-        if self.focused.is_some() && !is_focused
+        if self.focused.is_some()
+            && !is_focused
             && matches!(&event.kind, WMEK::Press(_))
-                && self.config.swallow_mouse_click_on_window_focus
-            {
-                // Entering click to focus state
-                self.is_click_to_focus_window = true;
-                context.invalidate();
-                log::trace!("enter click to focus");
-                return;
-            }
+            && self.config.swallow_mouse_click_on_window_focus
+        {
+            // Entering click to focus state
+            self.is_click_to_focus_window = true;
+            context.invalidate();
+            log::trace!("enter click to focus");
+            return;
+        }
         if self.is_click_to_focus_window && matches!(&event.kind, WMEK::Release(_)) {
             // Exiting click to focus state
             self.is_click_to_focus_window = false;
@@ -1092,10 +1098,11 @@ impl super::TermWindow {
                 // that shift is not one of the mods when the mouse is grabbed.
                 let mut mouse_reporting = pane.is_mouse_grabbed();
                 if mouse_reporting
-                    && modifiers.contains(self.config.bypass_mouse_reporting_modifiers) {
-                        modifiers.remove(self.config.bypass_mouse_reporting_modifiers);
-                        mouse_reporting = false;
-                    }
+                    && modifiers.contains(self.config.bypass_mouse_reporting_modifiers)
+                {
+                    modifiers.remove(self.config.bypass_mouse_reporting_modifiers);
+                    mouse_reporting = false;
+                }
 
                 if mouse_reporting {
                     // If they were scrolled back prior to launching an

@@ -34,7 +34,8 @@ impl Drop for GuiFrontEnd {
     }
 }
 
-static FAST_CONFIG_SNAPSHOT: LazyLock<Mutex<Option<config::ConfigHandle>>> = LazyLock::new(|| Mutex::new(None));
+static FAST_CONFIG_SNAPSHOT: LazyLock<Mutex<Option<config::ConfigHandle>>> =
+    LazyLock::new(|| Mutex::new(None));
 
 fn fast_config_snapshot() -> config::ConfigHandle {
     if let Some(cfg) = FAST_CONFIG_SNAPSHOT.lock().unwrap().as_ref().cloned() {

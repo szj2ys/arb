@@ -45,8 +45,9 @@ impl super::TermWindow {
                             col_span.prune_trailing_blanks(seqno);
                         }
 
-                        if let Some(line) = result
-                            .last_mut() { line.append_line(col_span, seqno) }
+                        if let Some(line) = result.last_mut() {
+                            line.append_line(col_span, seqno)
+                        }
 
                         last_was_wrapped = last_col_idx == last_phys_idx
                             && phys

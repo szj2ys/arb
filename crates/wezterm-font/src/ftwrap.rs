@@ -951,9 +951,9 @@ impl Face {
                         FT_Color_Root_Transform::FT_COLOR_NO_ROOT_TRANSFORM,
                     )
                     .is_ok()
-                {
-                    return Err(IsColr1OrLater.into());
-                }
+            {
+                return Err(IsColr1OrLater.into());
+            }
 
             ft_result(FT_Render_Glyph(slot, render_mode), ())
                 .context("load_and_render_glyph: FT_Render_Glyph")?;

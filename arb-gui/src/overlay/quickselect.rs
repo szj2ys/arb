@@ -732,7 +732,7 @@ impl QuickSelectRenderable {
     fn compute_search_row(&self) -> StableRowIndex {
         let dims = self.delegate.get_dimensions();
         let top = self.viewport.unwrap_or(dims.physical_top);
-        
+
         (top + dims.viewport_rows as StableRowIndex).saturating_sub(1)
     }
 

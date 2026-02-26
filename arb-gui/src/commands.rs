@@ -322,10 +322,7 @@ impl CommandDef {
         // And sweep to pick up stuff from their key assignments
         let inputmap = InputMap::new(config);
         for ((keycode, mods), entry) in inputmap.keys.default.iter() {
-            if result
-                .iter()
-                .any(|cmd| cmd.action == entry.action)
-            {
+            if result.iter().any(|cmd| cmd.action == entry.action) {
                 continue;
             }
             if let Some(cmd) = derive_command_from_key_assignment(&entry.action) {
@@ -341,10 +338,7 @@ impl CommandDef {
         }
         for table in inputmap.keys.by_name.values() {
             for entry in table.values() {
-                if result
-                    .iter()
-                    .any(|cmd| cmd.action == entry.action)
-                {
+                if result.iter().any(|cmd| cmd.action == entry.action) {
                     continue;
                 }
                 if let Some(cmd) = derive_command_from_key_assignment(&entry.action) {
@@ -547,7 +541,8 @@ impl CommandDef {
                     }
                 }
 
-                let short_cut = candidate.first()
+                let short_cut = candidate
+                    .first()
                     .map(|(key, _)| key_code_to_equivalent(key))
                     .unwrap_or_default();
 
@@ -604,7 +599,9 @@ impl CommandDef {
         // Now sweep away any items that were not updated
         for item in candidates_for_removal {
             if item.get_tag() == 0 {
-                if let Some(menu) = item.get_menu() { menu.remove_item(&item) }
+                if let Some(menu) = item.get_menu() {
+                    menu.remove_item(&item)
+                }
             }
         }
     }

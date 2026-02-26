@@ -265,15 +265,11 @@ impl super::TermWindow {
             let padding_right = effective_right_padding(config, h_context);
 
             let avail_width = dimensions.pixel_width.saturating_sub(
-                (padding_left + padding_right)
-                    + (border.left + border.right).get(),
+                (padding_left + padding_right) + (border.left + border.right).get(),
             );
             let avail_height = dimensions
                 .pixel_height
-                .saturating_sub(
-                    (padding_top + padding_bottom)
-                        + (border.top + border.bottom).get(),
-                )
+                .saturating_sub((padding_top + padding_bottom) + (border.top + border.bottom).get())
                 .saturating_sub(tab_bar_height as usize);
 
             let avail_width = avail_width.saturating_sub(tab_bar_width as usize);

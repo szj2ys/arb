@@ -121,14 +121,13 @@ mod imp {
         let delta = check_delta();
         let plugins = check_zsh_plugins();
 
-        let find_plugin =
-            |needle: &str| -> crate::doctor::imp::CheckResult {
-                plugins
-                    .iter()
-                    .find(|r| r.name.contains(needle))
-                    .cloned()
-                    .expect("expected plugin check result")
-            };
+        let find_plugin = |needle: &str| -> crate::doctor::imp::CheckResult {
+            plugins
+                .iter()
+                .find(|r| r.name.contains(needle))
+                .cloned()
+                .expect("expected plugin check result")
+        };
 
         let results = vec![
             shell,
@@ -147,9 +146,7 @@ mod imp {
     ///
     /// `results` must have one entry per item in [`SUMMARY_ITEMS`], in the same
     /// order.
-    fn format_init_summary(
-        results: &[crate::doctor::imp::CheckResult],
-    ) -> String {
+    fn format_init_summary(results: &[crate::doctor::imp::CheckResult]) -> String {
         use crate::doctor::imp::CheckStatus;
         use std::fmt::Write;
 
@@ -416,10 +413,7 @@ exit 127
                 output.contains("starship not executable"),
                 "expected warn message"
             );
-            assert!(
-                output.contains("chmod +x starship"),
-                "expected warn fix"
-            );
+            assert!(output.contains("chmod +x starship"), "expected warn fix");
             // The other 5 items should still show passing
             assert!(output.contains("\u{2714}"), "expected passing checks");
         }
@@ -449,10 +443,7 @@ exit 127
             // and that the guard exists. Since we cannot easily run the full init
             // (it requires shell scripts), we test the guard at the API level.
             let cmd_update = super::super::InitCommand { update_only: true };
-            assert!(
-                cmd_update.update_only,
-                "update_only flag should be true"
-            );
+            assert!(cmd_update.update_only, "update_only flag should be true");
 
             let cmd_normal = super::super::InitCommand { update_only: false };
             assert!(
@@ -529,9 +520,7 @@ exit 127
         #[test]
         fn should_include_global_applications_candidate() {
             let candidates = setup_script_candidates();
-            let global = PathBuf::from(
-                "/Applications/Arb.app/Contents/Resources/setup_zsh.sh",
-            );
+            let global = PathBuf::from("/Applications/Arb.app/Contents/Resources/setup_zsh.sh");
             assert!(
                 candidates.contains(&global),
                 "candidates should include the global /Applications path"
@@ -541,8 +530,8 @@ exit 127
         #[test]
         fn should_include_user_applications_candidate() {
             let candidates = setup_script_candidates();
-            let user = config::HOME_DIR
-                .join("Applications/Arb.app/Contents/Resources/setup_zsh.sh");
+            let user =
+                config::HOME_DIR.join("Applications/Arb.app/Contents/Resources/setup_zsh.sh");
             assert!(
                 candidates.contains(&user),
                 "candidates should include the ~/Applications path"

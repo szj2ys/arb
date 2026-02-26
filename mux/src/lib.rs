@@ -586,10 +586,7 @@ impl Mux {
     }
 
     pub fn iter_clients(&self) -> Vec<ClientInfo> {
-        self.clients
-            .read()
-            .values().cloned()
-            .collect()
+        self.clients.read().values().cloned().collect()
     }
 
     /// Returns a list of the unique workspace names known to the mux.
@@ -1049,9 +1046,7 @@ impl Mux {
     }
 
     pub fn iter_panes(&self) -> Vec<Arc<dyn Pane>> {
-        self.panes
-            .read().values().map(|v| Arc::clone(v))
-            .collect()
+        self.panes.read().values().map(|v| Arc::clone(v)).collect()
     }
 
     pub fn iter_windows_in_workspace(&self, workspace: &str) -> Vec<WindowId> {
@@ -1145,20 +1140,18 @@ impl Mux {
             SpawnTabDomain::DomainId(domain_id) => self
                 .get_domain(*domain_id)
                 .ok_or_else(|| anyhow!("domain id {} is invalid", domain_id))?,
-            SpawnTabDomain::DomainName(name) => {
-                self.get_domain_by_name(name).ok_or_else(|| {
-                    let names: Vec<String> = self
-                        .domains_by_name
-                        .read()
-                        .keys()
-                        .map(|name| format!("\"{name}\""))
-                        .collect();
-                    anyhow!(
-                        "domain name \"{name}\" is invalid. Possible names are {}.",
-                        names.join(", ")
-                    )
-                })?
-            }
+            SpawnTabDomain::DomainName(name) => self.get_domain_by_name(name).ok_or_else(|| {
+                let names: Vec<String> = self
+                    .domains_by_name
+                    .read()
+                    .keys()
+                    .map(|name| format!("\"{name}\""))
+                    .collect();
+                anyhow!(
+                    "domain name \"{name}\" is invalid. Possible names are {}.",
+                    names.join(", ")
+                )
+            })?,
         };
         Ok(domain)
     }

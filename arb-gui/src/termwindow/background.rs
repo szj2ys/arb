@@ -16,7 +16,8 @@ use std::time::SystemTime;
 use termwiz::image::{ImageData, ImageDataType};
 use wezterm_term::StableRowIndex;
 
-static IMAGE_CACHE: LazyLock<Mutex<HashMap<String, CachedImage>>> = LazyLock::new(|| Mutex::new(HashMap::new()));
+static IMAGE_CACHE: LazyLock<Mutex<HashMap<String, CachedImage>>> =
+    LazyLock::new(|| Mutex::new(HashMap::new()));
 static GRADIENT_CACHE: LazyLock<Mutex<Vec<CachedGradient>>> = LazyLock::new(|| Mutex::new(vec![]));
 
 struct CachedGradient {

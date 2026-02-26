@@ -252,11 +252,13 @@ impl<'a> Performer<'a> {
     pub fn perform(&mut self, action: Action) {
         debug!("perform {:?}", action);
         if self.suppress_initial_title_change {
-            if let Action::OperatingSystemCommand(osc) = &action { if let OperatingSystemCommand::SetIconNameAndWindowTitle(_) = **osc {
-                debug!("suppressed {:?}", osc);
-                self.suppress_initial_title_change = false;
-                return;
-            } }
+            if let Action::OperatingSystemCommand(osc) = &action {
+                if let OperatingSystemCommand::SetIconNameAndWindowTitle(_) = **osc {
+                    debug!("suppressed {:?}", osc);
+                    self.suppress_initial_title_change = false;
+                    return;
+                }
+            }
         }
         match action {
             Action::Print(c) => self.print(c),

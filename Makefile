@@ -4,6 +4,7 @@ all: build
 
 RUST_LOG ?= info
 PROFILE ?= debug
+RUSTFMT_TOOLCHAIN ?= nightly-2026-02-25
 
 test:
 	cargo nextest run
@@ -27,13 +28,13 @@ build:
 	cargo build $(BUILD_OPTS) -p arb -p arb-gui -p wezterm-mux-server-impl
 
 fmt:
-	cargo +nightly fmt -p arb -p arb-gui -p mux -p wezterm-term -p termwiz -p config -p wezterm-font
+	cargo +$(RUSTFMT_TOOLCHAIN) fmt -p arb -p arb-gui -p mux -p wezterm-term -p termwiz -p config -p wezterm-font
 
 fmt-check:
-	cargo +nightly fmt -p arb -p arb-gui -p mux -p wezterm-term -p termwiz -p config -p wezterm-font -- --check
+	cargo +$(RUSTFMT_TOOLCHAIN) fmt -p arb -p arb-gui -p mux -p wezterm-term -p termwiz -p config -p wezterm-font -- --check
 	@echo "Format check passed."
 
 install-tools:
 	cargo install cargo-nextest --locked
-	rustup toolchain install nightly --component rustfmt
+	rustup toolchain install $(RUSTFMT_TOOLCHAIN) --component rustfmt
 	@echo "Tools installed."

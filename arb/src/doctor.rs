@@ -387,7 +387,9 @@ pub(crate) mod imp {
     pub(crate) fn check_app_bundle() -> CheckResult {
         let candidates = [
             PathBuf::from("/Applications/Arb.app"),
-            crate::paths::home_dir().join("Applications").join("Arb.app"),
+            crate::paths::home_dir()
+                .join("Applications")
+                .join("Arb.app"),
         ];
 
         for candidate in &candidates {
@@ -495,11 +497,8 @@ pub(crate) mod imp {
                     Ok(output) if output.status.success() => CheckResult {
                         name: "Homebrew".into(),
                         status: CheckStatus::Warn,
-                        message: "found conflicting 'arb' package (not from szj2ys/arb tap)"
-                            .into(),
-                        fix: Some(
-                            "Run: brew uninstall arb && brew install szj2ys/arb/arb".into(),
-                        ),
+                        message: "found conflicting 'arb' package (not from szj2ys/arb tap)".into(),
+                        fix: Some("Run: brew uninstall arb && brew install szj2ys/arb/arb".into()),
                     },
                     _ => CheckResult {
                         name: "Homebrew".into(),

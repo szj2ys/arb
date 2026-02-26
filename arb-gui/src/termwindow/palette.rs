@@ -454,12 +454,7 @@ impl CommandPalette {
 
         let element = Element::new(&font, ElementContent::Children(elements))
             .colors(ElementColors {
-                border: BorderColor::new(
-                    term_window
-                        .config
-                        .command_palette_bg_color
-                        .to_linear(),
-                ),
+                border: BorderColor::new(term_window.config.command_palette_bg_color.to_linear()),
                 bg: term_window
                     .config
                     .command_palette_bg_color
