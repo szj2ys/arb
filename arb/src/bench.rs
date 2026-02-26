@@ -9,6 +9,10 @@ pub struct BenchCommand {
     /// Output results as a Markdown table (for sharing on GitHub/Twitter)
     #[arg(long)]
     markdown: bool,
+
+    /// Copy a shareable snippet to clipboard
+    #[arg(long)]
+    share: bool,
 }
 
 impl BenchCommand {
@@ -29,8 +33,9 @@ mod imp {
 #[cfg(target_os = "macos")]
 mod imp {
     use super::BenchCommand;
+    use std::io::Write;
     use std::path::PathBuf;
-    use std::process::Command;
+    use std::process::{Command, Stdio};
     use std::time::{Duration, Instant};
 
     const ITERATIONS: usize = 10;
@@ -91,6 +96,23 @@ mod imp {
             print_json(&result);
         } else if cmd.markdown {
             print_markdown(&result);
+        } else if cmd.share {
+            print_ansi(&result);
+
+            let snippet = format!(
+                "My shell boots in {:.0}ms with arb \u{2014} zero config terminal for AI coding.\n\nhttps://github.com/szj2ys/arb",
+                result.arb_median_ms
+            );
+
+            let mut child = Command::new("pbcopy")
+                .stdin(Stdio::piped())
+                .spawn()?;
+            if let Some(mut stdin) = child.stdin.take() {
+                stdin.write_all(snippet.as_bytes())?;
+            }
+            child.wait()?;
+
+            println!("{GREEN}Copied to clipboard! Paste to share on GitHub, Twitter, or anywhere.{RESET}");
         } else {
             print_ansi(&result);
         }
@@ -241,7 +263,7 @@ mod imp {
             result.arb_median_ms
         );
         println!();
-        println!("{GRAY}Tip: arb bench --markdown | pbcopy{RESET}");
+        println!("{GRAY}Tip: arb bench --share{RESET}");
         println!();
     }
 
@@ -317,6 +339,7 @@ mod tests {
         let cmd = BenchCommand::default();
         assert!(!cmd.json);
         assert!(!cmd.markdown);
+        assert!(!cmd.share);
     }
 
     #[cfg(target_os = "macos")]
