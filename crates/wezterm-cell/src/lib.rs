@@ -25,16 +25,11 @@ pub mod color;
 pub mod image;
 
 #[cfg_attr(feature = "use_serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
 enum SmallColor {
+    #[default]
     Default,
     PaletteIndex(PaletteIndex),
-}
-
-impl Default for SmallColor {
-    fn default() -> Self {
-        Self::Default
-    }
 }
 
 impl From<SmallColor> for ColorAttribute {
@@ -177,18 +172,13 @@ macro_rules! bitfield {
 /// Input (that the user typed) and Prompt (effectively, "chrome" provided
 /// by the shell or application that the user is interacting with.
 #[cfg_attr(feature = "use_serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, FromDynamic, ToDynamic)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, FromDynamic, ToDynamic, Default)]
 #[repr(u8)]
 pub enum SemanticType {
+    #[default]
     Output = 0,
     Input = 1,
     Prompt = 2,
-}
-
-impl Default for SemanticType {
-    fn default() -> Self {
-        Self::Output
-    }
 }
 
 pub use wezterm_escape_parser::csi::{Blink, Intensity, Underline, VerticalAlign};
