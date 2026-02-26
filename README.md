@@ -135,18 +135,6 @@ arb reset    # Remove arb-managed shell config (--yes for non-interactive)
 
 ---
 
-## What Developers Are Saying
-
-> *"I switched from iTerm2 + oh-my-zsh and saved 2 hours of setup on my new MacBook."*
-
-> *"Best terminal for Claude Code -- zero config, fast splits, just works."*
-
-> *"Finally a terminal that doesn't need a PhD in dotfile management."*
-
-> *"Replaced Warp because I wanted open source without login requirements."*
-
----
-
 ## Built-in Tools
 
 arb comes with a carefully curated suite of CLI tools, pre-configured for immediate productivity:
