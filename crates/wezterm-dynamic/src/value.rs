@@ -14,8 +14,9 @@ use alloc::string::String;
 /// Value is intended to be convertible to the same set
 /// of types as Lua and is a superset of the types possible
 /// in TOML and JSON.
-#[derive(Clone, PartialEq, Hash, Eq, Ord, PartialOrd)]
+#[derive(Clone, PartialEq, Hash, Eq, Ord, PartialOrd, Default)]
 pub enum Value {
+    #[default]
     Null,
     Bool(bool),
     String(String),
@@ -24,12 +25,6 @@ pub enum Value {
     U64(u64),
     I64(i64),
     F64(OrderedFloat<f64>),
-}
-
-impl Default for Value {
-    fn default() -> Self {
-        Self::Null
-    }
 }
 
 impl core::fmt::Debug for Value {
