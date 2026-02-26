@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Getting Started with arb &mdash; Install, Configure, and Customize</title>
+  <meta name="description" content="Get started with arb terminal in under a minute. Install via Homebrew, explore built-in tools, customize with Lua scripting, and set up your AI coding workflow.">
+  <meta name="keywords" content="arb terminal getting started, arb install guide, arb terminal setup, arb lua config, arb customization, macOS terminal setup">
+  <meta name="theme-color" content="#15141b">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://szj2ys.github.io/arb/getting-started.html">
+
+  <meta property="og:title" content="Getting Started with arb Terminal">
+  <meta property="og:description" content="Install arb in one command and start coding. Zero config terminal with built-in Starship, Delta, syntax highlighting, and Lua scripting.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://szj2ys.github.io/arb/getting-started.html">
+  <meta property="og:image" content="https://szj2ys.github.io/arb/social-preview.png">
+  <meta property="og:site_name" content="arb">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Getting Started with arb Terminal">
+  <meta name="twitter:description" content="Install arb in one command. Zero config terminal with built-in Starship, Delta, and Lua scripting.">
+  <meta name="twitter:image" content="https://szj2ys.github.io/arb/social-preview.png">
+
+  <link rel="stylesheet" href="shared.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>></text></svg>">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Getting Started with arb Terminal",
+    "description": "Install and set up arb, the GPU-accelerated macOS terminal built for AI coding.",
+    "step": [
+      {"@type": "HowToStep", "name": "Install arb", "text": "Run brew install szj2ys/arb/arb in any terminal."},
+      {"@type": "HowToStep", "name": "Launch arb", "text": "Open arb from Applications or Spotlight. Your shell is ready with Starship, syntax highlighting, and autosuggestions."},
+      {"@type": "HowToStep", "name": "Start coding", "text": "Use Claude Code, navigate with z, review diffs with Delta. Everything works out of the box."}
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "arb", "item": "https://szj2ys.github.io/arb/"},
+      {"@type": "ListItem", "position": 2, "name": "Getting Started"}
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do I install arb?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Run 'brew install szj2ys/arb/arb' in any terminal. arb is Apple-notarized, so it opens without security warnings. You can also download the DMG from GitHub Releases."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Where is the arb config file?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "arb uses a single Lua config file at ~/.config/arb/arb.lua. This file is optional — arb works perfectly with its defaults. Create it only when you want to customize."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What tools come built into arb?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "arb includes Starship prompt, z directory jumping, Delta diff viewer, syntax highlighting, autosuggestions, and tab completions. All are pre-configured and work immediately."
+        }
+      }
+    ]
+  }
+  </script>
+  <script defer data-domain="szj2ys.github.io" src="https://plausible.io/js/script.js"></script>
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a href="./" class="nav-brand">
+        <span class="nav-prompt">></span>
+        <span>arb</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="./" class="nav-link-text">Home</a></li>
+        <li><a href="blog.html" class="nav-link-text">Blog</a></li>
+        <li>
+          <a href="https://github.com/szj2ys/arb" class="nav-cta" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            GitHub
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero" style="min-height:auto;padding-top:120px;padding-bottom:48px;">
+    <div class="hero-content" style="max-width:800px;">
+      <nav class="breadcrumb" style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;color:var(--fg-muted);margin-bottom:24px;">
+        <a href="./" style="color:var(--fg-muted);">arb</a>
+        <span style="opacity:0.4;">></span>
+        <span>Getting Started</span>
+      </nav>
+      <h1 style="font-size:clamp(32px,5vw,48px);font-weight:800;letter-spacing:-0.03em;margin-bottom:16px;">Getting Started with <span class="gradient">arb</span></h1>
+      <p class="hero-sub" style="max-width:600px;">From install to productive in under a minute. No config files, no plugins, no account required.</p>
+    </div>
+  </section>
+
+  <div class="article-body" style="padding-bottom:96px;">
+    <div class="narrow">
+
+      <h2>Install</h2>
+
+      <h3>Option 1: Homebrew (recommended)</h3>
+      <p>Run a single command in any terminal:</p>
+      <div class="bottom-cta-install" style="max-width:440px;margin-bottom:24px;">
+        <code><span class="prompt-char">$ </span>brew install szj2ys/arb/arb</code>
+        <button class="copy-btn" data-copy="brew install szj2ys/arb/arb" aria-label="Copy install command">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        </button>
+      </div>
+      <p>arb is Apple-notarized &mdash; it opens without security warnings on macOS.</p>
+
+      <h3>Option 2: Download DMG</h3>
+      <p>Download the latest release from <a href="https://github.com/szj2ys/arb/releases">GitHub Releases</a>. Open the DMG and drag arb to your Applications folder.</p>
+
+      <h2>First Launch</h2>
+      <p>Open arb from Applications, Spotlight, or the command line. On your first launch, you'll see:</p>
+      <ul>
+        <li><strong>Starship prompt</strong> &mdash; a minimal, fast prompt showing your current directory, git branch, and language versions</li>
+        <li><strong>Syntax highlighting</strong> &mdash; commands light up as you type them, with different colors for valid commands, arguments, and flags</li>
+        <li><strong>Autosuggestions</strong> &mdash; ghost text from your command history appears as you type. Press <strong>right arrow</strong> to accept</li>
+        <li><strong>Tab completions</strong> &mdash; press Tab for context-aware completions of commands, paths, and arguments</li>
+      </ul>
+      <p>All of this works immediately. No configuration required.</p>
+
+      <h2>Built-in Tools</h2>
+      <p>arb ships with six tools pre-installed and pre-configured:</p>
+
+      <h3>Starship Prompt</h3>
+      <p>A cross-shell prompt that shows your current directory, git branch and status, language versions, and command duration. It's fast (&lt;10ms render time) and updates in real time.</p>
+
+      <h3>z (Directory Jumping)</h3>
+      <p>Navigate to frequently visited directories by typing partial names:</p>
+      <ul>
+        <li><code class="inline-code">z proj</code> &mdash; jumps to <code class="inline-code">~/projects</code> if that's your most visited match</li>
+        <li><code class="inline-code">z web</code> &mdash; jumps to <code class="inline-code">~/projects/webapp</code></li>
+      </ul>
+      <p>z learns from your <code class="inline-code">cd</code> usage automatically. The more you visit a directory, the higher it ranks.</p>
+
+      <h3>Delta (Diff Viewer)</h3>
+      <p>Every <code class="inline-code">git diff</code> is automatically rendered with syntax highlighting, line numbers, and color-coded additions/deletions. This is especially useful when reviewing AI-generated code changes from Claude Code or Aider.</p>
+
+      <h3>Syntax Highlighting</h3>
+      <p>Commands are colored as you type: valid commands in green, unknown commands in red, strings in yellow, flags in blue. This gives instant visual feedback before you hit Enter.</p>
+
+      <h3>Autosuggestions</h3>
+      <p>Fish-like suggestions appear as gray ghost text based on your command history. Press <strong>right arrow</strong> to accept the full suggestion, or <strong>Ctrl+right arrow</strong> to accept word by word.</p>
+
+      <h3>Completions</h3>
+      <p>Press <strong>Tab</strong> for context-aware completions. arb includes completions for common tools (git, npm, cargo, docker, etc.) out of the box.</p>
+
+      <h2>Key Bindings</h2>
+      <p>arb uses standard macOS key bindings plus terminal-specific shortcuts:</p>
+      <ul>
+        <li><strong>Cmd+T</strong> &mdash; new tab</li>
+        <li><strong>Cmd+N</strong> &mdash; new window</li>
+        <li><strong>Cmd+D</strong> &mdash; split pane vertically</li>
+        <li><strong>Cmd+Shift+D</strong> &mdash; split pane horizontally</li>
+        <li><strong>Cmd+W</strong> &mdash; close current pane/tab</li>
+        <li><strong>Cmd+[/]</strong> &mdash; switch between panes</li>
+        <li><strong>Cmd+1-9</strong> &mdash; switch to tab by number</li>
+        <li><strong>Cmd+Shift+F</strong> &mdash; search scrollback</li>
+        <li><strong>Cmd++/-</strong> &mdash; increase/decrease font size</li>
+      </ul>
+
+      <h2>Customization</h2>
+      <p>arb is fully customizable via a single Lua config file. The defaults are tuned for most developers, so customization is entirely optional.</p>
+
+      <h3>Config File Location</h3>
+      <p>Create your config at:</p>
+      <div class="bottom-cta-install" style="max-width:440px;margin-bottom:24px;">
+        <code><span class="prompt-char" style="user-select:none;color:var(--fg-muted);">~</span>/.config/arb/arb.lua</code>
+      </div>
+
+      <h3>Example: Change Font</h3>
+      <pre style="background:var(--bg-elevated);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius);padding:20px 24px;font-family:var(--font-mono);font-size:14px;color:var(--fg);overflow-x:auto;margin-bottom:24px;line-height:1.7;"><code><span style="color:var(--fg-muted);">-- ~/.config/arb/arb.lua</span>
+<span style="color:var(--purple);">local</span> config = {}
+
+config.font = wezterm.font(<span style="color:var(--yellow);">"Fira Code"</span>)
+config.font_size = <span style="color:var(--green);">14.0</span>
+
+<span style="color:var(--purple);">return</span> config</code></pre>
+
+      <h3>Example: Change Color Scheme</h3>
+      <pre style="background:var(--bg-elevated);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius);padding:20px 24px;font-family:var(--font-mono);font-size:14px;color:var(--fg);overflow-x:auto;margin-bottom:24px;line-height:1.7;"><code><span style="color:var(--fg-muted);">-- ~/.config/arb/arb.lua</span>
+<span style="color:var(--purple);">local</span> config = {}
+
+config.color_scheme = <span style="color:var(--yellow);">"Catppuccin Mocha"</span>
+
+<span style="color:var(--purple);">return</span> config</code></pre>
+
+      <h3>Example: Custom Key Bindings</h3>
+      <pre style="background:var(--bg-elevated);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius);padding:20px 24px;font-family:var(--font-mono);font-size:14px;color:var(--fg);overflow-x:auto;margin-bottom:24px;line-height:1.7;"><code><span style="color:var(--fg-muted);">-- ~/.config/arb/arb.lua</span>
+<span style="color:var(--purple);">local</span> wezterm = require(<span style="color:var(--yellow);">"wezterm"</span>)
+<span style="color:var(--purple);">local</span> act = wezterm.action
+<span style="color:var(--purple);">local</span> config = {}
+
+config.keys = {
+  { key = <span style="color:var(--yellow);">"h"</span>, mods = <span style="color:var(--yellow);">"CMD"</span>, action = act.ActivatePaneDirection(<span style="color:var(--yellow);">"Left"</span>) },
+  { key = <span style="color:var(--yellow);">"l"</span>, mods = <span style="color:var(--yellow);">"CMD"</span>, action = act.ActivatePaneDirection(<span style="color:var(--yellow);">"Right"</span>) },
+}
+
+<span style="color:var(--purple);">return</span> config</code></pre>
+
+      <p>arb uses the same Lua configuration format as WezTerm. If you're migrating from WezTerm, most of your existing config will work with minimal changes.</p>
+
+      <h2>AI Coding Workflow</h2>
+      <p>arb is purpose-built for AI coding. Here's a typical workflow:</p>
+      <ol>
+        <li><strong>Open arb</strong> &mdash; your shell boots in ~100ms with all tools ready</li>
+        <li><strong>Run Claude Code</strong> &mdash; type <code class="inline-code">claude "refactor auth module"</code> and watch AI edit your files</li>
+        <li><strong>Review with Delta</strong> &mdash; run <code class="inline-code">git diff</code> to see syntax-highlighted changes</li>
+        <li><strong>Navigate with z</strong> &mdash; jump between project directories instantly</li>
+        <li><strong>Split panes</strong> &mdash; run tests in one pane while coding in another</li>
+      </ol>
+
+      <div class="cross-links">
+        <h3>Learn More</h3>
+        <div class="cross-links-grid">
+          <a href="best-terminal-for-claude-code.html" class="cross-link">Best Terminal for Claude Code</a>
+          <a href="ai-coding-terminal-setup.html" class="cross-link">AI Coding Terminal Setup Guide</a>
+          <a href="wezterm-alternative-arb.html" class="cross-link">Migrating from WezTerm</a>
+          <a href="best-macos-terminal-2026.html" class="cross-link">Best macOS Terminal 2026</a>
+        </div>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            How do I install arb?
+            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">Run <code class="inline-code">brew install szj2ys/arb/arb</code> in any terminal. arb is Apple-notarized, so it opens without security warnings. You can also download the DMG from GitHub Releases.</div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Where is the arb config file?
+            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">arb uses a single Lua config file at <code class="inline-code">~/.config/arb/arb.lua</code>. This file is optional &mdash; arb works perfectly with its defaults. Create it only when you want to customize.</div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            What tools come built into arb?
+            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">arb includes Starship prompt, z directory jumping, Delta diff viewer, syntax highlighting, autosuggestions, and tab completions. All are pre-configured and work immediately.</div>
+          </div>
+        </div>
+      </div>
+
+      <section class="bottom-cta" style="padding:64px 0;">
+        <div class="bottom-cta-box">
+          <h2>Ready to start?</h2>
+          <p>Install arb in seconds. Zero config, zero plugins.</p>
+          <div class="bottom-cta-install">
+            <code><span class="prompt-char">$ </span>brew install szj2ys/arb/arb</code>
+            <button class="copy-btn" data-copy="brew install szj2ys/arb/arb" aria-label="Copy install command">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
+          </div>
+          <p class="bottom-cta-or">or</p>
+          <a href="https://github.com/szj2ys/arb/releases" class="download-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download from GitHub Releases
+          </a>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-left">
+        <span style="color:var(--purple);font-family:var(--font-mono);font-weight:700;">></span>
+        <span>arb &middot; MIT License</span>
+      </div>
+      <div class="footer-right">
+        <a href="https://github.com/szj2ys/arb" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/szj2ys/arb/issues" target="_blank" rel="noopener">Issues</a>
+        <a href="https://github.com/szj2ys/arb/blob/main/LICENSE" target="_blank" rel="noopener">License</a>
+        <a href="blog.html">Blog</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.copy-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var text = this.getAttribute('data-copy');
+        if (!text) return;
+        var button = this;
+        if (typeof plausible !== 'undefined') { plausible('Install CTA Click'); }
+        navigator.clipboard.writeText(text).then(function() {
+          button.classList.add('copied');
+          setTimeout(function() { button.classList.remove('copied'); }, 2000);
+        });
+      });
+    });
+    document.querySelectorAll('.faq-question').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var item = this.parentElement;
+        var isOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item.open').forEach(function(el) {
+          el.classList.remove('open');
+          el.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+        });
+        if (!isOpen) {
+          item.classList.add('open');
+          this.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
