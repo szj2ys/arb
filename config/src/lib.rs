@@ -886,13 +886,6 @@ impl Configuration {
         result
     }
 
-    /// Returns any captured error message, and clears
-    /// it from the config state.
-    #[allow(dead_code)]
-    pub fn clear_error(&self) -> Option<String> {
-        let mut inner = self.inner.lock().unwrap();
-        inner.error.take()
-    }
 }
 
 #[derive(Clone, Debug)]

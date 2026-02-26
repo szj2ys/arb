@@ -89,7 +89,6 @@ impl WslDistro {
 /// by looking at the tabulated output headers, determining
 /// where the columns are and then collecting the information
 /// into a hashmap and then grokking from there.
-#[allow(dead_code)]
 fn parse_wsl_distro_list(output: &str) -> Vec<WslDistro> {
     let lines = output.lines().collect::<Vec<_>>();
 
