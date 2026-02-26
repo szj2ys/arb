@@ -233,7 +233,15 @@ mod imp {
             }
         }
         println!();
-        println!("{GRAY}Share your results: arb bench --markdown | pbcopy{RESET}");
+        println!("{DIM}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}{RESET}");
+        println!("{BOLD}Share your results:{RESET}");
+        println!();
+        println!(
+            "  My shell boots in {GREEN}{:.0}ms{RESET} with arb \u{2014} zero config terminal for AI coding. https://github.com/szj2ys/arb",
+            result.arb_median_ms
+        );
+        println!();
+        println!("{GRAY}Tip: arb bench --markdown | pbcopy{RESET}");
         println!();
     }
 
@@ -288,6 +296,10 @@ mod imp {
             let path = if t.found { t.path.as_str() } else { "-" };
             println!("| {} | {} | {} |", t.name, status, path);
         }
+        println!();
+        println!(
+            "> Benchmarked with [`arb bench`](https://github.com/szj2ys/arb) — zero config terminal for AI coding"
+        );
     }
 
     /// Round a float to 2 decimal places.
