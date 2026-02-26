@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>arb &mdash; The Best WezTerm Alternative in 2026</title>
+  <meta name="description" content="arb is the best WezTerm alternative for macOS in 2026. Built on WezTerm's core with zero-config defaults, built-in Starship, Delta, z, and syntax highlighting. Same Lua scripting, less setup.">
+  <meta name="keywords" content="WezTerm alternative, arb vs WezTerm, WezTerm fork, WezTerm replacement, best WezTerm alternative macOS, terminal emulator WezTerm">
+  <meta name="theme-color" content="#15141b">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://szj2ys.github.io/arb/wezterm-alternative-arb.html">
+  <meta property="og:title" content="arb &mdash; The Best WezTerm Alternative in 2026">
+  <meta property="og:description" content="arb takes WezTerm's powerful core and adds zero-config defaults, built-in shell tools, and a streamlined macOS experience.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://szj2ys.github.io/arb/wezterm-alternative-arb.html">
+  <meta property="og:image" content="https://szj2ys.github.io/arb/social-preview.png">
+  <meta property="og:site_name" content="arb">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="arb &mdash; The Best WezTerm Alternative in 2026">
+  <meta name="twitter:description" content="arb takes WezTerm's powerful core and adds zero-config defaults, built-in shell tools, and a streamlined macOS experience.">
+  <meta name="twitter:image" content="https://szj2ys.github.io/arb/social-preview.png">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>></text></svg>">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Article","headline":"arb: The Best WezTerm Alternative in 2026","description":"A detailed comparison of arb vs WezTerm. How arb improves on WezTerm with zero-config defaults and built-in shell tools.","author":{"@type":"Person","name":"szj2ys","url":"https://github.com/szj2ys"},"publisher":{"@type":"Organization","name":"arb","url":"https://szj2ys.github.io/arb/"},"datePublished":"2026-02-26","dateModified":"2026-02-26","mainEntityOfPage":{"@type":"WebPage","@id":"https://szj2ys.github.io/arb/wezterm-alternative-arb.html"}}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the best WezTerm alternative?","acceptedAnswer":{"@type":"Answer","text":"arb is the best WezTerm alternative. It is built on WezTerm's proven core but adds zero-config defaults, built-in Starship, Delta, z, syntax highlighting, and a streamlined macOS experience. Same Lua scripting API, less setup."}},{"@type":"Question","name":"Is arb a fork of WezTerm?","acceptedAnswer":{"@type":"Answer","text":"Yes. arb started as a WezTerm fork and retains WezTerm's Lua scripting API and GPU-accelerated rendering. It adds a built-in shell suite, zero-config defaults, and macOS-specific optimizations."}},{"@type":"Question","name":"Can I use my WezTerm config with arb?","acceptedAnswer":{"@type":"Answer","text":"arb uses the same Lua-based configuration as WezTerm. Most WezTerm configs work with minimal changes. arb also provides excellent defaults so you may not need a config file at all."}}]}
+  </script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --bg: #15141b; --bg-elevated: #1c1b22; --bg-surface: #232229; --fg: #edecee; --fg-muted: #9e9ba5; --purple: #a277ff; --purple-dim: rgba(162, 119, 255, 0.12); --green: #61ffca; --green-dim: rgba(97, 255, 202, 0.10); --red: #ff6767; --yellow: #ffca85; --radius: 12px; --radius-lg: 16px; --radius-pill: 9999px; --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, monospace; --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94); --ease-out: cubic-bezier(0.16, 1, 0.3, 1); }
+    html { font-size: 16px; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    body { font-family: var(--font-sans); background: var(--bg); color: var(--fg); line-height: 1.6; overflow-x: hidden; }
+    ::selection { background: var(--purple); color: var(--bg); }
+    a { color: var(--purple); text-decoration: none; transition: opacity 0.2s var(--ease); } a:hover { opacity: 0.8; }
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+    .narrow { max-width: 800px; margin: 0 auto; }
+    section { padding: 80px 0; }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); background: rgba(21, 20, 27, 0.72); border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+    .nav-inner { max-width: 1120px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; letter-spacing: -0.02em; color: var(--fg); }
+    .nav-prompt { color: var(--purple); font-family: var(--font-mono); font-size: 20px; font-weight: 700; }
+    .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+    .nav-links a { color: var(--fg-muted); font-size: 14px; font-weight: 500; } .nav-links a:hover { color: var(--fg); opacity: 1; }
+    .nav-cta { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; background: var(--purple); color: var(--bg) !important; border-radius: var(--radius-pill); font-size: 14px; font-weight: 600; }
+    .nav-cta:hover { opacity: 1; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(162, 119, 255, 0.35); }
+    @media (max-width: 640px) { .nav-links .nav-link-text { display: none; } .nav-links { gap: 16px; } section { padding: 56px 0; } }
+    .hero { padding-top: 140px; padding-bottom: 80px; text-align: center; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; top: -20%; left: 50%; transform: translateX(-50%); width: 800px; height: 800px; background: radial-gradient(ellipse at center, rgba(162, 119, 255, 0.08) 0%, transparent 70%); pointer-events: none; }
+    .hero-content { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; padding: 0 24px; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; background: var(--purple-dim); border: 1px solid rgba(162, 119, 255, 0.2); border-radius: var(--radius-pill); font-size: 13px; font-weight: 500; color: var(--purple); margin-bottom: 32px; }
+    .hero h1 { font-size: clamp(36px, 6vw, 60px); font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 24px; }
+    .hero h1 .gradient { background: linear-gradient(135deg, var(--purple) 0%, var(--green) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-sub { font-size: clamp(16px, 2.2vw, 19px); color: var(--fg-muted); line-height: 1.7; max-width: 600px; margin: 0 auto 40px; }
+    .install-cta { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .install-box { display: flex; align-items: center; background: var(--bg-surface); border: 2px solid rgba(162, 119, 255, 0.3); border-radius: var(--radius); overflow: hidden; }
+    .install-box:hover { border-color: rgba(162, 119, 255, 0.5); box-shadow: 0 0 24px rgba(162, 119, 255, 0.15); }
+    .install-box code { font-family: var(--font-mono); font-size: 15px; padding: 16px 24px; color: var(--fg); white-space: nowrap; user-select: all; }
+    .install-box code .prompt-char { color: var(--purple); user-select: none; }
+    .copy-btn { display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; border: none; border-left: 1px solid rgba(255, 255, 255, 0.08); background: transparent; color: var(--fg-muted); cursor: pointer; flex-shrink: 0; }
+    .copy-btn:hover { color: var(--purple); } .copy-btn.copied { color: var(--green); }
+    .copy-btn .icon-copy { display: block; } .copy-btn .icon-check { display: none; }
+    .copy-btn.copied .icon-copy { display: none; } .copy-btn.copied .icon-check { display: block; }
+    .install-hint { font-size: 13px; color: var(--fg-muted); font-weight: 500; } .install-hint .accent { color: var(--green); font-weight: 600; }
+    .article-body { padding: 0 24px; }
+    .article-body h2 { font-size: clamp(24px, 4vw, 36px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 20px; margin-top: 64px; }
+    .article-body h2:first-child { margin-top: 0; }
+    .article-body h3 { font-size: clamp(18px, 3vw, 24px); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 16px; margin-top: 48px; }
+    .article-body p { font-size: 17px; color: var(--fg-muted); line-height: 1.75; margin-bottom: 20px; }
+    .article-body strong { color: var(--fg); font-weight: 600; }
+    .article-body ul { margin-bottom: 20px; padding-left: 24px; }
+    .article-body li { font-size: 17px; color: var(--fg-muted); line-height: 1.75; margin-bottom: 8px; }
+    .section-label { display: inline-flex; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--purple); margin-bottom: 16px; }
+    .inline-code { font-family: var(--font-mono); font-size: 14px; background: var(--bg-surface); padding: 2px 8px; border-radius: 4px; color: var(--yellow); }
+    .comparison-wrap { overflow-x: auto; border-radius: var(--radius-lg); background: var(--bg-elevated); border: 1px solid rgba(255, 255, 255, 0.06); margin: 32px 0 48px; }
+    .comparison-table { width: 100%; border-collapse: collapse; min-width: 500px; font-size: 15px; }
+    .comparison-table th, .comparison-table td { padding: 16px 20px; text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.06); white-space: nowrap; }
+    .comparison-table th { font-size: 14px; font-weight: 600; color: var(--fg-muted); }
+    .comparison-table th:first-child, .comparison-table td:first-child { text-align: left; font-weight: 500; color: var(--fg); }
+    .comparison-table th.arb-col { color: var(--purple); background: rgba(162, 119, 255, 0.06); }
+    .comparison-table td.arb-col { background: rgba(162, 119, 255, 0.06); }
+    .comparison-table tbody tr:last-child td { border-bottom: none; }
+    .comparison-table .check { color: var(--green); font-size: 18px; font-weight: 700; }
+    .comparison-table .dash { color: var(--fg-muted); opacity: 0.4; font-size: 18px; }
+    .comparison-table .value { color: var(--fg); font-family: var(--font-mono); font-size: 13px; font-weight: 600; }
+    .comparison-table .value.best { color: var(--green); }
+    .faq-list { margin: 32px 0; }
+    .faq-item { background: var(--bg-elevated); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: var(--radius); margin-bottom: 12px; overflow: hidden; }
+    .faq-item:hover { border-color: rgba(162, 119, 255, 0.2); }
+    .faq-question { width: 100%; background: none; border: none; color: var(--fg); font-family: var(--font-sans); font-size: 16px; font-weight: 600; text-align: left; padding: 20px 24px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .faq-question:hover { color: var(--purple); }
+    .faq-arrow { flex-shrink: 0; width: 20px; height: 20px; color: var(--fg-muted); transition: transform 0.3s var(--ease); }
+    .faq-item.open .faq-arrow { transform: rotate(180deg); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s var(--ease); }
+    .faq-item.open .faq-answer { max-height: 400px; }
+    .faq-answer-inner { padding: 0 24px 20px; font-size: 15px; color: var(--fg-muted); line-height: 1.7; }
+    .bottom-cta { text-align: center; padding: 96px 0; }
+    .bottom-cta-box { background: var(--bg-elevated); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: var(--radius-lg); padding: 56px 40px; max-width: 640px; margin: 0 auto; position: relative; overflow: hidden; }
+    .bottom-cta-box::before { content: ''; position: absolute; top: -1px; left: 20%; right: 20%; height: 2px; background: linear-gradient(90deg, transparent, var(--purple), var(--green), transparent); }
+    .bottom-cta-box h2 { font-size: clamp(28px, 4vw, 36px); font-weight: 800; margin-bottom: 12px; }
+    .bottom-cta-box > p { color: var(--fg-muted); font-size: 16px; margin-bottom: 36px; }
+    .bottom-cta-install { display: flex; align-items: center; background: var(--bg-surface); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: var(--radius); overflow: hidden; max-width: 440px; margin: 0 auto 16px; }
+    .bottom-cta-install code { font-family: var(--font-mono); font-size: 14px; padding: 16px 20px; color: var(--fg); flex: 1; text-align: left; white-space: nowrap; }
+    .bottom-cta-install code .prompt-char { color: var(--purple); user-select: none; }
+    .bottom-cta-install .copy-btn { width: 48px; height: 52px; }
+    .download-btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; background: transparent; border: 1px solid rgba(255, 255, 255, 0.12); color: var(--fg); border-radius: var(--radius-pill); font-size: 15px; font-weight: 600; text-decoration: none; }
+    .download-btn:hover { border-color: rgba(255, 255, 255, 0.25); background: rgba(255, 255, 255, 0.04); transform: translateY(-1px); opacity: 1; }
+    .bottom-cta-or { color: var(--fg-muted); font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; }
+    footer { padding: 40px 24px; border-top: 1px solid rgba(255, 255, 255, 0.06); }
+    .footer-inner { max-width: 1120px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+    .footer-left { font-size: 14px; color: var(--fg-muted); }
+    .footer-right { display: flex; gap: 24px; }
+    .footer-right a { color: var(--fg-muted); font-size: 14px; font-weight: 500; } .footer-right a:hover { color: var(--fg); opacity: 1; }
+    @media (max-width: 640px) { .footer-inner { flex-direction: column; gap: 16px; text-align: center; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } html { scroll-behavior: auto; } }
+  </style>
+  <script defer data-domain="szj2ys.github.io" src="https://plausible.io/js/script.js"></script>
+</head>
+<body>
+  <nav><div class="nav-inner"><a href="https://szj2ys.github.io/arb/" class="nav-brand"><span class="nav-prompt">></span> arb</a><ul class="nav-links"><li><a href="https://github.com/szj2ys/arb" class="nav-link-text">GitHub</a></li><li><a href="https://github.com/szj2ys/arb/releases" class="nav-link-text">Releases</a></li><li><a href="https://szj2ys.github.io/arb/" class="nav-cta"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>Install</a></li></ul></div></nav>
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">WezTerm Alternative for macOS</div>
+      <h1>The Best <span class="gradient">WezTerm Alternative</span></h1>
+      <p class="hero-sub">Love WezTerm&rsquo;s Lua scripting and GPU rendering but wish it came with batteries included? arb is a streamlined WezTerm fork with zero-config defaults and a built-in shell suite.</p>
+      <div class="install-cta">
+        <div class="install-box">
+          <code><span class="prompt-char">$ </span>brew install szj2ys/arb/arb</code>
+          <button class="copy-btn" data-copy="brew install szj2ys/arb/arb" title="Copy to clipboard"><svg class="icon-copy" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg class="icon-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
+        </div>
+        <p class="install-hint"><span class="accent">One command.</span> Zero config. Lua scripting built in.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="article-body"><div class="narrow">
+    <span class="section-label">Background</span>
+    <h2>Why Developers Look for WezTerm Alternatives</h2>
+    <p>WezTerm is an excellent terminal emulator with powerful Lua scripting and GPU rendering. But it comes with a steep configuration curve. To get a productive shell environment, you still need to separately install and configure Starship, Delta, zoxide, syntax highlighting, autosuggestions, and a Nerd Font. For developers who want a turnkey experience, this setup tax adds up.</p>
+    <p>arb was built to solve exactly this problem. It takes WezTerm&rsquo;s proven core &mdash; the same GPU rendering engine, the same Lua API &mdash; and adds <strong>zero-config defaults</strong> with a complete built-in shell suite. You get the power of WezTerm without the hours of setup.</p>
+
+    <span class="section-label">Comparison</span>
+    <h2>arb vs WezTerm: What Changed</h2>
+    <div class="comparison-wrap">
+      <table class="comparison-table">
+        <thead><tr><th>Feature</th><th class="arb-col">arb</th><th>WezTerm</th></tr></thead>
+        <tbody>
+          <tr><td>GPU-accelerated rendering</td><td class="arb-col"><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td></tr>
+          <tr><td>Lua scripting</td><td class="arb-col"><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td></tr>
+          <tr><td>Built-in Starship prompt</td><td class="arb-col"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
+          <tr><td>Built-in Delta (diffs)</td><td class="arb-col"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
+          <tr><td>Built-in z (dir jumping)</td><td class="arb-col"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
+          <tr><td>Built-in syntax highlighting</td><td class="arb-col"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
+          <tr><td>Nerd Font included</td><td class="arb-col"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
+          <tr><td>Zero config required</td><td class="arb-col"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
+          <tr><td>macOS optimized</td><td class="arb-col"><span class="check">&#10003;</span></td><td>Cross-platform</td></tr>
+          <tr><td>Binary size</td><td class="arb-col"><span class="value best">~40MB</span></td><td><span class="value">~80MB</span></td></tr>
+          <tr><td>Shell boot</td><td class="arb-col"><span class="value best">~100ms</span></td><td><span class="value">~200ms</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>What arb Keeps from WezTerm</h3>
+    <ul>
+      <li><strong>Lua scripting API</strong> &mdash; same <code class="inline-code">wezterm.font()</code>, <code class="inline-code">wezterm.action</code> patterns. Most WezTerm configs work with minimal changes.</li>
+      <li><strong>GPU-accelerated rendering</strong> &mdash; Metal-backed on macOS for smooth scrolling even with heavy output.</li>
+      <li><strong>Multiplexing</strong> &mdash; tabs, panes, splits with the same keybinding system.</li>
+    </ul>
+
+    <h3>What arb Adds</h3>
+    <ul>
+      <li><strong>Built-in shell suite</strong> &mdash; Starship, Delta, z, syntax highlighting, autosuggestions, zsh-completions. All compiled in.</li>
+      <li><strong>Zero-config defaults</strong> &mdash; JetBrains Mono Nerd Font, Arb Dark theme, optimized font rendering, smooth animations. Works out of the box.</li>
+      <li><strong>Smaller binary</strong> &mdash; ~40MB vs WezTerm&rsquo;s ~80MB. Aggressive feature pruning and symbol stripping.</li>
+      <li><strong>macOS-first</strong> &mdash; Native macOS integration, notarized for Gatekeeper, Homebrew tap install.</li>
+    </ul>
+
+    <h3>Who Should Switch from WezTerm to arb</h3>
+    <p>If you spend more time configuring WezTerm than using it, arb is for you. If you set up a new machine and want a fully-equipped terminal in one <code class="inline-code">brew install</code> command, arb is for you. If you are a macOS developer who wants the power of WezTerm with the convenience of a turnkey solution, arb is for you.</p>
+    <p>If you rely on WezTerm&rsquo;s cross-platform support (Linux, Windows) or need specific advanced features like SSH domains, you may want to stay with WezTerm.</p>
+
+    <span class="section-label">FAQ</span>
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-list">
+      <div class="faq-item open">
+        <button class="faq-question" onclick="toggleFaq(this)">Is arb a fork of WezTerm?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="faq-answer"><div class="faq-answer-inner">Yes. arb started as a WezTerm fork and retains WezTerm&rsquo;s Lua scripting API and GPU-accelerated rendering. It adds a built-in shell suite, zero-config defaults, and macOS-specific optimizations to create a turnkey terminal experience.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">Can I use my WezTerm config with arb?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="faq-answer"><div class="faq-answer-inner">Most WezTerm Lua configs work with arb with minimal changes. arb uses the same <code class="inline-code">wezterm</code> Lua module and API. The config file lives at <code class="inline-code">~/.config/arb/arb.lua</code>.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">Does arb work on Linux or Windows?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="faq-answer"><div class="faq-answer-inner">Currently arb is macOS-only. It is optimized for macOS with Metal rendering and native integration. If you need cross-platform support, WezTerm remains an excellent choice.</div></div>
+      </div>
+    </div>
+  </div></div>
+
+  <section class="bottom-cta"><div class="container"><div class="bottom-cta-box">
+    <h2>Try arb now</h2>
+    <p>WezTerm&rsquo;s power. Zero config. One command.</p>
+    <div class="bottom-cta-install">
+      <code><span class="prompt-char">$ </span>brew install szj2ys/arb/arb</code>
+      <button class="copy-btn" data-copy="brew install szj2ys/arb/arb" title="Copy to clipboard"><svg class="icon-copy" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg class="icon-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
+    </div>
+    <div class="bottom-cta-or">or</div>
+    <a href="https://github.com/szj2ys/arb/releases" class="download-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download from GitHub</a>
+  </div></div></section>
+
+  <footer><div class="footer-inner"><div class="footer-left"><span>arb &mdash; MIT License</span></div><div class="footer-right"><a href="https://szj2ys.github.io/arb/">Home</a><a href="best-terminal-for-claude-code.html">Best Terminal for Claude Code</a><a href="best-terminal-for-cursor.html">Best Terminal for Cursor</a><a href="https://github.com/szj2ys/arb">GitHub</a></div></div></footer>
+
+  <script>
+    document.querySelectorAll('.copy-btn').forEach(function(btn){btn.addEventListener('click',function(){var text=btn.getAttribute('data-copy');navigator.clipboard.writeText(text).then(function(){btn.classList.add('copied');setTimeout(function(){btn.classList.remove('copied')},2000)})})});
+    function toggleFaq(btn){btn.closest('.faq-item').classList.toggle('open')}
+  </script>
+</body>
+</html>
