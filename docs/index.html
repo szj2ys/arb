@@ -430,6 +430,14 @@
       opacity: 1;
     }
 
+    .hero-links .star-cta {
+      color: var(--purple);
+      font-weight: 600;
+    }
+    .hero-links .star-cta:hover {
+      color: var(--fg);
+    }
+
     .hero-scroll {
       position: absolute;
       bottom: 32px;
@@ -1190,6 +1198,69 @@
     }
 
     /* ============================================
+       RESOURCES / LEARN MORE
+       ============================================ */
+    .resources {
+      background: var(--bg);
+      text-align: center;
+    }
+
+    .resources-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 640px) {
+      .resources-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .resource-card {
+      background: var(--bg-elevated);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      text-align: left;
+      text-decoration: none;
+      transition: border-color 0.3s var(--ease), transform 0.3s var(--ease);
+      display: block;
+    }
+
+    .resource-card:hover {
+      border-color: rgba(162, 119, 255, 0.2);
+      transform: translateY(-2px);
+      opacity: 1;
+    }
+
+    .resource-card h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--fg);
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .resource-card p {
+      font-size: 14px;
+      color: var(--fg-muted);
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .resource-card .read-more {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--purple);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ============================================
        FOOTER
        ============================================ */
     footer {
@@ -1603,6 +1674,10 @@
           <a href="https://github.com/szj2ys/arb" target="_blank" rel="noopener">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
             View on GitHub
+          </a>
+          <a href="https://github.com/szj2ys/arb" target="_blank" rel="noopener" class="star-cta">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Star on GitHub
           </a>
         </div>
         <div class="hero-badges">
@@ -2115,6 +2190,27 @@
             Download from GitHub Releases
           </a>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESOURCES -->
+  <section class="resources">
+    <div class="container fade-in">
+      <span class="section-label">Learn More</span>
+      <h2 class="section-title">Resources</h2>
+      <p class="section-desc" style="margin-left:auto;margin-right:auto;">Guides to help you get the most out of AI-powered terminal workflows.</p>
+      <div class="resources-grid">
+        <a href="best-terminal-for-claude-code.html" class="resource-card">
+          <h3>Best Terminal for Claude Code in 2026</h3>
+          <p>Why your terminal choice matters for AI coding, and how arb delivers GPU acceleration, built-in tools, and zero config out of the box.</p>
+          <span class="read-more">Read the guide &rarr;</span>
+        </a>
+        <a href="ai-coding-terminal-setup.html" class="resource-card">
+          <h3>AI Coding Terminal Setup Guide</h3>
+          <p>Step-by-step setup for Claude Code, Copilot CLI, and AI-assisted workflows. From install to productive in under a minute.</p>
+          <span class="read-more">Read the guide &rarr;</span>
+        </a>
       </div>
     </div>
   </section>
