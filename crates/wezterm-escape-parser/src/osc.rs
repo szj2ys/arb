@@ -657,9 +657,10 @@ impl Display for FinalTermClick {
 }
 
 /// https://gitlab.freedesktop.org/Per_Bothner/specifications/blob/master/proposals/semantic-prompts.md
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub enum FinalTermPromptKind {
     /// A normal left side primary prompt
+    #[default]
     Initial,
     /// A right-aligned prompt
     RightSide,
@@ -667,12 +668,6 @@ pub enum FinalTermPromptKind {
     Continuation,
     /// A continuation prompt where the input cannot be edited
     Secondary,
-}
-
-impl Default for FinalTermPromptKind {
-    fn default() -> Self {
-        Self::Initial
-    }
 }
 
 impl core::convert::TryFrom<&str> for FinalTermPromptKind {
@@ -1103,18 +1098,13 @@ impl Display for ITermFileData {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum ITermDimension {
+    #[default]
     Automatic,
     Cells(i64),
     Pixels(i64),
     Percent(i64),
-}
-
-impl Default for ITermDimension {
-    fn default() -> Self {
-        Self::Automatic
-    }
 }
 
 impl Display for ITermDimension {
