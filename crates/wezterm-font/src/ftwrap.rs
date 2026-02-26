@@ -1274,6 +1274,8 @@ struct FreeTypeStream {
     name: String,
 }
 
+// Variant data fields are not read directly; they keep memory alive
+// while FreeType reads from it via raw pointer.
 #[allow(dead_code)]
 enum StreamBacking {
     File(BufReader<File>),
