@@ -71,7 +71,16 @@
     .article-body ul { margin-bottom: 20px; padding-left: 24px; }
     .article-body li { font-size: 17px; color: var(--fg-muted); line-height: 1.75; margin-bottom: 8px; }
     .section-label { display: inline-flex; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--purple); margin-bottom: 16px; }
+    .article-body .narrow { padding: 0; }
+    .article-body ol { margin-bottom: 20px; padding-left: 24px; }
     .inline-code { font-family: var(--font-mono); font-size: 14px; background: var(--bg-surface); padding: 2px 8px; border-radius: 4px; color: var(--yellow); }
+    .pain-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin: 32px 0 48px; }
+    @media (max-width: 768px) { .pain-grid { grid-template-columns: 1fr; } }
+    .pain-card { background: var(--bg-elevated); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: var(--radius-lg); padding: 28px 24px; transition: border-color 0.3s var(--ease); }
+    .pain-card:hover { border-color: rgba(255, 103, 103, 0.2); }
+    .pain-card .pain-icon { width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; font-size: 18px; background: rgba(255, 103, 103, 0.10); color: var(--red); }
+    .pain-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .pain-card p { font-size: 14px !important; color: var(--fg-muted); line-height: 1.6; margin-bottom: 0 !important; }
     .comparison-wrap { overflow-x: auto; border-radius: var(--radius-lg); background: var(--bg-elevated); border: 1px solid rgba(255, 255, 255, 0.06); margin: 32px 0 48px; }
     .comparison-table { width: 100%; border-collapse: collapse; min-width: 500px; font-size: 15px; }
     .comparison-table th, .comparison-table td { padding: 16px 20px; text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.06); white-space: nowrap; }
@@ -140,8 +149,34 @@
     <p>WezTerm is an excellent terminal emulator with powerful Lua scripting and GPU rendering. But it comes with a steep configuration curve. To get a productive shell environment, you still need to separately install and configure Starship, Delta, zoxide, syntax highlighting, autosuggestions, and a Nerd Font. For developers who want a turnkey experience, this setup tax adds up.</p>
     <p>arb was built to solve exactly this problem. It takes WezTerm&rsquo;s proven core &mdash; the same GPU rendering engine, the same Lua API &mdash; and adds <strong>zero-config defaults</strong> with a complete built-in shell suite. You get the power of WezTerm without the hours of setup.</p>
 
+    <span class="section-label">Pain Points</span>
+    <h2>Common WezTerm Frustrations</h2>
+
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="pain-icon">~</div>
+        <h4>Configuration Overload</h4>
+        <p>WezTerm requires a Lua config file for basics like font, color scheme, and keybindings. New users spend hours reading docs before their terminal looks right.</p>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">!</div>
+        <h4>Missing Shell Tools</h4>
+        <p>WezTerm gives you a terminal but no shell suite. You still need to separately install Starship, Delta, zoxide, syntax highlighting, autosuggestions, and a Nerd Font.</p>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">#</div>
+        <h4>Binary Bloat</h4>
+        <p>WezTerm&rsquo;s ~80MB binary includes X11, Wayland, and Windows backends even on macOS. You pay the disk and memory cost for platforms you never use.</p>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">%</div>
+        <h4>New Machine Setup</h4>
+        <p>Setting up a new Mac means recreating your WezTerm environment from scratch: Lua config, font install, shell plugins, color scheme. arb makes this a single brew command.</p>
+      </div>
+    </div>
+
     <span class="section-label">Comparison</span>
-    <h2>arb vs WezTerm: What Changed</h2>
+    <h2>arb vs WezTerm: Feature Comparison</h2>
     <div class="comparison-wrap">
       <table class="comparison-table">
         <thead><tr><th>Feature</th><th class="arb-col">arb</th><th>WezTerm</th></tr></thead>
@@ -152,6 +187,7 @@
           <tr><td>Built-in Delta (diffs)</td><td class="arb-col"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
           <tr><td>Built-in z (dir jumping)</td><td class="arb-col"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
           <tr><td>Built-in syntax highlighting</td><td class="arb-col"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
+          <tr><td>Built-in autosuggestions</td><td class="arb-col"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
           <tr><td>Nerd Font included</td><td class="arb-col"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
           <tr><td>Zero config required</td><td class="arb-col"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
           <tr><td>macOS optimized</td><td class="arb-col"><span class="check">&#10003;</span></td><td>Cross-platform</td></tr>
@@ -176,6 +212,36 @@
       <li><strong>macOS-first</strong> &mdash; Native macOS integration, notarized for Gatekeeper, Homebrew tap install.</li>
     </ul>
 
+    <h3>What arb Removes (and Why)</h3>
+    <p>arb&rsquo;s 40MB binary (vs WezTerm&rsquo;s ~80MB) comes from deliberate removal of features that macOS users do not need:</p>
+    <ul>
+      <li><strong>X11 and Wayland backends</strong> &mdash; arb is macOS-only, so Linux display server code is removed entirely.</li>
+      <li><strong>Windows support</strong> &mdash; No Windows-specific code, terminal emulation quirks, or ConPTY integration.</li>
+      <li><strong>SSH domain multiplexing</strong> &mdash; WezTerm&rsquo;s remote multiplexer is removed. Use SSH directly in your shell instead.</li>
+      <li><strong>Serial port support</strong> &mdash; Rarely used, removed to reduce binary size.</li>
+    </ul>
+    <p>The space saved is reallocated to the built-in shell suite (Starship, Delta, z, syntax highlighting, autosuggestions) that ships with every arb install.</p>
+
+    <span class="section-label">Migration</span>
+    <h2>How to Switch from WezTerm to arb</h2>
+    <p>Migrating from WezTerm to arb takes under 5 minutes:</p>
+    <ol>
+      <li><strong>Install arb</strong> &mdash; Run <code class="inline-code">brew install szj2ys/arb/arb</code>. This installs the arb binary and GUI app.</li>
+      <li><strong>Copy your config (optional)</strong> &mdash; If you have a WezTerm Lua config, copy it: <code class="inline-code">cp ~/.wezterm.lua ~/.config/arb/arb.lua</code>. Most configs work as-is.</li>
+      <li><strong>Remove font/theme config</strong> &mdash; arb ships JetBrains Mono and Arb Dark by default. You can delete your <code class="inline-code">font</code> and <code class="inline-code">color_scheme</code> settings unless you have a custom preference.</li>
+      <li><strong>Remove shell plugin configs</strong> &mdash; If your <code class="inline-code">.zshrc</code> has lines for Starship, Delta, zoxide, zsh-syntax-highlighting, or zsh-autosuggestions, you can remove them. arb handles all of these automatically.</li>
+      <li><strong>Launch arb</strong> &mdash; Open arb. Your shell is ready with Starship prompt, Delta diffs, z navigation, and syntax highlighting. No further setup needed.</li>
+    </ol>
+
+    <h3>Config Translation Examples</h3>
+    <p>Here is what changes (and what does not) when moving your WezTerm config to arb:</p>
+    <ul>
+      <li><strong>Font configuration</strong> &mdash; WezTerm: <code class="inline-code">config.font = wezterm.font("JetBrains Mono")</code>. arb: not needed (JetBrains Mono is the default). Only add a font line if you want a different typeface.</li>
+      <li><strong>Color scheme</strong> &mdash; WezTerm: <code class="inline-code">config.color_scheme = "Catppuccin Mocha"</code>. arb: not needed (Arb Dark is the default). Custom schemes still work via the same API.</li>
+      <li><strong>Keybindings</strong> &mdash; WezTerm: <code class="inline-code">config.keys = { ... }</code>. arb: works exactly the same. Same <code class="inline-code">wezterm.action</code> API, same key names.</li>
+      <li><strong>Tab bar</strong> &mdash; WezTerm: <code class="inline-code">config.use_fancy_tab_bar = true</code>. arb: works the same. arb defaults to a clean tab bar style.</li>
+    </ul>
+
     <h3>Who Should Switch from WezTerm to arb</h3>
     <p>If you spend more time configuring WezTerm than using it, arb is for you. If you set up a new machine and want a fully-equipped terminal in one <code class="inline-code">brew install</code> command, arb is for you. If you are a macOS developer who wants the power of WezTerm with the convenience of a turnkey solution, arb is for you.</p>
     <p>If you rely on WezTerm&rsquo;s cross-platform support (Linux, Windows) or need specific advanced features like SSH domains, you may want to stay with WezTerm.</p>
@@ -189,11 +255,19 @@
       </div>
       <div class="faq-item">
         <button class="faq-question" onclick="toggleFaq(this)">Can I use my WezTerm config with arb?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
-        <div class="faq-answer"><div class="faq-answer-inner">Most WezTerm Lua configs work with arb with minimal changes. arb uses the same <code class="inline-code">wezterm</code> Lua module and API. The config file lives at <code class="inline-code">~/.config/arb/arb.lua</code>.</div></div>
+        <div class="faq-answer"><div class="faq-answer-inner">Most WezTerm Lua configs work with arb with minimal changes. arb uses the same <code class="inline-code">wezterm</code> Lua module and API. The config file lives at <code class="inline-code">~/.config/arb/arb.lua</code>. Font and color scheme settings can usually be removed since arb provides polished defaults.</div></div>
       </div>
       <div class="faq-item">
         <button class="faq-question" onclick="toggleFaq(this)">Does arb work on Linux or Windows?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
         <div class="faq-answer"><div class="faq-answer-inner">Currently arb is macOS-only. It is optimized for macOS with Metal rendering and native integration. If you need cross-platform support, WezTerm remains an excellent choice.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">Will arb stay compatible with WezTerm updates?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="faq-answer"><div class="faq-answer-inner">arb maintains its own development pace and may diverge from WezTerm over time. The Lua scripting API remains compatible for core use cases. arb focuses on macOS-specific improvements and built-in tooling rather than tracking every WezTerm upstream change.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">How do I report bugs in arb?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="faq-answer"><div class="faq-answer-inner">Open an issue on <a href="https://github.com/szj2ys/arb/issues">GitHub Issues</a>. arb is MIT-licensed and actively maintained. You can also run <code class="inline-code">arb doctor</code> to diagnose common configuration issues before reporting.</div></div>
       </div>
     </div>
   </div></div>
