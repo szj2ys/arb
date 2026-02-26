@@ -186,6 +186,11 @@ mod imp {
 
         writeln!(buf).unwrap();
         writeln!(buf, "  Open a {BOLD}new tab{RESET} to start using arb.").unwrap();
+        writeln!(
+            buf,
+            "  {GRAY}Like arb? Star us on GitHub \u{2192} https://github.com/szj2ys/arb{RESET}"
+        )
+        .unwrap();
         writeln!(buf).unwrap();
 
         buf
@@ -359,6 +364,10 @@ exit 127
                 output.contains("Open a"),
                 "expected footer instruction in output"
             );
+            assert!(
+                output.contains("Star us on GitHub"),
+                "expected star nudge in output"
+            );
             // None of the warning icons should appear
             assert!(
                 !output.contains("\u{26a0}"),
@@ -413,6 +422,19 @@ exit 127
             );
             // The other 5 items should still show passing
             assert!(output.contains("\u{2714}"), "expected passing checks");
+        }
+
+        #[test]
+        fn should_include_star_nudge_in_init_summary() {
+            let output = format_init_summary(&all_passing_results());
+            assert!(
+                output.contains("Star us on GitHub"),
+                "expected star nudge in output"
+            );
+            assert!(
+                output.contains("https://github.com/szj2ys/arb"),
+                "expected GitHub URL in star nudge"
+            );
         }
 
         #[test]

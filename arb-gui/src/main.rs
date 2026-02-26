@@ -864,6 +864,17 @@ fn run() -> anyhow::Result<()> {
         }
     };
 
+    // First-run hint: if shell integration hasn't been installed yet, nudge
+    // the user so they know how to finish setup.
+    if !config::HOME_DIR
+        .join(".config/arb/zsh/arb.zsh")
+        .exists()
+    {
+        eprintln!(
+            "Welcome to arb! Run `arb init` to set up Starship, Delta, and syntax highlighting."
+        );
+    }
+
     match sub {
         SubCommand::Start(start) => {
             log::trace!("Using configuration: {:#?}\nopts: {:#?}", config, opts);
