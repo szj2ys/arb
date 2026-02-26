@@ -321,10 +321,8 @@ fn should_create_expected_directory_structure_in_tmpdir() {
     //   mkdir -p "$USER_CONFIG_DIR/plugins"
     //   mkdir -p "$USER_CONFIG_DIR/bin"
     let user_config_dir = fake_home.join(".config/arb/zsh");
-    std::fs::create_dir_all(user_config_dir.join("plugins"))
-        .expect("create plugins dir");
-    std::fs::create_dir_all(user_config_dir.join("bin"))
-        .expect("create bin dir");
+    std::fs::create_dir_all(user_config_dir.join("plugins")).expect("create plugins dir");
+    std::fs::create_dir_all(user_config_dir.join("bin")).expect("create bin dir");
 
     assert!(user_config_dir.exists());
     assert!(user_config_dir.join("plugins").exists());

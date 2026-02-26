@@ -2398,7 +2398,10 @@ impl TerminalState {
             }
             Cursor::BackwardTabulation(n) => {
                 for _ in 0..n {
-                    let x = self.tabs.find_prev_tab_stop(self.cursor.x).unwrap_or_default();
+                    let x = self
+                        .tabs
+                        .find_prev_tab_stop(self.cursor.x)
+                        .unwrap_or_default();
                     self.set_cursor_pos(&Position::Absolute(x as i64), &Position::Relative(0));
                 }
             }

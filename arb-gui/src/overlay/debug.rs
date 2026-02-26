@@ -15,7 +15,8 @@ use termwiz::lineedit::*;
 use termwiz::surface::Change;
 use termwiz::terminal::Terminal;
 
-static LATEST_LOG_ENTRY: LazyLock<Mutex<Option<DateTime<Local>>>> = LazyLock::new(|| Mutex::new(None));
+static LATEST_LOG_ENTRY: LazyLock<Mutex<Option<DateTime<Local>>>> =
+    LazyLock::new(|| Mutex::new(None));
 
 struct LuaReplHost {
     history: BasicHistory,

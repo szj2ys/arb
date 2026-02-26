@@ -32,7 +32,8 @@ use wezterm_term::{
 };
 use window::{KeyCode as WKeyCode, Modifiers, WindowOps};
 
-static SAVED_PATTERN: LazyLock<Mutex<HashMap<TabId, Pattern>>> = LazyLock::new(|| Mutex::new(HashMap::new()));
+static SAVED_PATTERN: LazyLock<Mutex<HashMap<TabId, Pattern>>> =
+    LazyLock::new(|| Mutex::new(HashMap::new()));
 
 const SEARCH_CHUNK_SIZE: StableRowIndex = 1000;
 
@@ -129,7 +130,8 @@ impl CopyOverlay {
         let pattern = if params.pattern.is_empty() {
             SAVED_PATTERN
                 .lock()
-                .get(&tab_id).cloned()
+                .get(&tab_id)
+                .cloned()
                 .unwrap_or(params.pattern)
         } else {
             params.pattern
@@ -217,7 +219,7 @@ impl CopyRenderable {
     fn compute_search_row(&self) -> StableRowIndex {
         let dims = self.delegate.get_dimensions();
         let top = self.viewport.unwrap_or(dims.physical_top);
-        
+
         (top + dims.viewport_rows as StableRowIndex).saturating_sub(1)
     }
 
@@ -927,15 +929,14 @@ impl CopyRenderable {
 
             if let Some(word) = words.next() {
                 let mut word_end = self.cursor.x + unicode_column_width(word, None);
-                if !is_whitespace_word(word)
-                    && self.cursor.x == word_end - 1 {
-                        for next_word in words.by_ref() {
-                            word_end += unicode_column_width(next_word, None);
-                            if !is_whitespace_word(next_word) {
-                                break;
-                            }
+                if !is_whitespace_word(word) && self.cursor.x == word_end - 1 {
+                    for next_word in words.by_ref() {
+                        word_end += unicode_column_width(next_word, None);
+                        if !is_whitespace_word(next_word) {
+                            break;
                         }
                     }
+                }
                 for next_word in words {
                     if !is_whitespace_word(next_word) {
                         word_end += unicode_column_width(next_word, None);
@@ -1599,9 +1600,8 @@ pub struct SearchOverlayPatternWriter {
 impl std::io::Write for SearchOverlayPatternWriter {
     fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
         let mut render = self.render.lock();
-        let s = std::str::from_utf8(buf).map_err(|err| {
-            std::io::Error::other(format!("invalid UTF-8: {err:#}"))
-        })?;
+        let s = std::str::from_utf8(buf)
+            .map_err(|err| std::io::Error::other(format!("invalid UTF-8: {err:#}")))?;
         render.search_line.insert_text(s);
         render.schedule_update_search();
         Ok(buf.len())

@@ -8,7 +8,6 @@
 //! Configuration for the gui portion of the terminal
 
 use anyhow::{anyhow, bail, Context, Error};
-use std::sync::LazyLock;
 use mlua::Lua;
 use ordered_float::NotNan;
 use parking_lot::RwLock;
@@ -23,7 +22,7 @@ use std::os::unix::fs::DirBuilderExt;
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, LazyLock, Mutex};
 use std::time::Duration;
 use wezterm_dynamic::{FromDynamic, FromDynamicOptions, ToDynamic, UnknownFieldAction, Value};
 use wezterm_term::UnicodeVersion;
@@ -87,8 +86,7 @@ static CONFIG_OVERRIDES: LazyLock<Mutex<Vec<(String, String)>>> =
 static SHOW_ERROR: LazyLock<Mutex<Option<ErrorCallback>>> =
     LazyLock::new(|| Mutex::new(Some(|e| log::error!("{}", e))));
 static LUA_PIPE: LazyLock<LuaPipe> = LazyLock::new(LuaPipe::new);
-pub static COLOR_SCHEMES: LazyLock<ColorSchemeRegistry> =
-    LazyLock::new(ColorSchemeRegistry::new);
+pub static COLOR_SCHEMES: LazyLock<ColorSchemeRegistry> = LazyLock::new(ColorSchemeRegistry::new);
 
 thread_local! {
     static LUA_CONFIG: RefCell<Option<LuaConfigState>> = const { RefCell::new(None) };
@@ -885,7 +883,6 @@ impl Configuration {
         }
         result
     }
-
 }
 
 #[derive(Clone, Debug)]

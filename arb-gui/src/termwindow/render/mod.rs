@@ -741,23 +741,24 @@ impl crate::TermWindow {
         let mut iter = infos.iter().peekable();
         while let Some(info) = iter.next() {
             if self.config.custom_block_glyphs
-                && info.only_char.and_then(BlockKey::from_char).is_some() {
-                    // Don't bother rendering the glyph from the font, as it can
-                    // have incorrect advance metrics.
-                    // Instead, just use our pixel-perfect cell metrics
-                    glyphs.push(Rc::new(CachedGlyph {
-                        brightness_adjust: 1.0,
-                        has_color: false,
-                        texture: None,
-                        x_advance: PixelLength::new(metrics.cell_size.width as f64),
-                        x_offset: PixelLength::zero(),
-                        y_offset: PixelLength::zero(),
-                        bearing_x: PixelLength::zero(),
-                        bearing_y: PixelLength::zero(),
-                        scale: 1.0,
-                    }));
-                    continue;
-                }
+                && info.only_char.and_then(BlockKey::from_char).is_some()
+            {
+                // Don't bother rendering the glyph from the font, as it can
+                // have incorrect advance metrics.
+                // Instead, just use our pixel-perfect cell metrics
+                glyphs.push(Rc::new(CachedGlyph {
+                    brightness_adjust: 1.0,
+                    has_color: false,
+                    texture: None,
+                    x_advance: PixelLength::new(metrics.cell_size.width as f64),
+                    x_offset: PixelLength::zero(),
+                    y_offset: PixelLength::zero(),
+                    bearing_x: PixelLength::zero(),
+                    bearing_y: PixelLength::zero(),
+                    scale: 1.0,
+                }));
+                continue;
+            }
 
             let followed_by_space = match iter.peek() {
                 Some(next_info) => next_info.is_space,

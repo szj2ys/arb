@@ -457,11 +457,12 @@ mod imp {
         if let Some(target) = std::env::var_os("ARB_UPDATE_TARGET_APP") {
             let target = PathBuf::from(target);
             if (path_contains_caskroom(&exe) || path_contains_caskroom(&target))
-                && find_brew_binary().is_none() {
-                    bail!(
+                && find_brew_binary().is_none()
+            {
+                bail!(
                         "Arb appears to be Homebrew-managed but `brew` was not found in PATH or standard locations"
                     );
-                }
+            }
         }
 
         Ok(UpdateProvider::Direct)

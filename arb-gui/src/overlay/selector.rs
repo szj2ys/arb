@@ -354,10 +354,9 @@ impl SelectorState {
                     if y > 0 && y as usize <= self.filtered_entries.len() {
                         self.active_idx = self.top_row + y as usize - 1;
 
-                        if mouse_buttons == MouseButtons::LEFT
-                            && self.launch(self.active_idx) {
-                                break;
-                            }
+                        if mouse_buttons == MouseButtons::LEFT && self.launch(self.active_idx) {
+                            break;
+                        }
                     }
                     if mouse_buttons != MouseButtons::NONE {
                         // Treat any other mouse button as cancel

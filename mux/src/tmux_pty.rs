@@ -110,9 +110,7 @@ impl ChildKiller for TmuxChildKiller {
 
 impl ChildKiller for TmuxChild {
     fn kill(&mut self) -> std::io::Result<()> {
-        Err(std::io::Error::other(
-            "TmuxPty: kill not implemented!",
-        ))
+        Err(std::io::Error::other("TmuxPty: kill not implemented!"))
     }
 
     fn clone_killer(&self) -> Box<dyn ChildKiller + Send + Sync> {

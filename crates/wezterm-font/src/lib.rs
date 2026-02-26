@@ -1,6 +1,11 @@
 #![allow(clippy::too_many_arguments)]
 #![allow(unused_parens)]
-#![allow(clippy::empty_line_after_doc_comments, clippy::needless_borrows_for_generic_args, clippy::derived_hash_with_manual_eq, clippy::non_canonical_partial_ord_impl)]
+#![allow(
+    clippy::empty_line_after_doc_comments,
+    clippy::needless_borrows_for_generic_args,
+    clippy::derived_hash_with_manual_eq,
+    clippy::non_canonical_partial_ord_impl
+)]
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 #![allow(clippy::boxed_local)]
 #![allow(clippy::box_collection)]

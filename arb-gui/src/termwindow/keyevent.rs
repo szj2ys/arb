@@ -285,12 +285,9 @@ impl super::TermWindow {
                 }
             }
 
-            if let Some((entry, table_name)) = self.lookup_key(
-                pane,
-                keycode,
-                raw_modifiers | leader_mod,
-                only_key_bindings,
-            ) {
+            if let Some((entry, table_name)) =
+                self.lookup_key(pane, keycode, raw_modifiers | leader_mod, only_key_bindings)
+            {
                 if self.config.debug_key_events {
                     log::info!(
                         "{}{:?} {:?} -> perform {:?}",

@@ -384,9 +384,8 @@ impl FreeTypeRasterizer {
         log::trace!("Rasterizier wants {:?}", parsed);
         let lib = ftwrap::Library::new()?;
         let mut face = lib.face_from_locator(&parsed.handle)?;
-        let has_color = unsafe {
-            (((*face.face).face_flags as u32) & ftwrap::FT_FACE_FLAG_COLOR) != 0
-        };
+        let has_color =
+            unsafe { (((*face.face).face_flags as u32) & ftwrap::FT_FACE_FLAG_COLOR) != 0 };
 
         if parsed.synthesize_italic {
             face.set_transform(Some(FT_Matrix {

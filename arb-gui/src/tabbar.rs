@@ -668,54 +668,56 @@ pub fn parse_status_text(text: &str, default_cell: CellAttributes) -> Line {
             }
             Action::CSI(csi) => {
                 flush_print(&mut print_buffer, &mut cells, &pen);
-                if let CSI::Sgr(sgr) = csi { match sgr {
-                    Sgr::Reset => pen = default_cell.clone(),
-                    Sgr::Intensity(i) => {
-                        pen.set_intensity(i);
-                    }
-                    Sgr::Underline(u) => {
-                        pen.set_underline(u);
-                    }
-                    Sgr::Overline(o) => {
-                        pen.set_overline(o);
-                    }
-                    Sgr::VerticalAlign(o) => {
-                        pen.set_vertical_align(o);
-                    }
-                    Sgr::Blink(b) => {
-                        pen.set_blink(b);
-                    }
-                    Sgr::Italic(i) => {
-                        pen.set_italic(i);
-                    }
-                    Sgr::Inverse(inverse) => {
-                        pen.set_reverse(inverse);
-                    }
-                    Sgr::Invisible(invis) => {
-                        pen.set_invisible(invis);
-                    }
-                    Sgr::StrikeThrough(strike) => {
-                        pen.set_strikethrough(strike);
-                    }
-                    Sgr::Foreground(col) => {
-                        if let ColorSpec::Default = col {
-                            pen.set_foreground(default_cell.foreground());
-                        } else {
-                            pen.set_foreground(col);
+                if let CSI::Sgr(sgr) = csi {
+                    match sgr {
+                        Sgr::Reset => pen = default_cell.clone(),
+                        Sgr::Intensity(i) => {
+                            pen.set_intensity(i);
                         }
-                    }
-                    Sgr::Background(col) => {
-                        if let ColorSpec::Default = col {
-                            pen.set_background(default_cell.background());
-                        } else {
-                            pen.set_background(col);
+                        Sgr::Underline(u) => {
+                            pen.set_underline(u);
                         }
+                        Sgr::Overline(o) => {
+                            pen.set_overline(o);
+                        }
+                        Sgr::VerticalAlign(o) => {
+                            pen.set_vertical_align(o);
+                        }
+                        Sgr::Blink(b) => {
+                            pen.set_blink(b);
+                        }
+                        Sgr::Italic(i) => {
+                            pen.set_italic(i);
+                        }
+                        Sgr::Inverse(inverse) => {
+                            pen.set_reverse(inverse);
+                        }
+                        Sgr::Invisible(invis) => {
+                            pen.set_invisible(invis);
+                        }
+                        Sgr::StrikeThrough(strike) => {
+                            pen.set_strikethrough(strike);
+                        }
+                        Sgr::Foreground(col) => {
+                            if let ColorSpec::Default = col {
+                                pen.set_foreground(default_cell.foreground());
+                            } else {
+                                pen.set_foreground(col);
+                            }
+                        }
+                        Sgr::Background(col) => {
+                            if let ColorSpec::Default = col {
+                                pen.set_background(default_cell.background());
+                            } else {
+                                pen.set_background(col);
+                            }
+                        }
+                        Sgr::UnderlineColor(col) => {
+                            pen.set_underline_color(col);
+                        }
+                        Sgr::Font(_) => {}
                     }
-                    Sgr::UnderlineColor(col) => {
-                        pen.set_underline_color(col);
-                    }
-                    Sgr::Font(_) => {}
-                } }
+                }
             }
             Action::OperatingSystemCommand(_)
             | Action::DeviceControl(_)

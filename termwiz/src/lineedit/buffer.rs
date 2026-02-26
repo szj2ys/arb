@@ -10,7 +10,6 @@ pub struct LineEditBuffer {
     cursor: usize,
 }
 
-
 impl LineEditBuffer {
     pub fn new(line: &str, cursor: usize) -> Self {
         let mut buffer = Self::default();

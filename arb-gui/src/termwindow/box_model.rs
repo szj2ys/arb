@@ -19,15 +19,13 @@ use wezterm_font::LoadedFont;
 use wezterm_term::color::{ColorAttribute, ColorPalette};
 use window::bitmaps::atlas::Sprite;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[derive(Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum VerticalAlign {
     #[default]
     Top,
     Bottom,
     Middle,
 }
-
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DisplayType {

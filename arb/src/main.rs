@@ -22,8 +22,8 @@ mod cli;
 mod config_cmd;
 mod doctor;
 mod init;
-mod reset;
 pub(crate) mod paths;
+mod reset;
 pub mod update;
 
 #[derive(Debug, Parser)]
@@ -107,10 +107,18 @@ enum SubCommand {
     #[command(short_flag_alias = 'e', hide = true)]
     BlockingStart(StartCommand),
 
-    #[command(name = "cli", about = "Interact with experimental mux server", hide = true)]
+    #[command(
+        name = "cli",
+        about = "Interact with experimental mux server",
+        hide = true
+    )]
     Cli(cli::CliCommand),
 
-    #[command(name = "imgcat", about = "Output an image to the terminal", hide = true)]
+    #[command(
+        name = "imgcat",
+        about = "Output an image to the terminal",
+        hide = true
+    )]
     ImageCat(ImgCatCommand),
 
     #[command(
@@ -121,10 +129,18 @@ enum SubCommand {
     )]
     SetCwd(SetCwdCommand),
 
-    #[command(name = "record", about = "Record a terminal session as an asciicast", hide = true)]
+    #[command(
+        name = "record",
+        about = "Record a terminal session as an asciicast",
+        hide = true
+    )]
     Record(asciicast::RecordCommand),
 
-    #[command(name = "replay", about = "Replay an asciicast terminal session", hide = true)]
+    #[command(
+        name = "replay",
+        about = "Replay an asciicast terminal session",
+        hide = true
+    )]
     Replay(asciicast::PlayCommand),
 
     /// Generate shell completion information
@@ -611,15 +627,16 @@ impl ImgCatCommand {
             term.set_raw_mode()?;
             while let Ok(Some(event)) = term.poll_input(None) {
                 if let InputEvent::Key(
-                        KeyEvent {
-                            key: KeyCode::Enter | KeyCode::Escape,
-                            modifiers: _,
-                        }
-                        | KeyEvent {
-                            key: KeyCode::Char('c') | KeyCode::Char('d'),
-                            modifiers: Modifiers::CTRL,
-                        },
-                    ) = event {
+                    KeyEvent {
+                        key: KeyCode::Enter | KeyCode::Escape,
+                        modifiers: _,
+                    }
+                    | KeyEvent {
+                        key: KeyCode::Char('c') | KeyCode::Char('d'),
+                        modifiers: Modifiers::CTRL,
+                    },
+                ) = event
+                {
                     break;
                 }
             }
