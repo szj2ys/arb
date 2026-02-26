@@ -42,6 +42,17 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "arb", "item": "https://szj2ys.github.io/arb/"},
+      {"@type": "ListItem", "position": 2, "name": "Best Terminal for Cursor IDE in 2026"}
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "arb",
     "description": "GPU-accelerated macOS terminal emulator built for AI coding workflows. Zero config with built-in Starship, Delta, syntax highlighting, and Lua scripting.",
@@ -392,6 +403,17 @@
     </div>
   </section>
 
+  <section style="padding:48px 0;border-top:1px solid rgba(255,255,255,0.06);">
+    <div style="max-width:720px;margin:0 auto;padding:0 24px;">
+      <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:#edecee;">Related Articles</h3>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:12px;">
+        <li><a href="best-terminal-for-claude-code.html" style="color:#a277ff;font-size:15px;">Best Terminal for Claude Code in 2026</a></li>
+        <li><a href="ai-coding-terminal-setup.html" style="color:#a277ff;font-size:15px;">AI Coding Terminal Setup Guide</a></li>
+        <li><a href="wezterm-alternative-arb.html" style="color:#a277ff;font-size:15px;">arb: The Best WezTerm Alternative</a></li>
+      </ul>
+    </div>
+  </section>
+
   <footer>
     <div class="footer-inner">
       <div class="footer-left">
@@ -400,7 +422,7 @@
       <div class="footer-right">
         <a href="https://szj2ys.github.io/arb/">Home</a>
         <a href="best-terminal-for-claude-code.html">Best Terminal for Claude Code</a>
-        <a href="ai-coding-terminal-setup.html">AI Coding Terminal Setup</a>
+        <a href="ai-coding-terminal-setup.html">AI Coding Setup</a>
         <a href="https://github.com/szj2ys/arb">GitHub</a>
       </div>
     </div>
@@ -410,6 +432,7 @@
     document.querySelectorAll('.copy-btn').forEach(function(btn) {
       btn.addEventListener('click', function() {
         var text = btn.getAttribute('data-copy');
+        if (typeof plausible !== 'undefined') { plausible('Install CTA Click'); }
         navigator.clipboard.writeText(text).then(function() {
           btn.classList.add('copied');
           setTimeout(function() { btn.classList.remove('copied'); }, 2000);

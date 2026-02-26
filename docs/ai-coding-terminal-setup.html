@@ -53,6 +53,18 @@
   }
   </script>
 
+  <!-- Structured Data: BreadcrumbList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "arb", "item": "https://szj2ys.github.io/arb/"},
+      {"@type": "ListItem", "position": 2, "name": "AI Coding Terminal Setup Guide"}
+    ]
+  }
+  </script>
+
   <!-- Structured Data: SoftwareApplication -->
   <script type="application/ld+json">
   {
@@ -1323,6 +1335,17 @@
     </div>
   </section>
 
+  <section style="padding:48px 0;border-top:1px solid rgba(255,255,255,0.06);">
+    <div style="max-width:720px;margin:0 auto;padding:0 24px;">
+      <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:#edecee;">Related Articles</h3>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:12px;">
+        <li><a href="best-terminal-for-claude-code.html" style="color:#a277ff;font-size:15px;">Best Terminal for Claude Code in 2026</a></li>
+        <li><a href="best-terminal-for-cursor.html" style="color:#a277ff;font-size:15px;">Best Terminal for Cursor IDE in 2026</a></li>
+        <li><a href="wezterm-alternative-arb.html" style="color:#a277ff;font-size:15px;">arb: The Best WezTerm Alternative</a></li>
+      </ul>
+    </div>
+  </section>
+
   <!-- ========== FOOTER ========== -->
   <footer>
     <div class="footer-inner">
@@ -1344,6 +1367,7 @@
     document.querySelectorAll('.copy-btn').forEach(function(btn) {
       btn.addEventListener('click', function() {
         var text = btn.getAttribute('data-copy');
+        if (typeof plausible !== 'undefined') { plausible('Install CTA Click'); }
         navigator.clipboard.writeText(text).then(function() {
           btn.classList.add('copied');
           setTimeout(function() {
