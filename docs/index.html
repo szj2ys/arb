@@ -1701,6 +1701,82 @@
     }
 
     /* Ensure hero terminal and preview terminal respect reduced motion */
+    .sticky-install {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 99;
+      background: rgba(21, 20, 27, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(162, 119, 255, 0.2);
+      padding: 12px 16px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .sticky-install.visible {
+      display: flex;
+    }
+
+    .sticky-install code {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--fg);
+      flex: 1;
+      text-align: center;
+    }
+
+    .sticky-install code .prompt-char {
+      color: var(--purple);
+      user-select: none;
+    }
+
+    .sticky-install .copy-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: var(--purple-dim);
+      color: var(--purple);
+      cursor: pointer;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+      transition: background 0.2s var(--ease);
+    }
+    .sticky-install .copy-btn:hover {
+      background: rgba(162, 119, 255, 0.2);
+    }
+    .sticky-install .copy-btn.copied {
+      color: var(--green);
+    }
+
+    .sticky-dismiss {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: transparent;
+      color: var(--fg-muted);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: color 0.2s var(--ease);
+    }
+    .sticky-dismiss:hover {
+      color: var(--fg);
+    }
+
+    @media (min-width: 769px) {
+      .sticky-install { display: none !important; }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .hero-term-anim .hero-term-line,
       .hero-term-anim .hero-term-spacer {
@@ -1772,6 +1848,10 @@
         <div class="hero-metric">
           <span class="hero-metric-value"><span class="metric-accent">6</span></span>
           <span class="hero-metric-label">Built-in tools</span>
+        </div>
+        <div class="hero-metric">
+          <span class="hero-metric-value"><span class="metric-accent">0</span></span>
+          <span class="hero-metric-label">Config required</span>
         </div>
       </div>
 
@@ -1922,6 +2002,90 @@
           <p>Full Lua scripting support for infinite customization. Configure every detail at <code style="font-family:var(--font-mono);font-size:13px;color:var(--yellow);">~/.config/arb/arb.lua</code></p>
         </div>
 
+      </div>
+    </div>
+  </section>
+
+  <!-- TERMINAL PREVIEW -->
+  <section class="preview">
+    <div class="container">
+      <div class="fade-in" style="text-align:center;margin-bottom:48px;">
+        <div class="section-label">Preview</div>
+        <h2 class="section-title">See it in action</h2>
+      </div>
+      <div class="terminal-window fade-in">
+        <div class="terminal-titlebar">
+          <span class="terminal-dot red"></span>
+          <span class="terminal-dot yellow"></span>
+          <span class="terminal-dot green"></span>
+          <span class="terminal-title">arb &mdash; ~/projects/api</span>
+          <span style="width:36px;"></span>
+        </div>
+        <div class="terminal-body preview-term-anim">
+          <div class="preview-term-line terminal-line">
+            <span class="t-starship-dir">~/projects/api</span>&nbsp;<span class="t-starship-branch">on main</span>&nbsp;<span style="color:var(--red);">v20.11.0</span>
+          </div>
+          <div class="preview-term-line terminal-line">
+            <span class="t-starship-arrow success">&#10148;</span>&nbsp;<span class="t-cmd">claude</span>&nbsp;<span class="t-arg">"add rate limiting middleware to the auth routes"</span>
+          </div>
+          <div class="preview-term-line terminal-line">
+            <span class="t-ai-label">Claude</span>&nbsp;<span class="t-ai-text">I'll add rate limiting to protect the auth endpoints.</span>
+          </div>
+          <div class="preview-term-line terminal-line">
+            <span class="t-ai-text">&nbsp;&nbsp;Created </span><span style="color:var(--yellow);">src/middleware/rateLimit.ts</span><span class="t-ai-text"> (+38 lines)</span>
+          </div>
+          <div class="preview-term-line terminal-line">
+            <span class="t-ai-text">&nbsp;&nbsp;Edited &nbsp;</span><span style="color:var(--yellow);">src/routes/auth.ts</span><span class="t-ai-text"> (+6 lines)</span>
+          </div>
+          <div class="preview-term-line terminal-line">
+            <span class="t-ai-text">&nbsp;&nbsp;Edited &nbsp;</span><span style="color:var(--yellow);">src/app.ts</span><span class="t-ai-text"> (+2 lines)</span>
+          </div>
+          <div class="preview-term-line terminal-line">
+            <span class="t-ai-success">&nbsp;&nbsp;&#10003; All changes applied. Tests passing.</span>
+          </div>
+          <div class="preview-term-spacer" style="height:1.2em;"></div>
+          <div class="preview-term-line terminal-line">
+            <span class="t-starship-dir">~/projects/api</span>&nbsp;<span class="t-starship-branch">on main *</span>&nbsp;<span style="color:var(--red);">v20.11.0</span>
+          </div>
+          <div class="preview-term-line terminal-line">
+            <span class="t-starship-arrow success">&#10148;</span>&nbsp;<span class="t-cmd">git</span>&nbsp;<span class="t-flag">diff</span>&nbsp;<span class="t-arg">src/routes/auth.ts</span>
+          </div>
+          <div class="preview-term-line terminal-line">
+            <span class="t-diff-header">--- a/src/routes/auth.ts</span>
+          </div>
+          <div class="preview-term-line terminal-line">
+            <span class="t-diff-header">+++ b/src/routes/auth.ts</span>
+          </div>
+          <div class="preview-term-line terminal-line">
+            <span class="t-diff-line-nr">@@ -1,4 +1,6 @@</span>
+          </div>
+          <div class="preview-term-spacer" style="height:0;"></div>
+          <div class="preview-term-line terminal-line">
+            <span class="t-diff-context">&nbsp;import { Router } from 'express';</span>
+          </div>
+          <div class="preview-term-line terminal-line">
+            <span class="t-diff-add">+import { rateLimit } from '../middleware/rateLimit';</span>
+          </div>
+          <div class="preview-term-line terminal-line">
+            <span class="t-diff-context">&nbsp;const router = Router();</span>
+          </div>
+          <div class="preview-term-line terminal-line">
+            <span class="t-diff-add">+router.use('/auth', rateLimit({ window: '15m', max: 10 }));</span>
+          </div>
+          <div class="preview-term-spacer" style="height:1.2em;"></div>
+          <div class="preview-term-line terminal-line">
+            <span class="t-starship-arrow success">&#10148;</span>&nbsp;<span class="t-cmd">git</span>&nbsp;<span class="t-flag">add</span>&nbsp;<span class="t-arg">.</span>&nbsp;<span class="t-flag">&amp;&amp;</span>&nbsp;<span class="t-cmd">git</span>&nbsp;<span class="t-flag">commit</span>&nbsp;<span class="t-arg">-m</span>&nbsp;<span class="t-arg">"feat: add rate limiting to auth"</span>
+          </div>
+          <div class="preview-term-line terminal-line">
+            <span style="color:var(--green);">[main a3f7c2d]</span>&nbsp;<span class="t-output">feat: add rate limiting to auth</span>
+          </div>
+          <div class="preview-term-line terminal-line">
+            <span class="t-output">&nbsp;3 files changed, 46 insertions(+)</span>
+          </div>
+          <div class="preview-term-line terminal-line">
+            <span class="t-starship-arrow success">&#10148;</span>&nbsp;<span class="preview-cursor t-cursor"></span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -2187,98 +2351,6 @@
     </div>
   </section>
 
-  <!-- TERMINAL PREVIEW -->
-  <section class="preview">
-    <div class="container">
-      <div class="fade-in" style="text-align:center;margin-bottom:48px;">
-        <div class="section-label">Preview</div>
-        <h2 class="section-title">See it in action</h2>
-      </div>
-      <div class="terminal-window fade-in">
-        <div class="terminal-titlebar">
-          <span class="terminal-dot red"></span>
-          <span class="terminal-dot yellow"></span>
-          <span class="terminal-dot green"></span>
-          <span class="terminal-title">arb &mdash; ~/projects/api</span>
-          <span style="width:36px;"></span>
-        </div>
-        <div class="terminal-body preview-term-anim">
-          <!-- Starship prompt with git branch + node version -->
-          <div class="preview-term-line terminal-line">
-            <span class="t-starship-dir">~/projects/api</span>&nbsp;<span class="t-starship-branch">on main</span>&nbsp;<span style="color:var(--red);">v20.11.0</span>
-          </div>
-          <div class="preview-term-line terminal-line">
-            <span class="t-starship-arrow success">&#10148;</span>&nbsp;<span class="t-cmd">claude</span>&nbsp;<span class="t-arg">"add rate limiting middleware to the auth routes"</span>
-          </div>
-          <!-- Claude AI working -->
-          <div class="preview-term-line terminal-line">
-            <span class="t-ai-label">Claude</span>&nbsp;<span class="t-ai-text">I'll add rate limiting to protect the auth endpoints.</span>
-          </div>
-          <div class="preview-term-line terminal-line">
-            <span class="t-ai-text">&nbsp;&nbsp;Created </span><span style="color:var(--yellow);">src/middleware/rateLimit.ts</span><span class="t-ai-text"> (+38 lines)</span>
-          </div>
-          <div class="preview-term-line terminal-line">
-            <span class="t-ai-text">&nbsp;&nbsp;Edited &nbsp;</span><span style="color:var(--yellow);">src/routes/auth.ts</span><span class="t-ai-text"> (+6 lines)</span>
-          </div>
-          <div class="preview-term-line terminal-line">
-            <span class="t-ai-text">&nbsp;&nbsp;Edited &nbsp;</span><span style="color:var(--yellow);">src/app.ts</span><span class="t-ai-text"> (+2 lines)</span>
-          </div>
-          <div class="preview-term-line terminal-line">
-            <span class="t-ai-success">&nbsp;&nbsp;&#10003; All changes applied. Tests passing.</span>
-          </div>
-          <!-- Spacer -->
-          <div class="preview-term-spacer" style="height:1.2em;"></div>
-          <!-- Review the diff with Delta -->
-          <div class="preview-term-line terminal-line">
-            <span class="t-starship-dir">~/projects/api</span>&nbsp;<span class="t-starship-branch">on main *</span>&nbsp;<span style="color:var(--red);">v20.11.0</span>
-          </div>
-          <div class="preview-term-line terminal-line">
-            <span class="t-starship-arrow success">&#10148;</span>&nbsp;<span class="t-cmd">git</span>&nbsp;<span class="t-flag">diff</span>&nbsp;<span class="t-arg">src/routes/auth.ts</span>
-          </div>
-          <!-- Delta-styled diff output -->
-          <div class="preview-term-line terminal-line">
-            <span class="t-diff-header">--- a/src/routes/auth.ts</span>
-          </div>
-          <div class="preview-term-line terminal-line">
-            <span class="t-diff-header">+++ b/src/routes/auth.ts</span>
-          </div>
-          <div class="preview-term-line terminal-line">
-            <span class="t-diff-line-nr">@@ -1,4 +1,6 @@</span>
-          </div>
-          <!-- Spacer -->
-          <div class="preview-term-spacer" style="height:0;"></div>
-          <div class="preview-term-line terminal-line">
-            <span class="t-diff-context">&nbsp;import { Router } from 'express';</span>
-          </div>
-          <div class="preview-term-line terminal-line">
-            <span class="t-diff-add">+import { rateLimit } from '../middleware/rateLimit';</span>
-          </div>
-          <div class="preview-term-line terminal-line">
-            <span class="t-diff-context">&nbsp;const router = Router();</span>
-          </div>
-          <div class="preview-term-line terminal-line">
-            <span class="t-diff-add">+router.use('/auth', rateLimit({ window: '15m', max: 10 }));</span>
-          </div>
-          <!-- Spacer -->
-          <div class="preview-term-spacer" style="height:1.2em;"></div>
-          <!-- z jump + commit -->
-          <div class="preview-term-line terminal-line">
-            <span class="t-starship-arrow success">&#10148;</span>&nbsp;<span class="t-cmd">git</span>&nbsp;<span class="t-flag">add</span>&nbsp;<span class="t-arg">.</span>&nbsp;<span class="t-flag">&amp;&amp;</span>&nbsp;<span class="t-cmd">git</span>&nbsp;<span class="t-flag">commit</span>&nbsp;<span class="t-arg">-m</span>&nbsp;<span class="t-arg">"feat: add rate limiting to auth"</span>
-          </div>
-          <div class="preview-term-line terminal-line">
-            <span style="color:var(--green);">[main a3f7c2d]</span>&nbsp;<span class="t-output">feat: add rate limiting to auth</span>
-          </div>
-          <div class="preview-term-line terminal-line">
-            <span class="t-output">&nbsp;3 files changed, 46 insertions(+)</span>
-          </div>
-          <div class="preview-term-line terminal-line">
-            <span class="t-starship-arrow success">&#10148;</span>&nbsp;<span class="preview-cursor t-cursor"></span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- FAQ -->
   <section class="faq" id="faq">
     <div class="container">
@@ -2413,6 +2485,17 @@
     </div>
   </footer>
 
+  <!-- MOBILE STICKY INSTALL BAR -->
+  <div class="sticky-install" id="stickyInstall">
+    <code><span class="prompt-char">$ </span>brew install szj2ys/arb/arb</code>
+    <button class="copy-btn" data-copy="brew install szj2ys/arb/arb" aria-label="Copy install command">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+    </button>
+    <button class="sticky-dismiss" id="stickyDismiss" aria-label="Dismiss install bar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
   <!-- MINIMAL JS -->
   <script>
     /* Copy to clipboard */
@@ -2490,6 +2573,32 @@
         if (typeof plausible !== 'undefined') { plausible('Article Click', {props: {article: this.querySelector('h3').textContent}}); }
       });
     });
+
+    /* Mobile sticky install bar */
+    var stickyBar = document.getElementById('stickyInstall');
+    var stickyDismissed = false;
+    var heroSection = document.querySelector('.hero');
+    if (stickyBar && heroSection) {
+      var stickyObserver = new IntersectionObserver(function(entries) {
+        if (stickyDismissed) return;
+        entries.forEach(function(entry) {
+          if (!entry.isIntersecting) {
+            stickyBar.classList.add('visible');
+          } else {
+            stickyBar.classList.remove('visible');
+          }
+        });
+      }, { threshold: 0 });
+      stickyObserver.observe(heroSection);
+      document.getElementById('stickyDismiss').addEventListener('click', function() {
+        stickyDismissed = true;
+        stickyBar.classList.remove('visible');
+        if (typeof plausible !== 'undefined') { plausible('Sticky Dismiss'); }
+      });
+      stickyBar.querySelector('.copy-btn').addEventListener('click', function() {
+        if (typeof plausible !== 'undefined') { plausible('Sticky Install Click'); }
+      });
+    }
 
     /* FAQ accordion */
     document.querySelectorAll('.faq-question').forEach(function(btn) {
