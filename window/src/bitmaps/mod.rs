@@ -404,7 +404,6 @@ impl Image {
         self.resize(width, height)
     }
 
-    #[allow(dead_code)]
     pub fn log_bits(&self) {
         log::info!("Image pixels:");
         for y in 0..self.height {

@@ -31,8 +31,8 @@ enum State {
     Exit,
 }
 
-#[allow(dead_code)]
 #[derive(Debug)]
+#[allow(dead_code)] // Fields synced from tmux remote state; not all read yet
 pub(crate) struct TmuxRemotePane {
     // members for local
     pub local_pane_id: PaneId,
@@ -54,7 +54,6 @@ pub(crate) type RefTmuxRemotePane = Arc<Mutex<TmuxRemotePane>>;
 
 /// As a remote TmuxTab, keeping the TmuxPanes ID
 /// within the remote tab.
-#[allow(dead_code)]
 pub(crate) struct TmuxTab {
     pub tab_id: TabId, // local tab ID
     pub tmux_window_id: TmuxWindowId,

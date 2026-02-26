@@ -1137,7 +1137,6 @@ impl LocalPane {
         None
     }
 
-    #[allow(dead_code)]
     fn divine_foreground_process(&self, policy: CachePolicy) -> Option<LocalProcessInfo> {
         self.divine_process_list(policy).map(|info| info.foreground.clone())
     }

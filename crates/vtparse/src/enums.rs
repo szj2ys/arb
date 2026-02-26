@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 #[repr(u16)]
 pub enum Action {
@@ -50,6 +48,7 @@ pub enum State {
     SosPmString = 13,
     ApcString = 14,
     // Special states, always last (no tables for these)
+    #[allow(dead_code)] // Sentinel value in VT parser state machine
     Anywhere = 15,
     Utf8Sequence = 16,
 }
