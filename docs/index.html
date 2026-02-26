@@ -7,14 +7,14 @@
   <meta name="description" content="arb is a GPU-accelerated macOS terminal emulator built for AI coding. Zero config, 40MB binary, 100ms shell boot. Built-in Starship, Delta, syntax highlighting, and Lua scripting. No login, no telemetry, MIT open source.">
   <meta name="theme-color" content="#15141b">
   <meta property="og:title" content="arb — Terminal Built for AI Coding">
-  <meta property="og:description" content="Fast, zero-config terminal with built-in Starship, z, Delta, syntax highlighting, and GPU acceleration.">
+  <meta property="og:description" content="GPU-accelerated macOS terminal with built-in Starship, z, Delta, and syntax highlighting. No setup required.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://szj2ys.github.io/arb/">
   <meta property="og:image" content="https://szj2ys.github.io/arb/social-preview.png">
   <meta property="og:image:alt" content="arb terminal emulator preview">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="arb — Terminal Built for AI Coding">
-  <meta name="twitter:description" content="GPU-accelerated macOS terminal emulator with zero config. Built for Claude Code, Copilot, and modern AI workflows.">
+  <meta name="twitter:description" content="GPU-accelerated macOS terminal built for Claude Code and AI workflows. Works instantly — no plugins, no dotfiles.">
   <meta name="twitter:image" content="https://szj2ys.github.io/arb/social-preview.png">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://szj2ys.github.io/arb/">
@@ -30,7 +30,7 @@
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "arb",
-    "description": "A GPU-accelerated macOS terminal emulator built for AI coding workflows. Zero config with built-in Starship, Delta, syntax highlighting, and Lua scripting.",
+    "description": "A GPU-accelerated macOS terminal emulator built for AI coding workflows. Built-in Starship, Delta, syntax highlighting, and Lua scripting. Works out of the box.",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "macOS",
     "url": "https://szj2ys.github.io/arb/",
@@ -47,6 +47,55 @@
       "price": "0",
       "priceCurrency": "USD"
     }
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What makes arb different from iTerm2?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "arb ships with a complete shell suite (Starship prompt, z directory jumper, Delta diff pager, syntax highlighting, autosuggestions) pre-configured out of the box. iTerm2 requires you to install and configure each tool separately. arb also has GPU-accelerated rendering and a ~40 MB binary vs iTerm2's ~55 MB."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does arb work with Claude Code and AI tools?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. arb is purpose-built for AI coding workflows. It supports Claude Code, GitHub Copilot, Aider, and other AI coding tools. Fast shell boot (~100ms), built-in Delta for reviewing AI-generated diffs, and native split-pane support make it ideal for AI-assisted development."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is arb free and open source?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. arb is MIT-licensed and fully open source. No login required, no account needed, no telemetry. The source code is available on GitHub."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I customize arb?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "arb is fully configurable via a single Lua config file at ~/.config/arb/arb.lua. You can customize fonts, colors, key bindings, and behavior. The defaults are designed to work well for most developers, so customization is optional."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I migrate from WezTerm to arb?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. arb is built on top of WezTerm's core and uses the same Lua configuration format. Most WezTerm configs work with arb with minimal changes. arb adds built-in shell tools, a smaller binary (~40 MB vs ~67 MB), and opinionated defaults."
+        }
+      }
+    ]
   }
   </script>
 
@@ -1476,122 +1525,137 @@
     /* ============================================
        WHY ARB SECTION
        ============================================ */
-    .why-arb {
+    .how-it-works {
       background: var(--bg);
-      text-align: center;
       padding: 80px 0;
     }
 
-    .why-arb-inner {
-      max-width: 640px;
-      margin: 0 auto;
+    .how-steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
     }
 
-    .why-arb-text {
-      font-size: clamp(18px, 2.5vw, 22px);
-      color: var(--fg);
-      line-height: 1.7;
-      font-weight: 400;
+    .how-step {
+      background: var(--bg-elevated);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-lg);
+      padding: 36px 28px;
+      text-align: center;
+      position: relative;
     }
 
-    .why-arb-text strong {
-      color: var(--purple);
-      font-weight: 600;
-    }
-
-    .why-arb-text .green-accent {
-      color: var(--green);
-      font-weight: 600;
-    }
-
-    .why-arb-highlights {
-      display: flex;
-      justify-content: center;
-      gap: 48px;
-      margin-top: 40px;
-      flex-wrap: wrap;
-    }
-
-    .why-arb-highlights .highlight-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .highlight-item .highlight-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: var(--radius);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
+    .how-step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
       background: var(--purple-dim);
       color: var(--purple);
+      font-family: var(--font-mono);
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
     }
 
-    .highlight-item .highlight-label {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--fg);
-      letter-spacing: -0.01em;
+    .how-step h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 10px;
     }
 
-    .highlight-item .highlight-desc {
-      font-size: 13px;
+    .how-step p {
+      font-size: 15px;
       color: var(--fg-muted);
+      line-height: 1.6;
     }
 
-    @media (max-width: 640px) {
-      .why-arb {
-        padding: 56px 0;
-      }
-      .why-arb-highlights {
-        gap: 32px;
-      }
-      .testimonials-grid {
+    .how-step code {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      background: rgba(162, 119, 255, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--purple);
+    }
+
+    @media (max-width: 768px) {
+      .how-steps-grid {
         grid-template-columns: 1fr;
       }
     }
 
-    .testimonials {
+    /* ============================================
+       FAQ
+       ============================================ */
+    .faq {
+      background: var(--bg);
       padding: 80px 0;
     }
-    .testimonials-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 24px;
-      margin-top: 48px;
+
+    .faq-list {
+      max-width: 720px;
+      margin: 0 auto;
     }
-    .testimonial-card {
-      background: var(--bg-elevated);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: var(--radius);
-      padding: 32px;
-      position: relative;
+
+    .faq-item {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
-    .testimonial-card::before {
-      content: "\201C";
-      position: absolute;
-      top: 16px;
-      left: 24px;
-      font-size: 48px;
-      line-height: 1;
-      color: var(--purple);
-      opacity: 0.3;
-      font-family: Georgia, serif;
+
+    .faq-item:last-child {
+      border-bottom: none;
     }
-    .testimonial-quote {
-      font-size: 1rem;
-      line-height: 1.7;
+
+    .faq-question {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 0;
+      background: none;
+      border: none;
       color: var(--fg);
-      margin-bottom: 16px;
-      font-style: italic;
+      font-size: 17px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      transition: color 0.2s var(--ease);
     }
-    .testimonial-author {
-      font-size: 0.85rem;
+
+    .faq-question:hover {
+      color: var(--purple);
+    }
+
+    .faq-question .faq-chevron {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
       color: var(--fg-muted);
+      transition: transform 0.3s var(--ease);
+    }
+
+    .faq-item.open .faq-chevron {
+      transform: rotate(180deg);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s var(--ease);
+    }
+
+    .faq-item.open .faq-answer {
+      max-height: 200px;
+    }
+
+    .faq-answer p {
+      padding: 0 0 24px;
+      font-size: 15px;
+      color: var(--fg-muted);
+      line-height: 1.7;
     }
 
     /* ============================================
@@ -1916,65 +1980,28 @@
     </div>
   </section>
 
-  <!-- WHY ARB -->
-  <section class="why-arb">
+  <!-- HOW IT WORKS -->
+  <section class="how-it-works">
     <div class="container">
-      <div class="why-arb-inner fade-in">
-        <div class="section-label">Why arb?</div>
-        <h2 class="section-title">Built for how you work now</h2>
-        <p class="why-arb-text" style="margin-top: 24px;">
-          Most terminals were designed before AI coding existed. <strong>arb</strong> is purpose-built for the modern workflow &mdash; where you run <strong>Claude Code</strong>, review diffs, and ship fast. <span class="green-accent">Zero config. No login. No telemetry.</span> Just open it and start building.
-        </p>
-        <div class="why-arb-highlights">
-          <div class="highlight-item">
-            <div class="highlight-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            </div>
-            <span class="highlight-label">Zero Config</span>
-            <span class="highlight-desc">Works instantly</span>
-          </div>
-          <div class="highlight-item">
-            <div class="highlight-icon" style="background:var(--green-dim);color:var(--green);">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-            </div>
-            <span class="highlight-label">AI-First</span>
-            <span class="highlight-desc">Built for Claude Code</span>
-          </div>
-          <div class="highlight-item">
-            <div class="highlight-icon" style="background:rgba(255,202,133,0.10);color:var(--yellow);">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            </div>
-            <span class="highlight-label">Private</span>
-            <span class="highlight-desc">No login, no telemetry</span>
-          </div>
-        </div>
+      <div class="fade-in" style="text-align:center;margin-bottom:48px;">
+        <div class="section-label">Get Started</div>
+        <h2 class="section-title">Ready in 3 steps</h2>
       </div>
-    </div>
-  </section>
-
-  <!-- TESTIMONIALS -->
-  <section class="testimonials">
-    <div class="container">
-      <div class="fade-in" style="text-align:center;">
-        <div class="section-label">What Developers Say</div>
-        <h2 class="section-title">Loved by developers who ship</h2>
-      </div>
-      <div class="testimonials-grid">
-        <div class="testimonial-card fade-in">
-          <p class="testimonial-quote">I switched from iTerm2 + oh-my-zsh and saved 2 hours of setup on my new MacBook. Everything just worked out of the box.</p>
-          <p class="testimonial-author">&mdash; Senior Engineer, switching from iTerm2</p>
+      <div class="how-steps-grid">
+        <div class="how-step fade-in">
+          <div class="how-step-number">1</div>
+          <h3>Install</h3>
+          <p>Run <code>brew install szj2ys/arb/arb</code>. One command, no dependencies. Apple-notarized &mdash; opens without security warnings.</p>
         </div>
-        <div class="testimonial-card fade-in">
-          <p class="testimonial-quote">Best terminal for Claude Code &mdash; zero config, fast splits, just works. I spend my time coding instead of configuring.</p>
-          <p class="testimonial-author">&mdash; Full-stack Developer, daily Claude Code user</p>
+        <div class="how-step fade-in">
+          <div class="how-step-number">2</div>
+          <h3>Open</h3>
+          <p>Launch arb. Starship prompt, syntax highlighting, autosuggestions, and Delta diffs are already configured. Nothing to install or tweak.</p>
         </div>
-        <div class="testimonial-card fade-in">
-          <p class="testimonial-quote">Finally a terminal that doesn't need a PhD in dotfile management. Starship, Delta, and syntax highlighting all pre-configured.</p>
-          <p class="testimonial-author">&mdash; DevOps Engineer, former Alacritty user</p>
-        </div>
-        <div class="testimonial-card fade-in">
-          <p class="testimonial-quote">Replaced Warp because I wanted open source without login requirements. arb gives me the same polish with none of the lock-in.</p>
-          <p class="testimonial-author">&mdash; Indie Developer, privacy-focused</p>
+        <div class="how-step fade-in">
+          <div class="how-step-number">3</div>
+          <h3>Code</h3>
+          <p>Start building. Use Claude Code, review diffs, navigate with <code>z</code>, split panes &mdash; everything works out of the box.</p>
         </div>
       </div>
     </div>
@@ -2252,6 +2279,63 @@
     </div>
   </section>
 
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <div class="fade-in" style="text-align:center;margin-bottom:48px;">
+        <div class="section-label">FAQ</div>
+        <h2 class="section-title">Frequently asked questions</h2>
+      </div>
+      <div class="faq-list fade-in">
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            What makes arb different from iTerm2?
+            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>arb ships with a complete shell suite (Starship, z, Delta, syntax highlighting, autosuggestions) pre-configured. iTerm2 requires you to install and configure each tool separately. arb also has GPU-accelerated rendering and a smaller binary (~40 MB vs ~55 MB).</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Does arb work with Claude Code and AI tools?
+            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Yes. arb supports Claude Code, GitHub Copilot, Aider, and other AI coding tools. Fast shell boot (~100ms), built-in Delta for reviewing AI-generated diffs, and native split-pane support make it ideal for AI-assisted development.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Is arb free and open source?
+            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Yes. arb is MIT-licensed and fully open source. No login required, no account needed, no telemetry. The source code is on GitHub.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            How do I customize arb?
+            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>A single Lua config file at <code>~/.config/arb/arb.lua</code> controls fonts, colors, key bindings, and behavior. Defaults are tuned for most developers, so customization is optional.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Can I migrate from WezTerm?
+            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Yes. arb uses the same Lua configuration format as WezTerm. Most configs work with minimal changes. arb adds built-in shell tools, a smaller binary, and opinionated defaults.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- INSTALL -->
   <section class="install" id="install">
     <div class="container">
@@ -2284,7 +2368,7 @@
       <div class="resources-grid">
         <a href="best-terminal-for-claude-code.html" class="resource-card">
           <h3>Best Terminal for Claude Code in 2026</h3>
-          <p>Why your terminal choice matters for AI coding, and how arb delivers GPU acceleration, built-in tools, and zero config out of the box.</p>
+          <p>Why your terminal choice matters for AI coding, and how arb delivers GPU acceleration, built-in tools, and instant productivity.</p>
           <span class="read-more">Read the guide &rarr;</span>
         </a>
         <a href="best-terminal-for-cursor.html" class="resource-card">
@@ -2323,10 +2407,8 @@
         <a href="https://github.com/szj2ys/arb/issues" target="_blank" rel="noopener">Issues</a>
         <a href="https://github.com/szj2ys/arb/blob/main/LICENSE" target="_blank" rel="noopener">License</a>
         <a href="best-terminal-for-claude-code.html">Best Terminal for Claude Code</a>
-        <a href="ai-coding-terminal-setup.html">AI Coding Terminal Setup</a>
-        <a href="best-terminal-for-cursor.html">Best Terminal for Cursor</a>
+        <a href="ai-coding-terminal-setup.html">AI Coding Setup</a>
         <a href="wezterm-alternative-arb.html">WezTerm Alternative</a>
-        <a href="best-terminal-for-aider.html">Best Terminal for Aider</a>
       </div>
     </div>
   </footer>
@@ -2338,6 +2420,7 @@
       btn.addEventListener('click', function() {
         var text = this.getAttribute('data-copy');
         var button = this;
+        if (typeof plausible !== 'undefined') { plausible('Install CTA Click'); }
         navigator.clipboard.writeText(text).then(function() {
           button.classList.add('copied');
           var checkSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -2394,6 +2477,34 @@
 
     document.querySelectorAll('.fade-in').forEach(function(el) {
       observer.observe(el);
+    });
+
+    /* Track outbound clicks */
+    document.querySelectorAll('a[href*="github.com/szj2ys/arb"]').forEach(function(link) {
+      link.addEventListener('click', function() {
+        if (typeof plausible !== 'undefined') { plausible('GitHub Click'); }
+      });
+    });
+    document.querySelectorAll('.resource-card').forEach(function(link) {
+      link.addEventListener('click', function() {
+        if (typeof plausible !== 'undefined') { plausible('Article Click', {props: {article: this.querySelector('h3').textContent}}); }
+      });
+    });
+
+    /* FAQ accordion */
+    document.querySelectorAll('.faq-question').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var item = this.parentElement;
+        var isOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item.open').forEach(function(el) {
+          el.classList.remove('open');
+          el.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+        });
+        if (!isOpen) {
+          item.classList.add('open');
+          this.setAttribute('aria-expanded', 'true');
+        }
+      });
     });
   </script>
 
