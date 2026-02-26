@@ -38,26 +38,22 @@ impl From<Blink> for bool {
 /// using an alternative color.  Some terminals implement `Intensity::Half`
 /// as a dimmer color variant.
 #[cfg_attr(feature = "use_serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, FromDynamic, ToDynamic)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, FromDynamic, ToDynamic, Default)]
 #[repr(u8)]
 pub enum Intensity {
+    #[default]
     Normal = 0,
     Bold = 1,
     Half = 2,
 }
 
-impl Default for Intensity {
-    fn default() -> Self {
-        Self::Normal
-    }
-}
-
 /// Specify just how underlined you want your `Cell` to be
 #[cfg_attr(feature = "use_serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, FromDynamic, ToDynamic)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, FromDynamic, ToDynamic, Default)]
 #[repr(u8)]
 pub enum Underline {
     /// The cell is not underlined
+    #[default]
     None = 0,
     /// The cell is underlined with a single line
     Single = 1,
@@ -69,12 +65,6 @@ pub enum Underline {
     Dotted = 4,
     /// Dashed underline
     Dashed = 5,
-}
-
-impl Default for Underline {
-    fn default() -> Self {
-        Self::None
-    }
 }
 
 /// Allow converting to boolean; true means some kind of
