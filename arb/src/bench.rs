@@ -214,7 +214,7 @@ mod imp {
         let mut ms: Vec<f64> = timings.iter().map(|d| d.as_secs_f64() * 1000.0).collect();
         ms.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
         let mid = ms.len() / 2;
-        if ms.len() % 2 == 0 {
+        if ms.len().is_multiple_of(2) {
             (ms[mid - 1] + ms[mid]) / 2.0
         } else {
             ms[mid]
