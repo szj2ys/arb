@@ -186,7 +186,6 @@ impl ToDynamic for BackgroundSize {
     }
 }
 
-
 #[derive(Debug, Copy, Clone, FromDynamic, ToDynamic, Default)]
 pub enum BackgroundHorizontalAlignment {
     #[default]
@@ -195,7 +194,6 @@ pub enum BackgroundHorizontalAlignment {
     Right,
 }
 
-
 #[derive(Debug, Copy, Clone, FromDynamic, ToDynamic, Default)]
 pub enum BackgroundVerticalAlignment {
     #[default]
@@ -203,7 +201,6 @@ pub enum BackgroundVerticalAlignment {
     Middle,
     Bottom,
 }
-
 
 #[derive(Debug, Copy, Clone, FromDynamic, ToDynamic, PartialEq, Eq, Default)]
 pub enum BackgroundRepeat {
@@ -238,7 +235,6 @@ pub enum BackgroundRepeat {
     NoRepeat,
 }
 
-
 #[derive(Debug, Copy, Clone, FromDynamic, ToDynamic, Default)]
 pub enum BackgroundAttachment {
     #[default]
@@ -257,14 +253,12 @@ impl BackgroundAttachment {
     }
 }
 
-
 #[derive(Debug, Copy, Clone, FromDynamic, ToDynamic, Default)]
 pub enum BackgroundOrigin {
     #[default]
     BorderBox,
     PaddingBox,
 }
-
 
 #[derive(Debug, Copy, Clone, FromDynamic, ToDynamic, PartialEq, Default)]
 pub enum SystemBackdrop {
@@ -311,7 +305,6 @@ pub enum GradientOrientation {
         cy: Option<f64>,
     },
 }
-
 
 #[derive(Debug, Copy, Clone, FromDynamic, ToDynamic, PartialEq)]
 pub enum GradientPreset {

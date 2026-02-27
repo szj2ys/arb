@@ -12,7 +12,6 @@ pub enum SshBackend {
     LibSsh,
 }
 
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq, FromDynamic, ToDynamic, Default)]
 pub enum SshMultiplexing {
     #[default]
@@ -20,7 +19,6 @@ pub enum SshMultiplexing {
     None,
     // TODO: Tmux-cc in the future?
 }
-
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, FromDynamic, ToDynamic, Default)]
 pub enum Shell {
@@ -33,7 +31,6 @@ pub enum Shell {
     Posix,
     // TODO: Cmd, PowerShell in the future?
 }
-
 
 #[derive(Default, Debug, Clone, FromDynamic, ToDynamic)]
 pub struct SshDomain {

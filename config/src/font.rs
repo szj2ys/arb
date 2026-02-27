@@ -8,7 +8,17 @@ use std::fmt::Display;
 use wezterm_dynamic::{FromDynamic, FromDynamicOptions, ToDynamic, Value};
 
 #[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, Display, PartialOrd, Ord, FromDynamic, ToDynamic,
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    Hash,
+    Display,
+    PartialOrd,
+    Ord,
+    FromDynamic,
+    ToDynamic,
     Default,
 )]
 pub enum FontStyle {
@@ -18,9 +28,18 @@ pub enum FontStyle {
     Oblique,
 }
 
-
 #[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, Display, PartialOrd, Ord, FromDynamic, ToDynamic,
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    Hash,
+    Display,
+    PartialOrd,
+    Ord,
+    FromDynamic,
+    ToDynamic,
     Default,
 )]
 pub enum FontStretch {
@@ -67,7 +86,6 @@ impl FontStretch {
         }
     }
 }
-
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct FontWeight(u16);
@@ -680,7 +698,6 @@ pub enum AllowSquareGlyphOverflow {
     #[default]
     WhenFollowedBySpace,
 }
-
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, FromDynamic, ToDynamic)]
 pub enum FontLocatorSelection {

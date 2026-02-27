@@ -50,4 +50,3 @@ pub enum WebGpuPowerPreference {
     LowPower,
     HighPerformance,
 }
-
