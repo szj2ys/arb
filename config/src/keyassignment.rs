@@ -131,7 +131,6 @@ impl Pattern {
     }
 }
 
-
 /// A mouse event that can trigger an action
 #[derive(Debug, Clone, PartialEq, Eq, Ord, PartialOrd, Hash, FromDynamic, ToDynamic)]
 pub enum MouseEventTrigger {
@@ -160,7 +159,6 @@ pub enum SpawnTabDomain {
     /// Use a specific domain by id
     DomainId(usize),
 }
-
 
 #[derive(Default, Clone, PartialEq, FromDynamic, ToDynamic)]
 pub struct SpawnCommand {
@@ -284,7 +282,9 @@ impl PaneDirection {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, FromDynamic, ToDynamic, Serialize, Deserialize, Default)]
+#[derive(
+    Debug, Copy, Clone, PartialEq, Eq, FromDynamic, ToDynamic, Serialize, Deserialize, Default,
+)]
 pub enum ScrollbackEraseMode {
     #[default]
     ScrollbackOnly,
@@ -382,7 +382,6 @@ char_select_group_impl_next_prev! (
     UnicodeNames => ShortCodes,
     ShortCodes => RecentlyUsed,
 );
-
 
 #[derive(Debug, Clone, PartialEq, Eq, FromDynamic, ToDynamic)]
 pub struct CharSelectArguments {

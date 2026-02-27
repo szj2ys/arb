@@ -185,7 +185,6 @@ pub enum GeometryOrigin {
     Named(String),
 }
 
-
 #[derive(Debug, Clone, PartialEq, FromDynamic, ToDynamic)]
 pub struct GuiPosition {
     #[dynamic(try_from = "crate::units::PixelUnit")]

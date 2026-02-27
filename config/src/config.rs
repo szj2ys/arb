@@ -57,7 +57,6 @@ pub enum TabBarPosition {
     Right,
 }
 
-
 #[derive(Debug, Clone, FromDynamic, ToDynamic, ConfigMeta)]
 pub struct Config {
     /// The font size, measured in points

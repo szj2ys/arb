@@ -10,7 +10,6 @@ pub enum KeyMapPreference {
     Mapped,
 }
 
-
 #[derive(Debug, Clone, Eq, PartialEq, FromDynamic, ToDynamic)]
 #[dynamic(into = "String", try_from = "String")]
 pub enum DeferredKeyCode {
@@ -171,7 +170,6 @@ impl ToDynamic for MouseEventAltScreen {
         }
     }
 }
-
 
 #[derive(
     Debug, Default, Clone, Copy, PartialOrd, Ord, PartialEq, Eq, Hash, FromDynamic, ToDynamic,

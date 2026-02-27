@@ -39,7 +39,6 @@ impl EasingFunction {
     }
 }
 
-
 #[derive(Default, Debug, Clone, FromDynamic, ToDynamic)]
 pub struct VisualBell {
     #[dynamic(default)]
@@ -61,11 +60,9 @@ pub enum VisualBellTarget {
     CursorColor,
 }
 
-
 #[derive(Debug, Clone, FromDynamic, ToDynamic, Default)]
 pub enum AudibleBell {
     #[default]
     SystemBeep,
     Disabled,
 }
-
