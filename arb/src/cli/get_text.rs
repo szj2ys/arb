@@ -46,8 +46,8 @@ impl GetText {
             None => info.dimensions.physical_top,
             Some(n) if n >= 0 => info.dimensions.physical_top + n as StableRowIndex,
             Some(n) => {
-                let line = info.dimensions.physical_top as isize + n as isize;
-                if line < info.dimensions.scrollback_top as isize {
+                let line = info.dimensions.physical_top + n as isize;
+                if line < info.dimensions.scrollback_top {
                     info.dimensions.scrollback_top
                 } else {
                     line as StableRowIndex
@@ -59,8 +59,8 @@ impl GetText {
             None => info.dimensions.physical_top + info.dimensions.viewport_rows as StableRowIndex,
             Some(n) if n >= 0 => info.dimensions.physical_top + n as StableRowIndex,
             Some(n) => {
-                let line = info.dimensions.physical_top as isize + n as isize;
-                if line < info.dimensions.scrollback_top as isize {
+                let line = info.dimensions.physical_top + n as isize;
+                if line < info.dimensions.scrollback_top {
                     info.dimensions.scrollback_top
                 } else {
                     line as StableRowIndex

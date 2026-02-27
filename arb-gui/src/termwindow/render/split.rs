@@ -43,9 +43,7 @@ impl crate::TermWindow {
                 foreground,
             )?;
             self.ui_items.push(UIItem {
-                x: border.left.get()
-                    + padding_left as usize
-                    + (split.left * cell_width as usize),
+                x: border.left.get() + padding_left as usize + (split.left * cell_width as usize),
                 width: cell_width as usize,
                 y: padding_top as usize
                     + first_row_offset as usize
@@ -68,9 +66,7 @@ impl crate::TermWindow {
                 foreground,
             )?;
             self.ui_items.push(UIItem {
-                x: border.left.get()
-                    + padding_left as usize
-                    + (split.left * cell_width as usize),
+                x: border.left.get() + padding_left as usize + (split.left * cell_width as usize),
                 width: split.size * cell_width as usize,
                 y: padding_top as usize
                     + first_row_offset as usize

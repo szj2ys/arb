@@ -335,10 +335,7 @@ impl LauncherState {
                     // Filter out some noisy, repetitive entries
                     continue;
                 }
-                if key_entries
-                    .iter()
-                    .any(|ent| ent.action == entry.action)
-                {
+                if key_entries.iter().any(|ent| ent.action == entry.action) {
                     // Avoid duplicate entries
                     continue;
                 }
@@ -615,10 +612,9 @@ impl LauncherState {
                     if y > 0 && y as usize <= self.filtered_entries.len() {
                         self.active_idx = self.top_row + y as usize - 1;
 
-                        if mouse_buttons == MouseButtons::LEFT
-                            && self.launch(self.active_idx) {
-                                break;
-                            }
+                        if mouse_buttons == MouseButtons::LEFT && self.launch(self.active_idx) {
+                            break;
+                        }
                     }
                     if mouse_buttons != MouseButtons::NONE {
                         // Treat any other mouse button as cancel

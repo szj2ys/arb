@@ -70,10 +70,7 @@ pub fn get_or_create_sub_module<'lua>(
     }
 }
 
-fn config_builder_set_strict_mode(
-    _lua: &Lua,
-    (myself, strict): (Table, bool),
-) -> mlua::Result<()> {
+fn config_builder_set_strict_mode(_lua: &Lua, (myself, strict): (Table, bool)) -> mlua::Result<()> {
     let mt = myself
         .get_metatable()
         .ok_or_else(|| mlua::Error::external("impossible that we have no metatable"))?;
@@ -717,10 +714,7 @@ fn split_by_newlines(_: &Lua, text: String) -> mlua::Result<Vec<String>> {
 ///
 /// wezterm.emit("event-name", "foo", "bar");
 /// ```
-pub fn register_event(
-    lua: &Lua,
-    (name, func): (String, mlua::Function),
-) -> mlua::Result<()> {
+pub fn register_event(lua: &Lua, (name, func): (String, mlua::Function)) -> mlua::Result<()> {
     let decorated_name = format!("wezterm-event-{}", name);
     let tbl: mlua::Value = lua.named_registry_value(&decorated_name)?;
     match tbl {
@@ -836,7 +830,7 @@ where
 fn utf16_to_utf8(_: &Lua, text: mlua::String) -> mlua::Result<String> {
     let bytes = text.as_bytes();
 
-    if bytes.len() % 2 != 0 {
+    if !bytes.len().is_multiple_of(2) {
         return Err(mlua::Error::external(anyhow!(
             "input data has odd length, cannot be utf16"
         )));
@@ -850,10 +844,7 @@ fn utf16_to_utf8(_: &Lua, text: mlua::String) -> mlua::Result<String> {
     String::from_utf16(wide).map_err(mlua::Error::external)
 }
 
-pub fn add_to_config_reload_watch_list(
-    lua: &Lua,
-    args: Variadic<String>,
-) -> mlua::Result<()> {
+pub fn add_to_config_reload_watch_list(lua: &Lua, args: Variadic<String>) -> mlua::Result<()> {
     let mut watch_paths: Vec<String> = lua.named_registry_value("wezterm-watch-paths")?;
     watch_paths.extend_from_slice(&args);
     lua.set_named_registry_value("wezterm-watch-paths", watch_paths)?;

@@ -94,11 +94,11 @@ impl TmuxDomainState {
     fn add_attached_window(&self, target: &WindowItem, tab_id: &TabId) -> anyhow::Result<()> {
         let mut gui_tabs = self.gui_tabs.lock();
         gui_tabs.entry(target.window_id).or_insert_with(|| TmuxTab {
-                    tab_id: *tab_id,
-                    tmux_window_id: target.window_id,
-                    layout_csum: target.layout_csum.clone(),
-                    panes: HashSet::new(),
-                });
+            tab_id: *tab_id,
+            tmux_window_id: target.window_id,
+            layout_csum: target.layout_csum.clone(),
+            panes: HashSet::new(),
+        });
 
         Ok(())
     }
@@ -562,7 +562,8 @@ impl TmuxDomainState {
                             .remote_panes
                             .lock()
                             .iter()
-                            .find(|(_, p)| p.lock().local_pane_id == pane_id).map(|(_, p)| p.lock().pane_id);
+                            .find(|(_, p)| p.lock().local_pane_id == pane_id)
+                            .map(|(_, p)| p.lock().pane_id);
 
                         if let Some(pane_id) = tmux_pane_id {
                             tmux_domain
@@ -583,13 +584,14 @@ impl TmuxDomainState {
                                 .gui_tabs
                                 .lock()
                                 .iter()
-                                .find(|(_, t)| t.tab_id == tab.tab_id()).map(|(_, t)| t.tmux_window_id);
+                                .find(|(_, t)| t.tab_id == tab.tab_id())
+                                .map(|(_, t)| t.tmux_window_id);
                             if let Some(window_id) = tmux_window_id {
-                                tmux_domain.inner.cmd_queue.lock().push_back(Box::new(
-                                    SelectWindow {
-                                        window_id,
-                                    },
-                                ));
+                                tmux_domain
+                                    .inner
+                                    .cmd_queue
+                                    .lock()
+                                    .push_back(Box::new(SelectWindow { window_id }));
                                 TmuxDomainState::schedule_send_next_command(domain_id);
                             }
                         }
@@ -953,8 +955,7 @@ impl TmuxCommand for CapturePane {
     fn get_command(&self, _domain_id: DomainId) -> String {
         format!(
             "capture-pane -p -t %{} -e -C -S {}\n",
-            self.pane_id,
-            -self.history_limit
+            self.pane_id, -self.history_limit
         )
     }
 

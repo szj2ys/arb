@@ -541,10 +541,12 @@ impl Tab {
         let mut inner = self.inner.lock();
         if inner.title != title {
             inner.title = title.to_string();
-            if let Some(mux) = Mux::try_get() { mux.notify(MuxNotification::TabTitleChanged {
+            if let Some(mux) = Mux::try_get() {
+                mux.notify(MuxNotification::TabTitleChanged {
                     tab_id: inner.id,
                     title: title.to_string(),
-                }) }
+                })
+            }
         }
     }
 
@@ -947,7 +949,9 @@ impl TabInner {
                 self.zoomed.replace(pane);
             }
         }
-        if let Some(mux) = Mux::try_get() { mux.notify(MuxNotification::TabResized(self.id)) }
+        if let Some(mux) = Mux::try_get() {
+            mux.notify(MuxNotification::TabResized(self.id))
+        }
     }
 
     fn contains_pane(&self, pane: PaneId) -> bool {
@@ -1036,7 +1040,9 @@ impl TabInner {
                 }
             }
         }
-        if let Some(mux) = Mux::try_get() { mux.notify(MuxNotification::TabResized(self.id)) }
+        if let Some(mux) = Mux::try_get() {
+            mux.notify(MuxNotification::TabResized(self.id))
+        }
     }
 
     fn iter_panes_impl(&mut self, respect_zoom_state: bool) -> Vec<PositionedPane> {
@@ -1143,9 +1149,7 @@ impl TabInner {
                         SplitDirection::Horizontal => {
                             left += node.first.cols + split_col_gutter() / 2
                         }
-                        SplitDirection::Vertical => {
-                            top += node.first.rows + split_row_gutter() / 2
-                        }
+                        SplitDirection::Vertical => top += node.first.rows + split_row_gutter() / 2,
                     }
 
                     dividers.push(PositionedSplit {
@@ -1222,7 +1226,9 @@ impl TabInner {
             apply_sizes_from_splits(self.pane.as_mut().unwrap(), &size);
         }
 
-        if let Some(mux) = Mux::try_get() { mux.notify(MuxNotification::TabResized(self.id)) }
+        if let Some(mux) = Mux::try_get() {
+            mux.notify(MuxNotification::TabResized(self.id))
+        }
     }
 
     fn apply_pane_size(&mut self, pane_size: TerminalSize, cursor: &mut Cursor) {
@@ -1302,7 +1308,9 @@ impl TabInner {
                 self.size = size;
             }
         }
-        if let Some(mux) = Mux::try_get() { mux.notify(MuxNotification::TabResized(self.id)) }
+        if let Some(mux) = Mux::try_get() {
+            mux.notify(MuxNotification::TabResized(self.id))
+        }
     }
 
     fn resize_split_by(&mut self, split_index: usize, delta: isize) {
@@ -1335,7 +1343,9 @@ impl TabInner {
         // Now cursor is looking at the split
         self.adjust_node_at_cursor(&mut cursor, delta);
         self.cascade_size_from_cursor(cursor);
-        if let Some(mux) = Mux::try_get() { mux.notify(MuxNotification::TabResized(self.id)) }
+        if let Some(mux) = Mux::try_get() {
+            mux.notify(MuxNotification::TabResized(self.id))
+        }
     }
 
     fn resize_split_by_visual(&mut self, split_index: usize, delta: isize) {
@@ -1364,7 +1374,9 @@ impl TabInner {
 
         self.adjust_node_at_cursor(&mut cursor, delta);
         self.cascade_size_from_cursor_visual(cursor);
-        if let Some(mux) = Mux::try_get() { mux.notify(MuxNotification::TabResized(self.id)) }
+        if let Some(mux) = Mux::try_get() {
+            mux.notify(MuxNotification::TabResized(self.id))
+        }
     }
 
     fn adjust_node_at_cursor(&mut self, cursor: &mut Cursor, delta: isize) {
@@ -1449,7 +1461,9 @@ impl TabInner {
                 }
             }
         }
-        if let Some(mux) = Mux::try_get() { mux.notify(MuxNotification::TabResized(self.id)) }
+        if let Some(mux) = Mux::try_get() {
+            mux.notify(MuxNotification::TabResized(self.id))
+        }
     }
 
     /// Like `cascade_size_from_cursor` but calls `resize_visual` instead of
@@ -1488,7 +1502,9 @@ impl TabInner {
                 }
             }
         }
-        if let Some(mux) = Mux::try_get() { mux.notify(MuxNotification::TabResized(self.id)) }
+        if let Some(mux) = Mux::try_get() {
+            mux.notify(MuxNotification::TabResized(self.id))
+        }
     }
 
     fn adjust_pane_size(&mut self, direction: PaneDirection, amount: usize) {

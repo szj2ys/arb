@@ -40,10 +40,12 @@ impl Window {
     pub fn set_title(&mut self, title: &str) {
         if self.title != title {
             self.title = title.to_string();
-            if let Some(mux) = Mux::try_get() { mux.notify(MuxNotification::WindowTitleChanged {
+            if let Some(mux) = Mux::try_get() {
+                mux.notify(MuxNotification::WindowTitleChanged {
                     window_id: self.id,
                     title: title.to_string(),
-                }) }
+                })
+            }
         }
     }
 
@@ -243,9 +245,7 @@ impl Window {
             .tabs
             .iter()
             .filter_map(|tab| {
-                if !live_tab_ids
-                    .iter().any(|&id| id == tab.tab_id())
-                {
+                if !live_tab_ids.iter().any(|&id| id == tab.tab_id()) {
                     Some(tab.tab_id())
                 } else {
                     None

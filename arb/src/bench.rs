@@ -104,9 +104,7 @@ mod imp {
                 result.arb_median_ms
             );
 
-            let mut child = Command::new("pbcopy")
-                .stdin(Stdio::piped())
-                .spawn()?;
+            let mut child = Command::new("pbcopy").stdin(Stdio::piped()).spawn()?;
             if let Some(mut stdin) = child.stdin.take() {
                 stdin.write_all(snippet.as_bytes())?;
             }
@@ -159,10 +157,7 @@ mod imp {
     /// If `with_arb_env` is true, runs the shell normally (which picks up arb
     /// shell integration). If false, passes `--no-rcs` to skip all rc files
     /// for a baseline measurement.
-    fn measure_shell_startup(
-        shell: &str,
-        with_arb_env: bool,
-    ) -> anyhow::Result<Vec<Duration>> {
+    fn measure_shell_startup(shell: &str, with_arb_env: bool) -> anyhow::Result<Vec<Duration>> {
         let shell_path = format!("/bin/{shell}");
         let mut timings = Vec::with_capacity(ITERATIONS);
 
@@ -219,7 +214,7 @@ mod imp {
         let mut ms: Vec<f64> = timings.iter().map(|d| d.as_secs_f64() * 1000.0).collect();
         ms.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
         let mid = ms.len() / 2;
-        if ms.len() % 2 == 0 {
+        if ms.len().is_multiple_of(2) {
             (ms[mid - 1] + ms[mid]) / 2.0
         } else {
             ms[mid]
@@ -251,7 +246,10 @@ mod imp {
             if t.found {
                 println!("  {GREEN}\u{2714}{RESET} {:<10} {}", t.name, t.path);
             } else {
-                println!("  {DIM}\u{2500}{RESET} {:<10} {GRAY}not found{RESET}", t.name);
+                println!(
+                    "  {DIM}\u{2500}{RESET} {:<10} {GRAY}not found{RESET}",
+                    t.name
+                );
             }
         }
         println!();
@@ -289,7 +287,10 @@ mod imp {
             "terminals": terminals,
         });
 
-        println!("{}", serde_json::to_string_pretty(&json).unwrap_or_default());
+        println!(
+            "{}",
+            serde_json::to_string_pretty(&json).unwrap_or_default()
+        );
     }
 
     /// Format benchmark results as a Markdown table.

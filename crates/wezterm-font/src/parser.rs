@@ -310,11 +310,7 @@ impl ParsedFont {
             }
             if !p.palettes.is_empty() {
                 for pal in &p.palettes {
-                    let mut info = format!(
-                        "  -- Palette: {} {}",
-                        pal.palette_index,
-                        pal.name
-                    );
+                    let mut info = format!("  -- Palette: {} {}", pal.palette_index, pal.name);
                     if pal.usable_with_light_bg {
                         info.push_str(" (with light bg)");
                     }
@@ -412,18 +408,15 @@ impl ParsedFont {
             Err(_) => vec![],
         };
 
-        let has_svg = unsafe {
-            (((*face.face).face_flags as u32) & crate::ftwrap::FT_FACE_FLAG_SVG) != 0
-        };
+        let has_svg =
+            unsafe { (((*face.face).face_flags as u32) & crate::ftwrap::FT_FACE_FLAG_SVG) != 0 };
 
-        if has_svg
-            && config::configuration().ignore_svg_fonts {
-                anyhow::bail!("skipping svg font because ignore_svg_fonts=true");
-            }
+        if has_svg && config::configuration().ignore_svg_fonts {
+            anyhow::bail!("skipping svg font because ignore_svg_fonts=true");
+        }
 
-        let has_color = unsafe {
-            (((*face.face).face_flags as u32) & crate::ftwrap::FT_FACE_FLAG_COLOR) != 0
-        };
+        let has_color =
+            unsafe { (((*face.face).face_flags as u32) & crate::ftwrap::FT_FACE_FLAG_COLOR) != 0 };
         let assume_emoji_presentation = has_color;
 
         let names = Names::from_ft_face(face);

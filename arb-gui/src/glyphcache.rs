@@ -833,12 +833,8 @@ impl GlyphCache {
                 scale,
             }
         } else {
-            let raw_im = Image::with_rgba32(
-                glyph.width,
-                glyph.height,
-                4 * glyph.width,
-                &glyph.data,
-            );
+            let raw_im =
+                Image::with_rgba32(glyph.width, glyph.height, 4 * glyph.width, &glyph.data);
 
             let bearing_x = glyph.bearing_x * scale * metrics_only_scale;
             // No metrics_only_scale adjustment to bearing_y is needed because

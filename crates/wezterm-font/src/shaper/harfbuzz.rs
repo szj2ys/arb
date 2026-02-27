@@ -575,7 +575,7 @@ impl FontShaper for HarfbuzzShaper {
         range: Option<Range<usize>>,
         presentation_width: Option<&PresentationWidth>,
     ) -> anyhow::Result<Vec<GlyphInfo>> {
-        let range = range.unwrap_or_else(|| 0..text.len());
+        let range = range.unwrap_or(0..text.len());
 
         log::trace!(
             "shape {range:?} `{}` with presentation={presentation:?}",
