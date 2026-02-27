@@ -48,19 +48,15 @@ use wezterm_input_types::{
 };
 use wezterm_term::TerminalSize;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, FromDynamic, ToDynamic)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, FromDynamic, ToDynamic, Default)]
 pub enum TabBarPosition {
     Top,
     Bottom,
+    #[default]
     Left,
     Right,
 }
 
-impl Default for TabBarPosition {
-    fn default() -> Self {
-        Self::Left
-    }
-}
 
 #[derive(Debug, Clone, FromDynamic, ToDynamic, ConfigMeta)]
 pub struct Config {
