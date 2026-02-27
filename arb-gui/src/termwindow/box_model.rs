@@ -33,16 +33,11 @@ pub enum DisplayType {
     Inline,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum Float {
+    #[default]
     None,
     Right,
-}
-
-impl Default for Float {
-    fn default() -> Self {
-        Self::None
-    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
@@ -140,8 +135,9 @@ impl BoxDimension {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub enum InheritableColor {
+    #[default]
     Inherited,
     Color(LinearRgba),
     Animated {
@@ -150,12 +146,6 @@ pub enum InheritableColor {
         ease: Rc<RefCell<ColorEase>>,
         one_shot: bool,
     },
-}
-
-impl Default for InheritableColor {
-    fn default() -> Self {
-        Self::Inherited
-    }
 }
 
 impl From<LinearRgba> for InheritableColor {
