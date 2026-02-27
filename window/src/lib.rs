@@ -52,17 +52,13 @@ pub use glium;
 pub use os::*;
 pub use wezterm_input_types::*;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum Clipboard {
+    #[default]
     Clipboard,
     PrimarySelection,
 }
 
-impl Default for Clipboard {
-    fn default() -> Self {
-        Self::Clipboard
-    }
-}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Dimensions {
