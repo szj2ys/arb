@@ -65,7 +65,7 @@ impl WslDistro {
 
         /// Ungh: https://github.com/microsoft/WSL/issues/4456
         fn utf16_to_utf8(bytes: &[u8]) -> anyhow::Result<String> {
-            if bytes.len() % 2 != 0 {
+            if !bytes.len().is_multiple_of(2) {
                 anyhow::bail!("input data has odd length, cannot be utf16");
             }
 

@@ -830,7 +830,7 @@ where
 fn utf16_to_utf8(_: &Lua, text: mlua::String) -> mlua::Result<String> {
     let bytes = text.as_bytes();
 
-    if bytes.len() % 2 != 0 {
+    if !bytes.len().is_multiple_of(2) {
         return Err(mlua::Error::external(anyhow!(
             "input data has odd length, cannot be utf16"
         )));

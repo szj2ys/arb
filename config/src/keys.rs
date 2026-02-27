@@ -3,17 +3,13 @@ use std::convert::TryFrom;
 use wezterm_dynamic::{Error as DynError, FromDynamic, FromDynamicOptions, ToDynamic, Value};
 use wezterm_input_types::{KeyCode, Modifiers, PhysKeyCode};
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq, FromDynamic, ToDynamic)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq, FromDynamic, ToDynamic, Default)]
 pub enum KeyMapPreference {
     Physical,
+    #[default]
     Mapped,
 }
 
-impl Default for KeyMapPreference {
-    fn default() -> Self {
-        Self::Mapped
-    }
-}
 
 #[derive(Debug, Clone, Eq, PartialEq, FromDynamic, ToDynamic)]
 #[dynamic(into = "String", try_from = "String")]
@@ -145,10 +141,11 @@ pub struct Mouse {
     pub action: KeyAssignment,
 }
 
-#[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq, Hash, Default)]
 pub enum MouseEventAltScreen {
     True,
     False,
+    #[default]
     Any,
 }
 
@@ -175,11 +172,6 @@ impl ToDynamic for MouseEventAltScreen {
     }
 }
 
-impl Default for MouseEventAltScreen {
-    fn default() -> Self {
-        Self::Any
-    }
-}
 
 #[derive(
     Debug, Default, Clone, Copy, PartialOrd, Ord, PartialEq, Eq, Hash, FromDynamic, ToDynamic,
