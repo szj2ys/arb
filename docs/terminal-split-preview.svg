@@ -1,0 +1,237 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="900" height="520">
+  <defs>
+    <style>
+      .bg { fill: #1c1b22; }
+      .titlebar { fill: #16151b; }
+      .pane-bg { fill: #1c1b22; }
+      .pane-active { fill: #262530; }
+      .fg { fill: #edecee; font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, monospace; font-size: 12px; }
+      .purple { fill: #a277ff; }
+      .green { fill: #61ffca; }
+      .yellow { fill: #ffca85; }
+      .red { fill: #ff6767; }
+      .dim { fill: #6e6a86; }
+      .white { fill: #edecee; }
+      .bold { font-weight: bold; }
+      .blue { fill: #82aaff; }
+      .orange { fill: #ffca85; }
+      .cyan { fill: #61ffca; }
+      .split-line { fill: #2a2933; }
+      .split-active { fill: #a277ff; }
+
+      @keyframes fadeIn {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+      }
+
+      @keyframes cursorBlink {
+        0%, 49% { opacity: 1; }
+        50%, 100% { opacity: 0; }
+      }
+
+      @keyframes highlightSplit {
+        0%, 90% { fill: #2a2933; }
+        95% { fill: #a277ff; }
+        100% { fill: #2a2933; }
+      }
+
+      @keyframes paneFocus {
+        0%, 45% { fill: #1c1b22; }
+        50%, 95% { fill: #232228; }
+        100% { fill: #1c1b22; }
+      }
+
+      .cursor { animation: cursorBlink 1s step-end infinite; }
+      .split-anim { animation: highlightSplit 6s ease-in-out infinite; }
+
+      /* Staggered animations for left pane */
+      .lp-l1 { animation: fadeIn 0.3s ease-out 0.2s both; }
+      .lp-l2 { animation: fadeIn 0.3s ease-out 0.6s both; }
+      .lp-l3 { animation: fadeIn 0.3s ease-out 1.0s both; }
+      .lp-l4 { animation: fadeIn 0.3s ease-out 1.4s both; }
+      .lp-l5 { animation: fadeIn 0.3s ease-out 1.8s both; }
+      .lp-l6 { animation: fadeIn 0.3s ease-out 2.2s both; }
+      .lp-l7 { animation: fadeIn 0.3s ease-out 2.6s both; }
+      .lp-l8 { animation: fadeIn 0.3s ease-out 3.0s both; }
+
+      /* Staggered animations for right pane */
+      .rp-l1 { animation: fadeIn 0.3s ease-out 3.4s both; }
+      .rp-l2 { animation: fadeIn 0.3s ease-out 3.8s both; }
+      .rp-l3 { animation: fadeIn 0.3s ease-out 4.2s both; }
+      .rp-l4 { animation: fadeIn 0.3s ease-out 4.6s both; }
+      .rp-l5 { animation: fadeIn 0.3s ease-out 5.0s both; }
+      .rp-l6 { animation: fadeIn 0.3s ease-out 5.4s both; }
+      .rp-l7 { animation: fadeIn 0.3s ease-out 5.8s both; }
+    </style>
+  </defs>
+
+  <!-- Window background with rounded corners -->
+  <rect class="bg" width="900" height="520" rx="10" ry="10" />
+
+  <!-- Title bar -->
+  <rect class="titlebar" width="900" height="38" rx="10" ry="10" />
+  <rect class="titlebar" y="20" width="900" height="18" />
+
+  <!-- Traffic light buttons -->
+  <circle cx="24" cy="19" r="6.5" fill="#ff5f57" />
+  <circle cx="46" cy="19" r="6.5" fill="#febc2e" />
+  <circle cx="68" cy="19" r="6.5" fill="#28c840" />
+
+  <!-- Window title -->
+  <text x="450" y="24" text-anchor="middle" fill="#6e6a86" font-family="'SF Pro Text', 'Helvetica Neue', Arial, sans-serif" font-size="13">arb</text>
+
+  <!-- Tab bar area -->
+  <rect x="0" y="38" width="900" height="28" fill="#1c1b22" />
+  <rect x="0" y="38" width="180" height="28" fill="#262530" rx="6" ry="6" />
+  <rect x="0" y="56" width="180" height="10" fill="#262530" />
+  <text x="24" y="56" fill="#edecee" font-family="'SF Pro Text', 'Helvetica Neue', Arial, sans-serif" font-size="11.5">~/projects/app</text>
+  <line x1="0" y1="66" x2="900" y2="66" stroke="#2a2933" stroke-width="1" />
+
+  <!-- LEFT PANE (AI Chat) -->
+  <rect class="pane-bg" x="0" y="66" width="445" height="454" />
+
+  <!-- Left pane content -->
+  <g class="lp-l1">
+    <text y="94" class="fg">
+      <tspan x="16" class="purple bold">~/projects/app</tspan>
+      <tspan class="dim"> on </tspan>
+      <tspan class="purple">main</tspan>
+      <tspan class="green"> [!]</tspan>
+    </text>
+  </g>
+
+  <g class="lp-l2">
+    <text y="114" class="fg">
+      <tspan x="16" class="green bold">❯</tspan>
+      <tspan class="white"> claude</tspan>
+    </text>
+  </g>
+
+  <g class="lp-l3">
+    <text y="140" class="fg">
+      <tspan x="16" class="blue bold">Claude</tspan>
+      <tspan class="dim"> Hi! How can I help you today?</tspan>
+    </text>
+  </g>
+
+  <g class="lp-l4">
+    <text y="170" class="fg">
+      <tspan x="16" class="green bold">❯</tspan>
+      <tspan class="white"> add auth middleware</tspan>
+    </text>
+  </g>
+
+  <g class="lp-l5">
+    <text y="196" class="fg">
+      <tspan x="16" class="blue bold">Claude</tspan>
+      <tspan class="dim"> I'll create auth middleware</tspan>
+    </text>
+  </g>
+
+  <g class="lp-l6">
+    <text y="216" class="fg">
+      <tspan x="16" class="dim">  for your API routes.</tspan>
+    </text>
+  </g>
+
+  <g class="lp-l7">
+    <text y="242" class="fg">
+      <tspan x="16" class="dim">  </tspan>
+      <tspan class="green">✓</tspan>
+      <tspan class="dim"> Created </tspan>
+      <tspan class="yellow">src/middleware/auth.rs</tspan>
+    </text>
+  </g>
+
+  <g class="lp-l8">
+    <text y="262" class="fg">
+      <tspan x="16" class="dim">  </tspan>
+      <tspan class="green">✓</tspan>
+      <tspan class="dim"> Updated </tspan>
+      <tspan class="yellow">src/main.rs</tspan>
+    </text>
+  </g>
+
+  <!-- LEFT PANE CURSOR (blinking) -->
+  <rect class="cursor" x="16" y="288" width="8" height="14" fill="#a277ff" opacity="0.8" />
+
+  <!-- SPLIT LINE -->
+  <rect class="split-anim" x="445" y="66" width="2" height="454" />
+
+  <!-- Divider handle indicator -->
+  <circle cx="446" cy="293" r="3" fill="#4a4956" />
+
+  <!-- RIGHT PANE (Code Editor) -->
+  <rect class="pane-bg" x="447" y="66" width="453" height="454" />
+
+  <!-- Right pane: File tabs -->
+  <rect x="447" y="66" width="453" height="24" fill="#1c1b22" />
+  <rect x="455" y="68" width="140" height="20" fill="#262530" rx="4" ry="4" />
+  <text x="465" y="82" fill="#edecee" font-family="'SF Pro Text', 'Helvetica Neue', Arial, sans-serif" font-size="10">auth.rs</text>
+  <circle cx="585" cy="78" r="3" fill="#6e6a86" />
+  <text x="605" y="82" fill="#6e6a86" font-family="'SF Pro Text', 'Helvetica Neue', Arial, sans-serif" font-size="10">main.rs</text>
+
+  <!-- Right pane: Line numbers and code -->
+  <g class="rp-l1">
+    <text y="110" class="fg">
+      <tspan x="460" class="dim" font-size="11">1</tspan>
+      <tspan x="485" class="purple">use</tspan>
+      <tspan class="white"> axum::extract::Request;</tspan>
+    </text>
+  </g>
+
+  <g class="rp-l2">
+    <text y="130" class="fg">
+      <tspan x="460" class="dim" font-size="11">2</tspan>
+    </text>
+  </g>
+
+  <g class="rp-l3">
+    <text y="150" class="fg">
+      <tspan x="460" class="dim" font-size="11">3</tspan>
+      <tspan x="485" class="purple">pub async fn</tspan>
+      <tspan class="blue">auth_middleware</tspan>
+      <tspan class="white">(</tspan>
+    </text>
+  </g>
+
+  <g class="rp-l4">
+    <text y="170" class="fg">
+      <tspan x="460" class="dim" font-size="11">4</tspan>
+      <tspan x="505" class="white">req: Request,</tspan>
+    </text>
+  </g>
+
+  <g class="rp-l5">
+    <text y="190" class="fg">
+      <tspan x="460" class="dim" font-size="11">5</tspan>
+      <tspan x="505" class="white">next: Next,</tspan>
+    </text>
+  </g>
+
+  <g class="rp-l6">
+    <text y="210" class="fg">
+      <tspan x="460" class="dim" font-size="11">6</tspan>
+      <tspan x="485" class="white">) -&gt; </tspan>
+      <tspan class="yellow">Result</tspan>
+      <tspan class="white">&lt;Response, AuthError&gt; {</tspan>
+    </text>
+  </g>
+
+  <g class="rp-l7">
+    <text y="230" class="fg">
+      <tspan x="460" class="dim" font-size="11">7</tspan>
+      <tspan x="505" class="purple">let</tspan>
+      <tspan class="white"> token = extract_token(&amp;req)?;</tspan>
+    </text>
+  </g>
+
+  <!-- Active pane indicator (right pane active) -->
+  <rect x="447" y="512" width="453" height="2" fill="#a277ff" opacity="0.6" />
+
+  <!-- Keyboard shortcut hint -->
+  <text x="450" y="555" text-anchor="middle" fill="#6e6a86" font-family="'SF Pro Text', 'Helvetica Neue', Arial, sans-serif" font-size="11" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.7;0.75;0.95;1" dur="6s" repeatCount="indefinite" />
+    Press <tspan fill="#a277ff">Cmd+D</tspan> to split vertically
+  </text>
+</svg>

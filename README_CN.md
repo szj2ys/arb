@@ -30,6 +30,14 @@
   <br /><br />
 </div>
 
+<!-- 分屏演示 -->
+<div align="center">
+  <img src="docs/terminal-split-preview.svg" alt="arb 分屏演示" width="900" />
+  <br />
+  <sub>内置分屏功能，专为 AI 编程工作流设计 — <code>Cmd+D</code> 垂直分割，<code>Cmd+Opt+方向键</code> 切换窗格</sub>
+  <br /><br />
+</div>
+
 <p align="center">
   <a href="https://szj2ys.github.io/arb/">
     <strong>在线体验 &rarr;</strong>
