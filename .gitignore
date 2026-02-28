@@ -65,3 +65,4 @@ CHANGELOG.md
 # Worktree task files
 TODO.md
 .worktrees/
+.vercel
