@@ -78,7 +78,7 @@ arb is the only terminal that ships with a full shell suite (Starship, z, Delta,
 
 ### Your new machine is ready in one command
 
-Most terminals require you to install a prompt, a fuzzy finder, syntax highlighting, completions, and a better diff pager -- separately. arb bundles all of these as a built-in shell suite. Run `brew install szj2ys/arb/arb`, open the app, and your shell is fully equipped.
+Most terminals require you to install a prompt, a fuzzy finder, syntax highlighting, completions, and a better diff pager -- separately. arb bundles all of these as a built-in shell suite. Run `brew tap szj2ys/arb && brew install arb`, open the app, and your shell is fully equipped.
 
 ### Built for AI coding workflows
 
@@ -104,7 +104,7 @@ arb ships opinionated defaults (JetBrains Mono, Arb Dark, smooth animations) tha
 ### Install
 
 ```bash
-brew install szj2ys/arb/arb
+brew tap szj2ys/arb && brew install arb
 ```
 
 Or download the latest `.dmg` from [Releases](https://github.com/szj2ys/arb/releases) and drag to Applications.
