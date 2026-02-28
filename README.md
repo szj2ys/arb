@@ -24,9 +24,17 @@
 
 <div align="center">
   <br />
-  <img src="docs/terminal-preview.svg" alt="arb terminal screenshot" width="800" />
+  <img src="docs/terminal-preview.svg" alt="arb terminal with Starship prompt and syntax highlighting" width="800" />
   <br />
   <sub>arb with Starship prompt, syntax highlighting, and smart directory navigation</sub>
+  <br /><br />
+</div>
+
+<!-- Split pane demo -->
+<div align="center">
+  <img src="docs/terminal-split-preview.svg" alt="arb split pane demo" width="900" />
+  <br />
+  <sub>Built-in split panes for AI coding workflows — <code>Cmd+D</code> to split, <code>Cmd+Opt+Arrows</code> to navigate</sub>
   <br /><br />
 </div>
 
