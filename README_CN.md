@@ -78,7 +78,7 @@ arb 是唯一一个开箱即带完整 Shell 套件（Starship、z、Delta、语�
 
 ### 一条命令，新机器就绑定
 
-大多数终端需要你分别安装提示符、模糊搜索、语法高亮、补全和 diff 工具。arb 把这些全部内置为 Shell 套件。运行 `brew install szj2ys/arb/arb`，打开应用，你的 Shell 就完整了。
+大多数终端需要你分别安装提示符、模糊搜索、语法高亮、补全和 diff 工具。arb 把这些全部内置为 Shell 套件。运行 `brew tap szj2ys/arb && brew install arb`，打开应用，你的 Shell 就完整了。
 
 ### 为 AI 编程工作流而生
 
@@ -104,7 +104,7 @@ arb 提供有主见的默认设置（JetBrains Mono、Arb Dark、流畅动画）
 ### 安装
 
 ```bash
-brew install szj2ys/arb/arb
+brew tap szj2ys/arb && brew install arb
 ```
 
 或从 [Releases](https://github.com/szj2ys/arb/releases) 下载最新 `.dmg` 并拖入 Applications。
