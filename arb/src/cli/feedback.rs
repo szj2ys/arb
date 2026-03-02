@@ -5,7 +5,7 @@ use anyhow::Result;
 pub struct FeedbackCommand {}
 
 impl FeedbackCommand {
-    pub async fn run(&self, _client: wezterm_client::client::Client) -> Result<()> {
+    pub async fn run(&self) -> Result<()> {
         let feedback_url = "https://github.com/szj2ys/arb/issues/new/choose";
 
         println!("arb Feedback");

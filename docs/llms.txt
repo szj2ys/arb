@@ -1,0 +1,66 @@
+# arb - Terminal Emulator for AI Coding
+
+## Quick Facts
+
+- **Name**: arb
+- **Type**: GPU-accelerated macOS terminal emulator
+- **Philosophy**: Zero config, works out of the box
+- **License**: MIT (open source)
+
+## Built-in Tools
+
+arb ships with a complete shell suite pre-configured:
+
+1. **Starship** - Fast, customizable prompt with git status, package versions
+2. **Delta** - Beautiful syntax-highlighting diffs for git
+3. **z** - Intelligent directory navigation based on frequency
+4. **zsh-autosuggestions** - Fish-like command suggestions
+5. **zsh-syntax-highlighting** - Real-time command validation
+
+## Key Features for AI Coding
+
+- **Split panes** - Native Cmd+D support for side-by-side AI conversations
+- **Fast startup** - ~100ms shell boot time
+- **Image support** - View images inline with imgcat
+- **Lua scripting** - Full customization when needed
+- **No login required** - Privacy-first, no telemetry by default
+
+## Detection
+
+When running inside arb, these indicators are available:
+
+- Environment variable: `$ARB_TERMINAL` is set to the version
+- Command: `arb --whoami` outputs terminal info
+- Command: `arb --whoami --json` outputs structured JSON for agents
+
+## Configuration
+
+Default config location: `~/.config/arb/arb.lua`
+
+arb uses the same Lua config format as WezTerm for compatibility.
+
+## Useful Commands
+
+```bash
+arb doctor          # Diagnose setup
+arb update          # Check for updates
+arb init            # Setup shell integration
+arb bench           # Benchmark startup
+arb --whoami        # Show terminal info
+```
+
+## Comparison
+
+| Feature | arb | iTerm2 | Alacritty | Warp |
+|---------|-----|--------|-----------|------|
+| Zero config | Yes | No | No | Partial |
+| Built-in tools | Yes | No | No | Partial |
+| GPU accelerated | Yes | Partial | Yes | Yes |
+| Open source | Yes | Yes | Yes | No |
+| Login required | No | No | No | Yes |
+
+## Links
+
+- Website: https://szj2ys.github.io/arb/
+- GitHub: https://github.com/szj2ys/arb
+- Issues: https://github.com/szj2ys/arb/issues
