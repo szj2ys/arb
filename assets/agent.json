@@ -1,0 +1,49 @@
+{
+  "name": "arb",
+  "type": "terminal-emulator",
+  "description": "A GPU-accelerated macOS terminal emulator with built-in shell suite",
+  "platforms": ["macos"],
+  "version": "0.1.10",
+  "features": [
+    "gpu-accelerated-rendering",
+    "zero-config",
+    "builtin-shell-tools",
+    "lua-scripting",
+    "split-panes",
+    "tabs",
+    "image-support"
+  ],
+  "builtin_tools": [
+    {
+      "name": "starship",
+      "type": "prompt",
+      "description": "Fast, customizable shell prompt"
+    },
+    {
+      "name": "delta",
+      "type": "pager",
+      "description": "Syntax-highlighting pager for git"
+    },
+    {
+      "name": "z",
+      "type": "navigation",
+      "description": "Smart directory jumper"
+    }
+  ],
+  "agent_capabilities": {
+    "supports_ansi": true,
+    "supports_images": true,
+    "supports_hyperlinks": true,
+    "supports_osc52": true,
+    "supports_osc7": true,
+    "color_depth": "24bit"
+  },
+  "detection": {
+    "environment_variable": "ARB_TERMINAL",
+    "command": "arb --whoami",
+    "config_file": "~/.arb/config"
+  },
+  "website": "https://szj2ys.github.io/arb/",
+  "repository": "https://github.com/szj2ys/arb",
+  "license": "MIT"
+}

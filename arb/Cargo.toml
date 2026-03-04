@@ -38,6 +38,7 @@ termwiz.workspace = true
 umask.workspace = true
 ureq.workspace = true
 url.workspace = true
+open = "5.3"
 wezterm-client.workspace = true
 wezterm-gui-subcommands.workspace = true
 wezterm-term.workspace = true

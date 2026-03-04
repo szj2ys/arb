@@ -177,6 +177,12 @@ enum SubCommand {
         about = "Benchmark shell startup time and detect installed terminals"
     )]
     Bench(bench::BenchCommand),
+
+    #[command(
+        name = "whoami",
+        about = "Output terminal identification information for AI agents"
+    )]
+    Whoami(WhoamiCommand),
 }
 
 use termwiz::escape::osc::{
@@ -319,6 +325,50 @@ fn width_x_height(arg: &str) -> Result<ImageDimension, String> {
         Ok(ImageDimension { width, height })
     } else {
         Err(format!("Expected WxH, but got {}", arg))
+    }
+}
+
+/// Whoami command for AI agent discovery
+#[derive(Debug, Parser, Clone, Default)]
+pub struct WhoamiCommand {
+    /// Output in JSON format
+    #[arg(long)]
+    json: bool,
+}
+
+impl WhoamiCommand {
+    fn run(&self) -> anyhow::Result<()> {
+        let version = config::arb_version();
+
+        if self.json {
+            let info = serde_json::json!({
+                "terminal": "arb",
+                "version": version,
+                "features": [
+                    "gpu-accelerated",
+                    "builtin-shell-suite",
+                    "lua-scripting",
+                    "split-panes",
+                    "tabs"
+                ],
+                "shell_tools": [
+                    "starship",
+                    "delta",
+                    "z"
+                ],
+                "website": "https://szj2ys.github.io/arb/",
+                "documentation": "https://github.com/szj2ys/arb",
+                "platform": "macos"
+            });
+            println!("{}", serde_json::to_string_pretty(&info)?);
+        } else {
+            println!("Terminal: arb");
+            println!("Version: {}", version);
+            println!("Features: gpu-accelerated, builtin-shell-suite, lua-scripting");
+            println!("Website: https://szj2ys.github.io/arb/");
+        }
+
+        Ok(())
     }
 }
 
@@ -751,6 +801,9 @@ fn main() {
 }
 
 fn init_config(opts: &Opt) -> anyhow::Result<ConfigHandle> {
+    // Set ARB_TERMINAL for AI agent discovery
+    std::env::set_var("ARB_TERMINAL", config::arb_version());
+
     config::common_init(
         opts.config_file.as_ref(),
         &opts.config_override,
@@ -800,6 +853,7 @@ fn run() -> anyhow::Result<()> {
         SubCommand::Reset(cmd) => cmd.run(),
         SubCommand::Doctor(cmd) => cmd.run(),
         SubCommand::Bench(cmd) => cmd.run(),
+        SubCommand::Whoami(cmd) => cmd.run(),
     }
 }
 
