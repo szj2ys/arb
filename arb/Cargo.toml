@@ -39,6 +39,8 @@ umask.workspace = true
 ureq.workspace = true
 url.workspace = true
 open = "5.3"
+dirs = "5.0"
+uuid = { version = "1.0", features = ["v4", "serde"] }
 wezterm-client.workspace = true
 wezterm-gui-subcommands.workspace = true
 wezterm-term.workspace = true
