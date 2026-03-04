@@ -3,7 +3,7 @@
 //! Provides autonomous task execution with tool use capabilities.
 //! The agent can plan, execute, and iterate on tasks using available tools.
 
-use crate::ai::provider::{ChatRequest, LLMProvider, Message, Role};
+use crate::ai::provider::{ChatRequest, LLMProvider, Message, Role, ToolCall};
 use crate::ai::tools::{ToolRegistry, ToolResult};
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
@@ -58,14 +58,15 @@ pub enum AgentStatus {
 pub struct AgentStep {
     pub iteration: u32,
     pub thought: String,
-    pub tool_calls: Vec<ToolCall>,
+    pub tool_calls: Vec<AgentToolCall>,
     pub tool_results: Vec<ToolResult>,
     pub timestamp: chrono::DateTime<chrono::Utc>,
 }
 
-/// Tool call from the agent
+/// Tool call for agent steps (simplified from provider's ToolCall)
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ToolCall {
+pub struct AgentToolCall {
+    pub id: String,
     pub name: String,
     pub arguments: Value,
 }
@@ -155,21 +156,16 @@ impl Agent {
 
         // Initialize conversation
         let mut messages = vec![
-            Message {
-                role: Role::System,
-                content: system_prompt,
-                name: None,
-            },
-            Message {
-                role: Role::User,
-                content: format!(
+            Message::new(Role::System, system_prompt),
+            Message::new(
+                Role::User,
+                format!(
                     "Task: {}\n\nPlease complete this task using the available tools. \
                     Think step by step and use tools when needed. \
                     When you're done, provide a summary of what you accomplished.",
                     task
                 ),
-                name: None,
-            },
+            ),
         ];
 
         let mut steps = Vec::new();
@@ -217,11 +213,12 @@ impl Agent {
             };
 
             let assistant_message = response.choices.first()
-                .map(|c| c.message.content.clone())
-                .unwrap_or_default();
+                .map(|c| c.message.clone())
+                .unwrap_or_else(|| Message::new(Role::Assistant, ""));
 
-            // Parse tool calls from the response
-            let (thought, tool_calls) = self.parse_response(&assistant_message);
+            // Extract content and tool calls from the response
+            let thought = assistant_message.content.clone().unwrap_or_default();
+            let tool_calls = assistant_message.tool_calls.clone().unwrap_or_default();
 
             self.send_event(AgentEvent::Thinking {
                 iteration,
@@ -230,30 +227,44 @@ impl Agent {
             .await;
 
             // Execute tool calls
+            let mut agent_tool_calls = Vec::new();
             let mut tool_results = Vec::new();
+            let mut tool_call_results = Vec::new();
             for tool_call in &tool_calls {
+                let tool_name = &tool_call.function.name;
+                let args: Value = serde_json::from_str(&tool_call.function.arguments)
+                    .unwrap_or(serde_json::json!({}));
+
+                agent_tool_calls.push(AgentToolCall {
+                    id: tool_call.id.clone(),
+                    name: tool_name.clone(),
+                    arguments: args.clone(),
+                });
+
                 self.send_event(AgentEvent::ToolCalling {
                     iteration,
-                    tool_name: tool_call.name.clone(),
-                    arguments: tool_call.arguments.clone(),
+                    tool_name: tool_name.clone(),
+                    arguments: args.clone(),
                 })
                 .await;
 
                 // Check for shell command confirmation
-                if tool_call.name == "shell" && self.config.confirm_shell_commands {
-                    let command = tool_call.arguments
+                if tool_name == "shell" && self.config.confirm_shell_commands {
+                    let command = args
                         .get("command")
                         .and_then(|c| c.as_str())
                         .unwrap_or("");
 
                     if !self.confirm_shell_command(command).await? {
-                        tool_results.push(ToolResult::error("User cancelled the command"));
+                        let result = ToolResult::error("User cancelled the command");
+                        tool_results.push(result.clone());
+                        tool_call_results.push((tool_call.id.clone(), result));
                         continue;
                     }
                 }
 
                 let result = self.tool_registry
-                    .execute(&tool_call.name, tool_call.arguments.clone())
+                    .execute(tool_name, args)
                     .await;
 
                 self.send_event(AgentEvent::ToolResult {
@@ -262,14 +273,15 @@ impl Agent {
                 })
                 .await;
 
-                tool_results.push(result);
+                tool_results.push(result.clone());
+                tool_call_results.push((tool_call.id.clone(), result));
             }
 
             // Record step
             let step = AgentStep {
                 iteration,
                 thought: thought.clone(),
-                tool_calls: tool_calls.clone(),
+                tool_calls: agent_tool_calls,
                 tool_results: tool_results.clone(),
                 timestamp: chrono::Utc::now(),
             };
@@ -287,37 +299,25 @@ impl Agent {
                 break;
             }
 
-            // Build next message
-            let mut next_content = thought;
-            if !tool_results.is_empty() {
-                next_content.push_str("\n\nTool results:\n");
-                for (i, result) in tool_results.iter().enumerate() {
-                    next_content.push_str(&format!(
-                        "\n[Tool {}]: {}\nSuccess: {}\nOutput: {}\n",
-                        i + 1,
-                        tool_calls.get(i).map(|t| t.name.as_str()).unwrap_or("unknown"),
-                        result.success,
-                        result.output
-                    ));
-                    if let Some(error) = &result.error {
-                        next_content.push_str(&format!("Error: {}\n", error));
-                    }
-                }
-            }
+            // Add assistant message with tool calls
+            messages.push(assistant_message);
 
-            messages.push(Message {
-                role: Role::Assistant,
-                content: next_content,
-                name: None,
-            });
+            // Add tool result messages
+            for (tool_call_id, result) in tool_call_results {
+                let content = if result.success {
+                    result.output
+                } else {
+                    format!("Error: {}", result.error.unwrap_or_default())
+                };
+                messages.push(Message::tool_result(tool_call_id, content));
+            }
 
             // Add a continue prompt if no tools were called but task isn't complete
             if tool_calls.is_empty() {
-                messages.push(Message {
-                    role: Role::User,
-                    content: "Continue working on the task. Use tools if needed.".to_string(),
-                    name: None,
-                });
+                messages.push(Message::new(
+                    Role::User,
+                    "Continue working on the task. Use tools if needed.",
+                ));
             }
         }
 
@@ -366,9 +366,9 @@ impl Agent {
                 let def = tool.definition();
                 format!(
                     "- {}: {}\n  Parameters: {}",
-                    def.name,
-                    def.description,
-                    serde_json::to_string_pretty(&def.parameters).unwrap_or_default()
+                    def.function.name,
+                    def.function.description,
+                    serde_json::to_string_pretty(&def.function.parameters).unwrap_or_default()
                 )
             })
             .collect();
@@ -376,54 +376,13 @@ impl Agent {
         format!(
             "You are an AI agent that can execute tasks autonomously using available tools.\n\n\
             Available tools:\n{}\n\n\
-            When you want to use a tool, respond with a JSON object in this format:\n\
-            {{{{\n\
-            \"thought\": \"Your reasoning here\",\n\
-            \"tool_calls\": [\n\
-            {{{{\n\
-            \"name\": \"tool_name\",\n\
-            \"arguments\": {{{{ \"param\": \"value\" }}}}\n\
-            }}}}\n\
-            ]\n\
-            }}}}\n\n\
-            If you don't need any tools, just provide your response.\n\
-            When the task is complete, clearly indicate this in your response.\n\n\
+            When you need to use a tool, use the function_call format. \
+            When you're done, provide a summary of what you accomplished.\n\n\
             Working directory: {}\n\
             Be thorough but efficient. Always check your work.",
             tool_descriptions.join("\n"),
             self.config.working_dir.display()
         )
-    }
-
-    /// Parse the agent's response
-    fn parse_response(&self, response: &str) -> (String, Vec<ToolCall>) {
-        // Try to parse as JSON
-        if let Ok(json) = serde_json::from_str::<Value>(response) {
-            let thought = json
-                .get("thought")
-                .and_then(|t| t.as_str())
-                .unwrap_or(response)
-                .to_string();
-
-            let tool_calls = json
-                .get("tool_calls")
-                .and_then(|t| t.as_array())
-                .map(|arr| {
-                    arr.iter()
-                        .filter_map(|item| {
-                            let name = item.get("name")?.as_str()?.to_string();
-                            let arguments = item.get("arguments").cloned().unwrap_or(Value::Null);
-                            Some(ToolCall { name, arguments })
-                        })
-                        .collect()
-                })
-                .unwrap_or_default();
-
-            return (thought, tool_calls);
-        }
-
-        // Fallback: treat entire response as thought
-        (response.to_string(), Vec::new())
     }
 
     /// Check if the task appears to be complete

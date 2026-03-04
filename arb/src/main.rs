@@ -24,9 +24,11 @@ mod doctor;
 mod init;
 pub(crate) mod paths;
 mod reset;
-pub mod stats;
-pub mod telemetry;
-pub mod update;
+mod stats;
+mod telemetry;
+mod update;
+
+use crate::stats::StatsCommand;
 
 #[derive(Debug, Parser)]
 #[command(

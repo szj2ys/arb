@@ -18,9 +18,57 @@ use std::time::Duration;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Message {
     pub role: Role,
-    pub content: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub content: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "tool_calls")]
+    pub tool_calls: Option<Vec<ToolCall>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "tool_call_id")]
+    pub tool_call_id: Option<String>,
+}
+
+impl Message {
+    pub fn new(role: Role, content: impl Into<String>) -> Self {
+        Self {
+            role,
+            content: Some(content.into()),
+            name: None,
+            tool_calls: None,
+            tool_call_id: None,
+        }
+    }
+
+    pub fn tool_result(tool_call_id: impl Into<String>, content: impl Into<String>) -> Self {
+        Self {
+            role: Role::Tool,
+            content: Some(content.into()),
+            name: None,
+            tool_calls: None,
+            tool_call_id: Some(tool_call_id.into()),
+        }
+    }
+
+    pub fn with_tool_calls(mut self, calls: Vec<ToolCall>) -> Self {
+        self.tool_calls = Some(calls);
+        self
+    }
+}
+
+/// Tool call from the assistant
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ToolCall {
+    pub id: String,
+    #[serde(rename = "type")]
+    pub call_type: String,
+    pub function: FunctionCall,
+}
+
+/// Function call details
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct FunctionCall {
+    pub name: String,
+    pub arguments: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -47,9 +95,29 @@ pub struct ChatRequest {
     pub tools: Option<Vec<ToolDefinition>>,
 }
 
-/// Tool definition for function calling
+/// Tool definition for function calling (OpenAI format)
 #[derive(Debug, Clone, Serialize)]
 pub struct ToolDefinition {
+    #[serde(rename = "type")]
+    pub tool_type: String,
+    pub function: FunctionDefinition,
+}
+
+impl ToolDefinition {
+    pub fn new(name: impl Into<String>, description: impl Into<String>, parameters: serde_json::Value) -> Self {
+        Self {
+            tool_type: "function".to_string(),
+            function: FunctionDefinition {
+                name: name.into(),
+                description: description.into(),
+                parameters,
+            },
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct FunctionDefinition {
     pub name: String,
     pub description: String,
     pub parameters: serde_json::Value,

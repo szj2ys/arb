@@ -53,15 +53,15 @@ pub trait Tool: Send + Sync {
 
 /// Create a tool definition with the given name and description
 pub fn tool_def(name: impl Into<String>, description: impl Into<String>) -> ToolDefinition {
-    ToolDefinition {
-        name: name.into(),
-        description: description.into(),
-        parameters: serde_json::json!({
+    ToolDefinition::new(
+        name,
+        description,
+        serde_json::json!({
             "type": "object",
             "properties": {},
             "required": []
         }),
-    }
+    )
 }
 
 /// Add a parameter to the tool definition
@@ -74,9 +74,10 @@ pub fn with_parameter(
 ) -> ToolDefinition {
     let name = name.into();
     let mut properties = def
+        .function
         .parameters
-        .get_mut("properties")
-        .and_then(|p| p.as_object_mut())
+        .get("properties")
+        .and_then(|p| p.as_object())
         .expect("parameters should be an object")
         .clone();
 
@@ -88,17 +89,25 @@ pub fn with_parameter(
         }),
     );
 
-    if let Some(obj) = def.parameters.as_object_mut() {
-        obj.insert("properties".to_string(), serde_json::Value::Object(properties));
-
-        if required {
-            let required = obj
-                .get_mut("required")
-                .and_then(|r| r.as_array_mut())
-                .expect("required should be an array");
-            required.push(serde_json::json!(name));
+    def.function.parameters = serde_json::json!({
+        "type": "object",
+        "properties": properties,
+        "required": if required {
+            let mut req = def.function.parameters
+                .get("required")
+                .and_then(|r| r.as_array())
+                .map(|r| r.clone())
+                .unwrap_or_default();
+            req.push(serde_json::json!(name));
+            req
+        } else {
+            def.function.parameters
+                .get("required")
+                .and_then(|r| r.as_array())
+                .map(|r| r.clone())
+                .unwrap_or_default()
         }
-    }
+    });
 
     def
 }
