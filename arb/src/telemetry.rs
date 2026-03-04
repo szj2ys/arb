@@ -126,7 +126,7 @@ impl Telemetry {
         let events = self.get_events()?;
         let mut stats = TelemetryStats::default();
 
-        for event in events {
+        for event in &events {
             match event.event_type {
                 EventType::Install { .. } => stats.install_count += 1,
                 EventType::FirstLaunch { .. } => stats.first_launch_count += 1,
@@ -171,7 +171,7 @@ impl Telemetry {
             return Ok(fs::read_to_string(&id_file)?.trim().to_string());
         }
 
-        let id = format!("arb_{}", uuid::Uuid::new_v4().to_simple());
+        let id = format!("arb_{}", uuid::Uuid::new_v4().as_simple());
         fs::write(&id_file, &id)?;
         Ok(id)
     }
