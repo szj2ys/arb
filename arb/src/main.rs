@@ -25,8 +25,11 @@ mod init;
 pub(crate) mod paths;
 mod reset;
 pub mod stats;
+pub use stats::StatsCommand;
 pub mod telemetry;
 pub mod update;
+
+mod ai;
 
 #[derive(Debug, Parser)]
 #[command(
@@ -191,6 +194,12 @@ enum SubCommand {
         about = "Show local usage statistics (anonymous, privacy-preserving)"
     )]
     Stats(StatsCommand),
+
+    #[command(
+        name = "ai",
+        about = "AI assistant for natural language commands and chat"
+    )]
+    Ai(ai::AiCommand),
 }
 
 use termwiz::escape::osc::{
@@ -867,6 +876,13 @@ fn run() -> anyhow::Result<()> {
         SubCommand::Bench(cmd) => cmd.run(),
         SubCommand::Stats(cmd) => cmd.run(),
         SubCommand::Whoami(cmd) => cmd.run(),
+        SubCommand::Ai(cmd) => {
+            if let Err(e) = tokio::runtime::Runtime::new().unwrap().block_on(cmd.run()) {
+                eprintln!("AI error: {:#}", e);
+                std::process::exit(1);
+            }
+            Ok(())
+        }
     }
 }
 

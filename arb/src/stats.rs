@@ -16,7 +16,7 @@ pub struct StatsCommand {
 
 impl StatsCommand {
     pub fn run(&self) -> anyhow::Result<()> {
-        use crate::telemetry::{EventType, InstallMethod, Telemetry};
+        use crate::telemetry::Telemetry;
 
         let telemetry = Telemetry::new()?;
 
