@@ -142,6 +142,7 @@ dependencies = [
  "filedescriptor",
  "filetime",
  "futures",
+ "glob",
  "hostname",
  "humantime",
  "image",

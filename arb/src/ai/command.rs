@@ -40,6 +40,14 @@ enum AiSubCommand {
     /// Test LLM connection
     #[command(name = "test")]
     Test,
+
+    /// Start agent mode for autonomous task execution
+    #[command(name = "agent")]
+    Agent(crate::ai::agent::command::AgentCommand),
+
+    /// Start team mode for multi-agent collaboration
+    #[command(name = "team")]
+    Team(crate::ai::team::command::TeamCommand),
 }
 
 /// AI configuration commands
@@ -92,6 +100,8 @@ impl AiCommand {
             Some(AiSubCommand::Explain { text }) => explain_command(text).await,
             Some(AiSubCommand::Fix) => fix_last_error().await,
             Some(AiSubCommand::Test) => test_connection().await,
+            Some(AiSubCommand::Agent(agent_cmd)) => agent_cmd.run().await,
+            Some(AiSubCommand::Team(team_cmd)) => team_cmd.run().await,
             None => {
                 if let Some(query) = &self.query {
                     process_natural_language(query).await
@@ -408,12 +418,12 @@ async fn create_provider() -> Result<Box<dyn LLMProvider>> {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-struct AiConfig {
-    name: String,
-    api_url: String,
-    model: String,
-    temperature: Option<f32>,
-    max_tokens: Option<u32>,
+pub struct AiConfig {
+    pub name: String,
+    pub api_url: String,
+    pub model: String,
+    pub temperature: Option<f32>,
+    pub max_tokens: Option<u32>,
 }
 
 impl Default for AiConfig {
@@ -428,7 +438,7 @@ impl Default for AiConfig {
     }
 }
 
-async fn load_ai_config() -> Result<AiConfig> {
+pub async fn load_ai_config() -> Result<AiConfig> {
     let config_path = get_config_path()?;
     if config_path.exists() {
         let content = tokio::fs::read_to_string(&config_path).await?;
@@ -460,7 +470,7 @@ async fn store_api_key(key: &str) -> Result<()> {
     Ok(())
 }
 
-async fn get_api_key() -> Result<String> {
+pub async fn get_api_key() -> Result<String> {
     // Try environment first
     if let Ok(key) = std::env::var("ARB_AI_API_KEY") {
         return Ok(key);
