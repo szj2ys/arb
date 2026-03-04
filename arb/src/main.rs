@@ -24,6 +24,8 @@ mod doctor;
 mod init;
 pub(crate) mod paths;
 mod reset;
+pub mod stats;
+pub mod telemetry;
 pub mod update;
 
 #[derive(Debug, Parser)]
@@ -183,6 +185,12 @@ enum SubCommand {
         about = "Output terminal identification information for AI agents"
     )]
     Whoami(WhoamiCommand),
+
+    #[command(
+        name = "stats",
+        about = "Show local usage statistics (anonymous, privacy-preserving)"
+    )]
+    Stats(StatsCommand),
 }
 
 use termwiz::escape::osc::{
@@ -794,6 +802,10 @@ fn terminate_with_error(err: anyhow::Error) -> ! {
 fn main() {
     config::designate_this_as_the_main_thread();
     config::assign_error_callback(mux::connui::show_configuration_error_message);
+
+    // Initialize telemetry (silently fails if disabled)
+    let _ = telemetry::init();
+
     if let Err(e) = run() {
         terminate_with_error(e);
     }
@@ -853,6 +865,7 @@ fn run() -> anyhow::Result<()> {
         SubCommand::Reset(cmd) => cmd.run(),
         SubCommand::Doctor(cmd) => cmd.run(),
         SubCommand::Bench(cmd) => cmd.run(),
+        SubCommand::Stats(cmd) => cmd.run(),
         SubCommand::Whoami(cmd) => cmd.run(),
     }
 }

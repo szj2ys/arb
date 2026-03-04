@@ -30,6 +30,7 @@ mod imp {
 #[cfg(target_os = "macos")]
 mod imp {
     use super::*;
+    use crate::telemetry::{EventType, InstallMethod};
     use std::os::unix::fs::PermissionsExt;
 
     pub fn run(update_only: bool) -> anyhow::Result<()> {
@@ -67,6 +68,16 @@ mod imp {
             .with_context(|| format!("run {}", script.display()))?;
 
         if status.success() {
+            // Record successful init/install
+            if !update_only {
+                crate::telemetry::record(EventType::Install {
+                    method: InstallMethod::Homebrew,
+                });
+            }
+            crate::telemetry::record(EventType::ShellInit {
+                shell: "zsh".to_string(),
+            });
+
             if !update_only {
                 print_init_summary();
             }

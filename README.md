@@ -135,6 +135,7 @@ git diff
 arb doctor   # Check that your shell integration is healthy
 arb update   # Check for and apply updates from the CLI
 arb reset    # Remove arb-managed shell config (--yes for non-interactive)
+arb stats    # View local usage statistics (privacy-respecting)
 ```
 
 ---
