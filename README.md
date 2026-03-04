@@ -20,6 +20,7 @@
   <img src="https://img.shields.io/badge/shell%20boot-~100ms-brightgreen?style=flat-square" alt="Shell Boot ~100ms" />
   <img src="https://img.shields.io/badge/config-zero-brightgreen?style=flat-square" alt="Zero Config" />
   <img src="https://img.shields.io/badge/login-not%20required-brightgreen?style=flat-square" alt="No Login Required" />
+  <img src="https://img.shields.io/badge/AI%20Coding-optimized-purple?style=flat-square" alt="AI Coding Optimized" />
 </p>
 
 <div align="center">
