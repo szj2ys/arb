@@ -5,10 +5,8 @@
 
 use crate::ai::agent::{Agent, AgentConfig, AgentResult, AgentStatus};
 use crate::ai::provider::{LLMProvider, ProviderConfig, ProviderFactory};
-use crate::ai::tools::ToolRegistry;
 use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -177,6 +175,7 @@ pub enum TeamEvent {
 }
 
 /// The Team manages multiple agents working together
+#[allow(dead_code)]
 pub struct Team {
     config: TeamConfig,
     members: Arc<RwLock<HashMap<String, (TeamMember, Arc<dyn LLMProvider>)>>>,
@@ -200,6 +199,7 @@ impl Team {
     }
 
     /// Set an event sender for progress reporting
+    #[allow(dead_code)]
     pub fn with_event_sender(mut self, tx: mpsc::UnboundedSender<TeamEvent>) -> Self {
         self.event_tx = Some(tx);
         self
@@ -251,6 +251,7 @@ impl Team {
     }
 
     /// Remove a member from the team
+    #[allow(dead_code)]
     pub async fn remove_member(&self, member_id: &str) -> Result<()> {
         {
             let mut members = self.members.write().await;
@@ -272,6 +273,7 @@ impl Team {
     }
 
     /// Send a message between members
+    #[allow(dead_code)]
     pub async fn send_message(
         &self,
         from: impl Into<String>,
@@ -300,6 +302,7 @@ impl Team {
     }
 
     /// Broadcast a message to all members
+    #[allow(dead_code)]
     pub async fn broadcast(
         &self,
         from: impl Into<String>,
@@ -455,11 +458,13 @@ impl Team {
     }
 
     /// Stop the team
+    #[allow(dead_code)]
     pub async fn stop(&self) {
         *self.running.write().await = false;
     }
 
     /// Check if team is running
+    #[allow(dead_code)]
     pub async fn is_running(&self) -> bool {
         *self.running.read().await
     }

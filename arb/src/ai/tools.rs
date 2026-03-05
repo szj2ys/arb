@@ -402,6 +402,7 @@ impl ShellTool {
     }
 
     /// Set allowed commands (empty = allow all)
+    #[allow(dead_code)]
     pub fn with_allowed_commands(mut self, commands: Vec<String>) -> Self {
         self.allowed_commands = commands;
         self
@@ -644,7 +645,7 @@ impl Tool for ListDirectoryTool {
                             "[FILE] "
                         };
 
-                        let name = entry.file_name().to_string_lossy().to_string();
+                        let _name = entry.file_name().to_string_lossy().to_string();
                         let relative_path = entry
                             .path()
                             .strip_prefix(&self.working_dir)
