@@ -121,17 +121,20 @@ impl Agent {
     }
 
     /// Set an event sender for progress reporting
+    #[allow(dead_code)]
     pub fn with_event_sender(mut self, tx: mpsc::UnboundedSender<AgentEvent>) -> Self {
         self.event_tx = Some(tx);
         self
     }
 
     /// Get the current status
+    #[allow(dead_code)]
     pub async fn status(&self) -> AgentStatus {
         *self.status.lock().await
     }
 
     /// Get execution history
+    #[allow(dead_code)]
     pub async fn history(&self) -> Vec<AgentStep> {
         self.history.lock().await.clone()
     }
@@ -351,6 +354,7 @@ impl Agent {
     }
 
     /// Cancel the running agent
+    #[allow(dead_code)]
     pub async fn cancel(&self) {
         let mut status = self.status.lock().await;
         *status = AgentStatus::Cancelled;

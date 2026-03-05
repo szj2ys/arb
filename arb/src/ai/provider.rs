@@ -57,6 +57,7 @@ pub struct ToolDefinition {
 
 /// LLM response
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct ChatResponse {
     pub id: String,
     pub choices: Vec<Choice>,
@@ -64,6 +65,7 @@ pub struct ChatResponse {
 }
 
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct Choice {
     pub index: u32,
     pub message: Message,
@@ -72,6 +74,7 @@ pub struct Choice {
 }
 
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct Usage {
     pub prompt_tokens: u32,
     pub completion_tokens: u32,
@@ -80,12 +83,14 @@ pub struct Usage {
 
 /// Streaming response chunk
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct StreamChunk {
     pub id: String,
     pub choices: Vec<StreamChoice>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct StreamChoice {
     pub index: u32,
     pub delta: Delta,
@@ -94,6 +99,7 @@ pub struct StreamChoice {
 }
 
 #[derive(Debug, Clone, Deserialize, Default)]
+#[allow(dead_code)]
 pub struct Delta {
     #[serde(default)]
     pub role: Option<String>,
