@@ -9,6 +9,7 @@ use std::collections::HashMap;
 use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::PathBuf;
+use std::sync::OnceLock;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 /// Telemetry event types
@@ -238,35 +239,31 @@ impl TelemetryStats {
     }
 }
 
-/// Global telemetry instance
-static mut TELEMETRY: Option<Telemetry> = None;
+/// Global telemetry instance (lazy-initialized)
+static TELEMETRY: OnceLock<Telemetry> = OnceLock::new();
 
 /// Initialize global telemetry
 pub fn init() -> Result<()> {
     let telemetry = Telemetry::new()?;
-    unsafe {
-        TELEMETRY = Some(telemetry);
-    }
+    let _ = TELEMETRY.set(telemetry);
     Ok(())
 }
 
 /// Record an event globally
 pub fn record(event_type: EventType) {
-    unsafe {
-        if let Some(ref telemetry) = TELEMETRY {
-            let _ = telemetry.record(event_type);
-        }
+    if let Some(telemetry) = TELEMETRY.get() {
+        let _ = telemetry.record(event_type);
     }
 }
 
 /// Get global telemetry instance
 pub fn get() -> Option<&'static Telemetry> {
-    unsafe { TELEMETRY.as_ref() }
+    TELEMETRY.get()
 }
 
 /// Check if telemetry is initialized
 pub fn is_initialized() -> bool {
-    unsafe { TELEMETRY.is_some() }
+    TELEMETRY.get().is_some()
 }
 
 #[cfg(test)]
