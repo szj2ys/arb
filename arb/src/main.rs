@@ -808,12 +808,36 @@ fn terminate_with_error(err: anyhow::Error) -> ! {
     terminate_with_error_message(&format!("{:#}", err));
 }
 
+/// Print welcome message for first-time users
+fn print_welcome_message() {
+    use crate::paths::{BOLD, GREEN, RESET, GRAY, YELLOW};
+
+    println!();
+    println!("  {GREEN}{BOLD}Welcome to Arb!{RESET}");
+    println!();
+    println!("  Arb is a GPU-accelerated terminal with built-in shell tools.");
+    println!();
+    println!("  {YELLOW}Quick start:{RESET}");
+    println!("    1. Run {BOLD}arb init{RESET} to set up shell integration");
+    println!("    2. Open a new terminal tab");
+    println!("    3. Try: {BOLD}z <directory>{RESET} for smart jumping");
+    println!("           {BOLD}git diff{RESET} for beautiful diffs");
+    println!();
+    println!("  {GRAY}Need help? Run arb doctor or visit https://szj2ys.github.io/arb/{RESET}");
+    println!();
+}
+
 fn main() {
     config::designate_this_as_the_main_thread();
     config::assign_error_callback(mux::connui::show_configuration_error_message);
 
     // Initialize telemetry (silently fails if disabled)
     let _ = telemetry::init();
+
+    // Show welcome message for first-time users
+    if paths::is_first_run() {
+        print_welcome_message();
+    }
 
     if let Err(e) = run() {
         terminate_with_error(e);
