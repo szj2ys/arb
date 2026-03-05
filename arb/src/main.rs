@@ -366,23 +366,38 @@ impl WhoamiCommand {
                     "builtin-shell-suite",
                     "lua-scripting",
                     "split-panes",
-                    "tabs"
+                    "tabs",
+                    "ai-integration"
                 ],
                 "shell_tools": [
                     "starship",
                     "delta",
                     "z"
                 ],
+                "ai_capabilities": {
+                    "agent_mode": true,
+                    "team_mode": true,
+                    "tool_use": ["file_read", "file_write", "shell", "git", "list_dir"],
+                    "llm_support": ["openai", "anthropic", "dashscope", "ollama"]
+                },
+                "escape_sequences": {
+                    "hyperlink": "\\e]8;;URL\\e\\\\TEXT\\e]8;;\\e\\\\",
+                    "image_display": "iterm2/kitty compatible",
+                    "cwd_reporting": "\\e]7;file://host/path\\e\\\\"
+                },
                 "website": "https://szj2ys.github.io/arb/",
                 "documentation": "https://github.com/szj2ys/arb",
-                "platform": "macos"
+                "llms_txt": "https://szj2ys.github.io/arb/llms.txt",
+                "platform": "macos",
+                "config_path": "~/.config/arb/arb.lua"
             });
             println!("{}", serde_json::to_string_pretty(&info)?);
         } else {
             println!("Terminal: arb");
             println!("Version: {}", version);
-            println!("Features: gpu-accelerated, builtin-shell-suite, lua-scripting");
+            println!("Features: gpu-accelerated, builtin-shell-suite, lua-scripting, ai-integration");
             println!("Website: https://szj2ys.github.io/arb/");
+            println!("LLMs.txt: https://szj2ys.github.io/arb/llms.txt");
         }
 
         Ok(())
