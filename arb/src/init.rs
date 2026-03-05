@@ -78,6 +78,9 @@ mod imp {
                 shell: "zsh".to_string(),
             });
 
+            // Mark as initialized
+            let _ = crate::paths::mark_initialized();
+
             if !update_only {
                 print_init_summary();
             }
