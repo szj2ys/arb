@@ -221,6 +221,17 @@ mod imp {
         }
     }
 
+    /// Get performance rating emoji and label based on startup time
+    fn get_performance_rating(ms: f64) -> &'static str {
+        if ms < 150.0 {
+            "🚀 Fast"
+        } else if ms < 300.0 {
+            "⚡ Normal"
+        } else {
+            "🐢 Slow"
+        }
+    }
+
     /// Format benchmark results as pretty ANSI output.
     fn print_ansi(result: &BenchResult) {
         println!();
@@ -232,9 +243,10 @@ mod imp {
         println!("Iterations: {}", result.iterations);
         println!();
         println!("{BOLD}Your shell startup time:{RESET}");
+        let rating = get_performance_rating(result.arb_median_ms);
         println!(
-            "  arb environment:  {GREEN}{:>6.0}ms{RESET} (median)",
-            result.arb_median_ms
+            "  arb environment:  {GREEN}{:>6.0}ms{RESET} (median) {}",
+            result.arb_median_ms, rating
         );
         println!(
             "  raw {}:         {:>6.0}ms (median)",
