@@ -13,72 +13,71 @@ pub struct FeedbackCommand {
     feature: bool,
 }
 
+const BASE_URL: &str = "https://github.com/szj2ys/arb/issues/new";
+const DISCUSSIONS_URL: &str = "https://github.com/szj2ys/arb/discussions";
+
 impl FeedbackCommand {
     pub async fn run(&self) -> Result<()> {
-        let base_url = "https://github.com/szj2ys/arb/issues/new";
+        let url = self.build_url();
 
-        // Determine the URL based on command type
-        let url = if self.bug {
-            format!("{}?template=bug_report.md", base_url)
-        } else if self.feature {
-            format!("{}?template=feature_request.md", base_url)
-        } else {
-            format!("{}/choose", base_url)
-        };
-
-        // Collect system info
-        let version = env!("CARGO_PKG_VERSION");
-        let os_info = get_os_info();
-
-        println!("arb Feedback");
-        println!("============");
-        println!();
-
-        if self.bug {
-            println!("Creating a bug report...");
-            println!();
-            println!("System information:");
-            println!("  arb version: {}", version);
-            println!("  OS: {}", os_info);
-            println!();
-        } else if self.feature {
-            println!("Creating a feature request...");
-            println!();
-        } else {
-            println!("We'd love to hear from you!");
-            println!();
-            println!("How to provide feedback:");
-            println!();
-            println!("  1. GitHub Issues (preferred):");
-            println!("     {}", url);
-            println!();
-            println!("  2. GitHub Discussions:");
-            println!("     https://github.com/szj2ys/arb/discussions");
-            println!();
-            println!("  3. Quick commands:");
-            println!("     arb feedback --bug     Create a bug report");
-            println!("     arb feedback --feature Create a feature request");
-            println!();
-            println!("When reporting issues, please include:");
-            println!("  - macOS version");
-            println!("  - arb version (run: arb --version)");
-            println!("  - Steps to reproduce");
-            println!("  - Expected vs actual behavior");
-            println!();
-        }
-
-        // Try to open browser
-        match open::that(&url) {
-            Ok(_) => {
-                println!("Opening feedback page in your browser...");
-            }
-            Err(_) => {
-                println!("Please visit the feedback URL manually:");
-                println!("  {}", url);
-            }
-        }
+        println!("arb Feedback\n============\n");
+        self.print_content(&url);
+        self.open_browser(&url);
 
         Ok(())
+    }
+
+    fn build_url(&self) -> String {
+        match (self.bug, self.feature) {
+            (true, _) => format!("{}?template=bug_report.md", BASE_URL),
+            (_, true) => format!("{}?template=feature_request.md", BASE_URL),
+            _ => format!("{}/choose", BASE_URL),
+        }
+    }
+
+    fn print_content(&self, url: &str) {
+        if self.bug {
+            self.print_bug_report();
+        } else if self.feature {
+            println!("Creating a feature request...\n");
+        } else {
+            self.print_general_feedback(url);
+        }
+    }
+
+    fn print_bug_report(&self) {
+        let version = env!("CARGO_PKG_VERSION");
+        println!(
+            "Creating a bug report...\n\nSystem information:\n  arb version: {}\n  OS: {}\n",
+            version,
+            get_os_info()
+        );
+    }
+
+    fn print_general_feedback(&self, url: &str) {
+        println!(
+            "We'd love to hear from you!\n\n\
+            How to provide feedback:\n\n  \
+            1. GitHub Issues (preferred):\n     {}\n\n  \
+            2. GitHub Discussions:\n     {}\n\n  \
+            3. Quick commands:\n     \
+            arb feedback --bug     Create a bug report\n     \
+            arb feedback --feature Create a feature request\n\n\
+            When reporting issues, please include:\n  \
+            - macOS version\n  \
+            - arb version (run: arb --version)\n  \
+            - Steps to reproduce\n  \
+            - Expected vs actual behavior\n",
+            url, DISCUSSIONS_URL
+        );
+    }
+
+    fn open_browser(&self, url: &str) {
+        let msg = match open::that(url) {
+            Ok(_) => "Opening feedback page in your browser...",
+            Err(_) => &format!("Please visit the feedback URL manually:\n  {}", url),
+        };
+        println!("{}", msg);
     }
 }
 
@@ -89,6 +88,8 @@ fn get_os_info() -> String {
         .output()
         .ok()
         .and_then(|o| String::from_utf8(o.stdout).ok())
-        .map(|s| format!("macOS {}", s.trim()))
-        .unwrap_or_else(|| "macOS (unknown version)".to_string())
+        .map_or_else(
+            || "macOS (unknown version)".to_string(),
+            |s| format!("macOS {}", s.trim()),
+        )
 }

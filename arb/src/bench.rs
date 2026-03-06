@@ -42,6 +42,8 @@ mod imp {
 
     use crate::paths::{BOLD, DIM, GRAY, GREEN, RESET};
 
+    const ITERATIONS: usize = 10;
+
     /// Terminal application info for detection.
     pub(crate) struct TerminalInfo {
         pub name: &'static str,
@@ -223,12 +225,10 @@ mod imp {
 
     /// Get performance rating emoji and label based on startup time
     fn get_performance_rating(ms: f64) -> &'static str {
-        if ms < 150.0 {
-            "🚀 Fast"
-        } else if ms < 300.0 {
-            "⚡ Normal"
-        } else {
-            "🐢 Slow"
+        match ms {
+            _ if ms < 150.0 => "🚀 Fast",
+            _ if ms < 300.0 => "⚡ Normal",
+            _ => "🐢 Slow",
         }
     }
 
