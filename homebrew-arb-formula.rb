@@ -1,8 +1,8 @@
 class Arb < Formula
   desc "GPU-accelerated terminal emulator built for AI coding"
   homepage "https://github.com/szj2ys/arb"
-  url "https://github.com/szj2ys/arb/archive/refs/tags/v0.3.2.tar.gz"
-  sha256 "ab62a5681327acd99f9cebf654e802710dcc8ccbf69b5adc6fc2c0dc182db49e"
+  url "https://github.com/szj2ys/arb/archive/refs/tags/v0.4.0.tar.gz"
+  sha256 "db4657822e5fa7a2080259991f07aa5df98d6a658a40c3b3e6c5e5e28822cf97"
   license "MIT"
   head "https://github.com/szj2ys/arb.git", branch: "main"
 
@@ -40,14 +40,22 @@ class Arb < Formula
   def caveats
     <<~EOS
       arb has been installed!
-      
-      To use the GUI:
+
+      To use the GUI application:
         ln -s #{opt_prefix}/Arb.app /Applications
-      
-      Shell integration:
+
+      To set up shell integration, run:
         arb init
-      
-      Config: ~/.config/arb/arb.lua
+
+      Or manually add to your shell config:
+        # For zsh (~/.zshrc)
+        eval "$(arb init zsh)"
+
+        # For bash (~/.bashrc)
+        eval "$(arb init bash)"
+
+      Configuration file:
+        ~/.config/arb/arb.lua
     EOS
   end
 

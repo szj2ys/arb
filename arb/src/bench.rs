@@ -42,8 +42,6 @@ mod imp {
 
     use crate::paths::{BOLD, DIM, GRAY, GREEN, RESET};
 
-    const ITERATIONS: usize = 10;
-
     /// Terminal application info for detection.
     pub(crate) struct TerminalInfo {
         pub name: &'static str,
