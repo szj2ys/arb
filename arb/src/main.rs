@@ -200,6 +200,9 @@ enum SubCommand {
         about = "AI assistant for natural language commands and chat"
     )]
     Ai(ai::AiCommand),
+
+    #[command(name = "feedback", about = "Send feedback to the arb team")]
+    Feedback(crate::cli::feedback::FeedbackCommand),
 }
 
 use termwiz::escape::osc::{
@@ -918,6 +921,13 @@ fn run() -> anyhow::Result<()> {
         SubCommand::Ai(cmd) => {
             if let Err(e) = tokio::runtime::Runtime::new().unwrap().block_on(cmd.run()) {
                 eprintln!("AI error: {:#}", e);
+                std::process::exit(1);
+            }
+            Ok(())
+        }
+        SubCommand::Feedback(cmd) => {
+            if let Err(e) = tokio::runtime::Runtime::new().unwrap().block_on(cmd.run()) {
+                eprintln!("Feedback error: {:#}", e);
                 std::process::exit(1);
             }
             Ok(())
