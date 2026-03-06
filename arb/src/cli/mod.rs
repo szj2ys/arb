@@ -7,7 +7,7 @@ mod activate_pane;
 mod activate_pane_direction;
 mod activate_tab;
 mod adjust_pane_size;
-mod feedback;
+pub mod feedback;
 mod get_pane_direction;
 mod get_text;
 mod kill_pane;
