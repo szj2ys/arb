@@ -846,6 +846,8 @@
 
     .hero-badges img {
       height: 22px;
+      width: auto;
+      aspect-ratio: 4 / 1;
       display: block;
     }
 
