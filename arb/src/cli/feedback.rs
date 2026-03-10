@@ -73,11 +73,10 @@ impl FeedbackCommand {
     }
 
     fn open_browser(&self, url: &str) {
-        let msg = match open::that(url) {
-            Ok(_) => "Opening feedback page in your browser...",
-            Err(_) => &format!("Please visit the feedback URL manually:\n  {}", url),
-        };
-        println!("{}", msg);
+        match open::that(url) {
+            Ok(_) => println!("Opening feedback page in your browser..."),
+            Err(_) => println!("Please visit the feedback URL manually:\n  {}", url),
+        }
     }
 }
 
