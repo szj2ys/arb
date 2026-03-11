@@ -68,7 +68,7 @@ Or download the DMG from GitHub Releases.
 ### Links
 
 - GitHub: https://github.com/szj2ys/arb
-- Website: https://arb-terminal.vercel.app (with split pane demo)
+- Website: https://szj2ys.github.io/arb/ (with split pane demo)
 - Docs: https://github.com/szj2ys/arb/blob/main/README.md
 
 ---
