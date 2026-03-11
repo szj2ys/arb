@@ -24,7 +24,7 @@ pub fn config_home() -> PathBuf {
     config::CONFIG_DIRS
         .first()
         .cloned()
-        .unwrap_or_else(|| home_dir().join(".config").join("arb"))
+        .unwrap_or_else(|| home_dir().join(".config/arb"))
 }
 
 /// Returns the path to `.zshrc`, respecting the `ZDOTDIR` environment variable.
@@ -49,16 +49,13 @@ pub fn command_exists(name: &str) -> bool {
 
 /// Check if this is the first time arb is being run
 pub fn is_first_run() -> bool {
-    let config_dir = config_home();
-    let first_run_marker = config_dir.join(".initialized");
-    !first_run_marker.exists()
+    !config_home().join(".initialized").exists()
 }
 
 /// Mark arb as initialized (create first-run marker)
 pub fn mark_initialized() -> anyhow::Result<()> {
-    let config_dir = config_home();
-    std::fs::create_dir_all(&config_dir)?;
-    let first_run_marker = config_dir.join(".initialized");
-    std::fs::write(&first_run_marker, "")?;
+    let marker = config_home();
+    std::fs::create_dir_all(&marker)?;
+    std::fs::write(marker.join(".initialized"), "")?;
     Ok(())
 }

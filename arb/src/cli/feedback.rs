@@ -22,7 +22,7 @@ impl FeedbackCommand {
 
         println!("arb Feedback\n============\n");
         self.print_content(&url);
-        self.open_browser(&url);
+        open_browser(&url);
 
         Ok(())
     }
@@ -71,12 +71,12 @@ impl FeedbackCommand {
             url, DISCUSSIONS_URL
         );
     }
+}
 
-    fn open_browser(&self, url: &str) {
-        match open::that(url) {
-            Ok(_) => println!("Opening feedback page in your browser..."),
-            Err(_) => println!("Please visit the feedback URL manually:\n  {}", url),
-        }
+fn open_browser(url: &str) {
+    match open::that(url) {
+        Ok(_) => println!("Opening feedback page in your browser..."),
+        Err(_) => println!("Please visit the feedback URL manually:\n  {}", url),
     }
 }
 

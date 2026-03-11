@@ -259,12 +259,7 @@ exit 127
     }
 
     fn wrapper_path() -> PathBuf {
-        config::HOME_DIR
-            .join(".config")
-            .join("arb")
-            .join("zsh")
-            .join("bin")
-            .join("arb")
+        config::HOME_DIR.join(".config/arb/zsh/bin/arb")
     }
 
     fn resolve_preferred_arb_bin() -> Option<PathBuf> {
@@ -289,12 +284,7 @@ exit 127
 
         [
             PathBuf::from("/Applications/Arb.app/Contents/MacOS/arb"),
-            config::HOME_DIR
-                .join("Applications")
-                .join("Arb.app")
-                .join("Contents")
-                .join("MacOS")
-                .join("arb"),
+            config::HOME_DIR.join("Applications/Arb.app/Contents/MacOS/arb"),
         ]
         .into_iter()
         .find(|candidate| candidate.exists())
@@ -312,29 +302,20 @@ exit 127
         let mut candidates = Vec::new();
 
         if let Ok(cwd) = std::env::current_dir() {
-            candidates.push(
-                cwd.join("assets")
-                    .join("shell-integration")
-                    .join("setup_zsh.sh"),
-            );
+            candidates.push(cwd.join("assets/shell-integration/setup_zsh.sh"));
         }
 
         if let Ok(exe) = std::env::current_exe() {
-            if let Some(contents_dir) = exe.parent().and_then(|p| p.parent()) {
-                candidates.push(contents_dir.join("Resources").join("setup_zsh.sh"));
-            }
+        if let Some(contents_dir) = exe.parent().and_then(|p| p.parent()) {
+            candidates.push(contents_dir.join("Resources/setup_zsh.sh"));
+        }
         }
 
         candidates.push(PathBuf::from(
             "/Applications/Arb.app/Contents/Resources/setup_zsh.sh",
         ));
         candidates.push(
-            config::HOME_DIR
-                .join("Applications")
-                .join("Arb.app")
-                .join("Contents")
-                .join("Resources")
-                .join("setup_zsh.sh"),
+            config::HOME_DIR.join("Applications/Arb.app/Contents/Resources/setup_zsh.sh"),
         );
 
         candidates

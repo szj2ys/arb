@@ -173,18 +173,8 @@ mod imp {
             let elapsed = start.elapsed();
 
             match status {
-                Ok(output) if output.status.success() => {
-                    timings.push(elapsed);
-                }
-                Ok(output) => {
-                    // Shell exited with non-zero — still record the timing
-                    // since interactive shells may return non-zero from `exit`.
-                    let _ = output;
-                    timings.push(elapsed);
-                }
-                Err(e) => {
-                    anyhow::bail!("Failed to run {shell_path}: {e}");
-                }
+                Ok(_) => timings.push(elapsed),
+                Err(e) => anyhow::bail!("Failed to run {shell_path}: {e}"),
             }
         }
 
@@ -277,30 +267,21 @@ mod imp {
 
     /// Format benchmark results as JSON.
     fn print_json(result: &BenchResult) {
-        let terminals: Vec<serde_json::Value> = result
-            .terminals
-            .iter()
-            .map(|t| {
-                serde_json::json!({
-                    "name": t.name,
-                    "path": t.path,
-                    "found": t.found,
-                })
-            })
-            .collect();
-
         let json = serde_json::json!({
             "shell": result.shell,
             "iterations": result.iterations,
             "arb_median_ms": round2(result.arb_median_ms),
             "raw_median_ms": round2(result.raw_median_ms),
-            "terminals": terminals,
+            "terminals": result.terminals.iter().map(|t| {
+                serde_json::json!({
+                    "name": t.name,
+                    "path": t.path,
+                    "found": t.found,
+                })
+            }).collect::<Vec<_>>(),
         });
 
-        println!(
-            "{}",
-            serde_json::to_string_pretty(&json).unwrap_or_default()
-        );
+        println!("{}", serde_json::to_string_pretty(&json).unwrap_or_default());
     }
 
     /// Format benchmark results as a Markdown table.

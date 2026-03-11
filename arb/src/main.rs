@@ -800,20 +800,11 @@ impl TmuxPassthru {
     }
 
     fn encode(&self, content: String) -> String {
-        if self.enabled() {
-            let mut result = "\u{1b}Ptmux;".to_string();
-            for c in content.chars() {
-                if c == '\u{1b}' {
-                    // Quote the escape by doubling it up
-                    result.push(c);
-                }
-                result.push(c);
-            }
-            result.push_str("\u{1b}\\");
-            result
-        } else {
-            content
+        if !self.enabled() {
+            return content;
         }
+        // Escape escapes by doubling them up, then wrap with tmux passthrough
+        format!("\x1bPtmux;{}\x1b\\", content.replace('\x1b', "\x1b\x1b"))
     }
 }
 
@@ -919,14 +910,14 @@ fn run() -> anyhow::Result<()> {
         SubCommand::Stats(cmd) => cmd.run(),
         SubCommand::Whoami(cmd) => cmd.run(),
         SubCommand::Ai(cmd) => {
-            if let Err(e) = tokio::runtime::Runtime::new().unwrap().block_on(cmd.run()) {
+            if let Err(e) = tokio::runtime::Runtime::new()?.block_on(cmd.run()) {
                 eprintln!("AI error: {:#}", e);
                 std::process::exit(1);
             }
             Ok(())
         }
         SubCommand::Feedback(cmd) => {
-            if let Err(e) = tokio::runtime::Runtime::new().unwrap().block_on(cmd.run()) {
+            if let Err(e) = tokio::runtime::Runtime::new()?.block_on(cmd.run()) {
                 eprintln!("Feedback error: {:#}", e);
                 std::process::exit(1);
             }
@@ -946,10 +937,7 @@ fn should_show_main_menu(opts: &Opt) -> bool {
 
 fn is_shell_integration_initialized() -> bool {
     config::HOME_DIR
-        .join(".config")
-        .join("arb")
-        .join("zsh")
-        .join("arb.zsh")
+        .join(".config/arb/zsh/arb.zsh")
         .exists()
 }
 
@@ -1080,15 +1068,13 @@ fn delegate_to_gui(saver: UmaskSaver) -> anyhow::Result<()> {
         if std::env::var_os("APPIMAGE").is_none() {
             portable_pty::unix::close_random_fds();
         }
-        let res = cmd.exec();
-        Err(anyhow::anyhow!("failed to exec {cmd:?}: {res:?}"))
+        let _ = cmd.exec();
+        Err(anyhow::anyhow!("failed to exec gui binary"))
     }
 
     #[cfg(windows)]
     {
-        let mut child = cmd.spawn()?;
-        let status = child.wait()?;
-        let code = status.code().unwrap_or(1);
-        std::process::exit(code);
+        let status = cmd.spawn()?.wait()?;
+        std::process::exit(status.code().unwrap_or(1));
     }
 }

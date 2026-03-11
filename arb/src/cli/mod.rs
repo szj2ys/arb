@@ -210,21 +210,17 @@ async fn run_cli_async(opts: &crate::Opt, cli: CliCommand) -> anyhow::Result<()>
 
 pub fn run_cli(opts: &crate::Opt, cli: CliCommand) -> anyhow::Result<()> {
     let executor = promise::spawn::ScopedExecutor::new();
-    match promise::spawn::block_on(executor.run(async move { run_cli_async(opts, cli).await })) {
-        Ok(_) => Ok(()),
-        Err(err) => crate::terminate_with_error(err),
-    }
+    promise::spawn::block_on(executor.run(async move { run_cli_async(opts, cli).await }))
+        .map_err(crate::terminate_with_error)?;
+    Ok(())
 }
 
 pub fn resolve_relative_cwd(cwd: Option<OsString>) -> anyhow::Result<Option<String>> {
-    match cwd {
-        None => Ok(None),
-        Some(cwd) => Ok(Some(
-            std::env::current_dir()?
-                .join(cwd)
-                .to_str()
-                .ok_or_else(|| anyhow!("path is not representable as String"))?
-                .to_string(),
-        )),
-    }
+    cwd.map(|cwd| {
+        std::env::current_dir()?
+            .join(cwd)
+            .to_str()
+            .map(|s| s.to_string())
+            .ok_or_else(|| anyhow!("path is not representable as String"))
+    }).transpose()
 }
