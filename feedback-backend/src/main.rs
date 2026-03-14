@@ -41,11 +41,10 @@ struct SubmitResponse {
 async fn main() -> anyhow::Result<()> {
     tracing_subscriber::fmt::init();
 
-    let database_url = std::env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "sqlite:feedback.db".to_string());
+    let database_url =
+        std::env::var("DATABASE_URL").unwrap_or_else(|_| "sqlite:feedback.db".to_string());
 
-    let admin_password = std::env::var("ADMIN_PASSWORD")
-        .unwrap_or_else(|| "admin123".to_string());
+    let admin_password = std::env::var("ADMIN_PASSWORD").unwrap_or_else(|| "admin123".to_string());
 
     let db = SqlitePoolOptions::new()
         .max_connections(5)

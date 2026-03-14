@@ -1,5 +1,5 @@
-use sqlx::{Pool, Sqlite};
 use crate::models::*;
+use sqlx::{Pool, Sqlite};
 
 pub async fn init(db: &Pool<Sqlite>) -> anyhow::Result<()> {
     sqlx::query(
