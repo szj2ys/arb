@@ -12,6 +12,8 @@ use std::path::PathBuf;
 use std::sync::OnceLock;
 use std::time::{SystemTime, UNIX_EPOCH};
 
+use crate::telemetry_client::TelemetryClient;
+
 /// Telemetry event types
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -60,6 +62,7 @@ pub struct Telemetry {
     device_id: String,
     data_dir: PathBuf,
     enabled: bool,
+    remote_client: Option<TelemetryClient>,
 }
 
 impl Telemetry {
@@ -75,10 +78,27 @@ impl Telemetry {
         let device_id = Self::get_or_create_device_id(&data_dir)?;
         let enabled = !std::env::var("ARB_DISABLE_TELEMETRY").is_ok();
 
+        // Initialize remote telemetry client
+        let remote_client = if enabled {
+            match TelemetryClient::new(device_id.clone()) {
+                Ok(mut client) => {
+                    client.start_batch_sender();
+                    Some(client)
+                }
+                Err(e) => {
+                    log::debug!("Failed to initialize telemetry client: {}", e);
+                    None
+                }
+            }
+        } else {
+            None
+        };
+
         Ok(Self {
             device_id,
             data_dir,
             enabled,
+            remote_client,
         })
     }
 
@@ -102,7 +122,15 @@ impl Telemetry {
             event_type,
         };
 
-        self.persist_event(&event)
+        // Persist locally (always do this first)
+        self.persist_event(&event)?;
+
+        // Send to remote backend (non-blocking)
+        if let Some(ref client) = self.remote_client {
+            let _ = client.send_event(event);
+        }
+
+        Ok(())
     }
 
     /// Get all recorded events
@@ -278,6 +306,7 @@ mod tests {
             device_id: "test_device".to_string(),
             data_dir: temp_dir.path().to_path_buf(),
             enabled: true,
+            remote_client: None,
         };
 
         telemetry
@@ -298,6 +327,7 @@ mod tests {
             device_id: "test_device".to_string(),
             data_dir: temp_dir.path().to_path_buf(),
             enabled: false,
+            remote_client: None,
         };
 
         telemetry
@@ -317,6 +347,7 @@ mod tests {
             device_id: "test_device".to_string(),
             data_dir: temp_dir.path().to_path_buf(),
             enabled: true,
+            remote_client: None,
         };
 
         telemetry
