@@ -11,7 +11,7 @@ const DEFAULT_ENDPOINT: &str = "https://arb-feedback.fly.dev";
 const REQUEST_TIMEOUT_SECS: u64 = 30;
 
 /// Feedback category
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub enum FeedbackCategory {
     /// Bug report

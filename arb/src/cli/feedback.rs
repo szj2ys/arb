@@ -87,11 +87,11 @@ impl FeedbackCommand {
 
         let content: String = Input::with_theme(&ColorfulTheme::default())
             .with_prompt(prompt)
-            .validate(|input: &String| {
+            .validate_with(|input: &String| {
                 if input.trim().len() < 5 {
-                    Err("Please provide at least 5 characters")
+                    Err("Please provide at least 5 characters".to_string())
                 } else if input.trim().len() > 2000 {
-                    Err("Please keep it under 2000 characters")
+                    Err("Please keep it under 2000 characters".to_string())
                 } else {
                     Ok(())
                 }
@@ -103,13 +103,13 @@ impl FeedbackCommand {
         let contact: String = Input::with_theme(&ColorfulTheme::default())
             .with_prompt("Your email (optional, for follow-up)")
             .allow_empty(true)
-            .validate(|input: &String| {
+            .validate_with(|input: &String| {
                 if input.is_empty() {
                     Ok(())
                 } else if input.contains('@') {
                     Ok(())
                 } else {
-                    Err("Please enter a valid email or leave empty")
+                    Err("Please enter a valid email or leave empty".to_string())
                 }
             })
             .interact_text()

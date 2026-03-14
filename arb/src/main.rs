@@ -28,6 +28,7 @@ pub mod stats;
 pub use stats::StatsCommand;
 pub mod telemetry;
 pub mod telemetry_client;
+pub mod feedback_submitter;
 pub mod update;
 
 mod ai;

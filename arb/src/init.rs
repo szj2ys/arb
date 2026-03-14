@@ -532,10 +532,10 @@ exit 127
             // We verify this by confirming the function signature accepts update_only
             // and that the guard exists. Since we cannot easily run the full init
             // (it requires shell scripts), we test the guard at the API level.
-            let cmd_update = super::super::InitCommand { update_only: true };
+            let cmd_update = super::super::InitCommand { update_only: true, restore: false };
             assert!(cmd_update.update_only, "update_only flag should be true");
 
-            let cmd_normal = super::super::InitCommand { update_only: false };
+            let cmd_normal = super::super::InitCommand { update_only: false, restore: false };
             assert!(
                 !cmd_normal.update_only,
                 "update_only flag should be false for normal init"

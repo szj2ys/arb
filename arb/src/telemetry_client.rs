@@ -127,6 +127,12 @@ impl TelemetryClient {
             return;
         }
 
+        // Check if we're running in a Tokio runtime context
+        if tokio::runtime::Handle::try_current().is_err() {
+            log::debug!("Telemetry batch sender not started (no Tokio runtime)");
+            return;
+        }
+
         let (tx, mut rx) = mpsc::unbounded_channel::<Event>();
         self.batch_sender = Some(tx);
 
