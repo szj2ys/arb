@@ -10,10 +10,17 @@ pub struct InitCommand {
     /// Refresh shell integration without interactive prompts
     #[arg(long)]
     pub update_only: bool,
+
+    /// Restore shell configuration from backup created during init
+    #[arg(long, conflicts_with = "update_only")]
+    pub restore: bool,
 }
 
 impl InitCommand {
     pub fn run(&self) -> anyhow::Result<()> {
+        if self.restore {
+            return imp::restore_shell_config();
+        }
         imp::run(self.update_only)
     }
 }
@@ -34,6 +41,11 @@ mod imp {
     use std::os::unix::fs::PermissionsExt;
 
     pub fn run(update_only: bool) -> anyhow::Result<()> {
+        // Create backup of .zshrc before any modifications
+        if !update_only {
+            backup_shell_config()?;
+        }
+
         if let Err(e) = install_arb_wrapper() {
             run_doctor_diagnostics();
             return Err(e).context("install arb wrapper");
@@ -110,6 +122,89 @@ mod imp {
         let _ = crate::doctor::DoctorCommand::default().run();
         eprintln!("Fix the issues above and retry with `arb init`");
         eprintln!();
+    }
+
+    /// Backup shell configuration before making modifications
+    fn backup_shell_config() -> anyhow::Result<()> {
+        let zshrc = config::HOME_DIR.join(".zshrc");
+        if !zshrc.exists() {
+            return Ok(());
+        }
+
+        let timestamp = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_secs();
+        let backup_path = format!("{}.arb-backup-{}", zshrc.display(), timestamp);
+
+        fs::copy(&zshrc, &backup_path)
+            .with_context(|| format!("Failed to create backup at {}", backup_path))?;
+
+        eprintln!("  Created backup: {}", backup_path);
+        Ok(())
+    }
+
+    /// Restore shell configuration from the most recent backup
+    pub fn restore_shell_config() -> anyhow::Result<()> {
+        let zshrc = config::HOME_DIR.join(".zshrc");
+        let home = config::HOME_DIR.as_path();
+
+        // Find all .arb-backup-* files
+        let mut backups: Vec<_> = fs::read_dir(home)
+            .context("Failed to read home directory")?
+            .filter_map(|entry| entry.ok())
+            .filter(|entry| {
+                entry
+                    .file_name()
+                    .to_str()
+                    .map(|name| name.starts_with(".zshrc.arb-backup-"))
+                    .unwrap_or(false)
+            })
+            .map(|entry| entry.path())
+            .collect();
+
+        if backups.is_empty() {
+            bail!(
+                "No backups found.\n\n\
+                 Did you mean to run `arb init` instead?\n\
+                 Or try `arb reset` to remove Arb shell integration."
+            );
+        }
+
+        // Sort by timestamp (newest first)
+        backups.sort_by(|a, b| b.cmp(a));
+        let latest_backup = &backups[0];
+
+        // Confirm restoration
+        eprintln!("Found backup: {}", latest_backup.display());
+        eprint!("Restore this backup? [y/N] ");
+        std::io::Write::flush(&mut std::io::stderr())?;
+
+        let mut input = String::new();
+        std::io::stdin().read_line(&mut input)?;
+
+        if !input.trim().eq_ignore_ascii_case("y") {
+            eprintln!("Cancelled.");
+            return Ok(());
+        }
+
+        // Perform restoration
+        if zshrc.exists() {
+            fs::copy(&zshrc, format!("{}.arb-pre-restore-{}", zshrc.display(),
+                std::time::SystemTime::now()
+                    .duration_since(std::time::UNIX_EPOCH)
+                    .unwrap_or_default()
+                    .as_secs()
+            )).ok();
+        }
+
+        fs::copy(latest_backup, &zshrc)
+            .with_context(|| format!("Failed to restore backup to {}", zshrc.display()))?;
+
+        eprintln!("✓ Restored shell configuration from {}", latest_backup.display());
+        eprintln!("  Open a new terminal tab to apply changes.");
+
+        Ok(())
     }
 
     use crate::paths::{BOLD, GRAY, GREEN, RESET, YELLOW};
