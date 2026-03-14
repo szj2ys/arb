@@ -1,0 +1,132 @@
+name: Binary Size
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  SIZE_THRESHOLD_ARB: 25000000      # 25MB
+  SIZE_THRESHOLD_ARB_GUI: 45000000  # 45MB
+  WARNING_THRESHOLD: 500000          # 500KB regression warning
+
+concurrency:
+  group: binary-size-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  binary-size:
+    name: Measure Binary Size
+    runs-on: macos-latest
+    outputs:
+      arb_bytes: ${{ steps.sizes.outputs.arb_bytes }}
+      arb_gui_bytes: ${{ steps.sizes.outputs.arb_gui_bytes }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+
+      - name: Cache Cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install cargo-bloat
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-bloat
+
+      - name: Build release binaries
+        run: |
+          cargo build --locked --release --target aarch64-apple-darwin -p arb -p arb-gui
+          cargo build --locked --release --target x86_64-apple-darwin -p arb -p arb-gui
+
+          mkdir -p target/universal/release
+          lipo -create -output target/universal/release/arb \
+            target/aarch64-apple-darwin/release/arb \
+            target/x86_64-apple-darwin/release/arb
+          lipo -create -output target/universal/release/arb-gui \
+            target/aarch64-apple-darwin/release/arb-gui \
+            target/x86_64-apple-darwin/release/arb-gui
+
+      - name: Measure binary sizes
+        id: sizes
+        run: |
+          ARB_SIZE=$(stat -f%z target/universal/release/arb)
+          ARB_GUI_SIZE=$(stat -f%z target/universal/release/arb-gui)
+
+          echo "arb_bytes=$ARB_SIZE" >> "$GITHUB_OUTPUT"
+          echo "arb_gui_bytes=$ARB_GUI_SIZE" >> "$GITHUB_OUTPUT"
+
+          echo "## Binary Size Report" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo '| Binary | Size | Threshold | Status |' >> "$GITHUB_STEP_SUMMARY"
+          echo '|--------|------|-----------|--------|' >> "$GITHUB_STEP_SUMMARY"
+
+          ARB_STATUS="✅"
+          if [ "$ARB_SIZE" -gt "$SIZE_THRESHOLD_ARB" ]; then
+            ARB_STATUS="❌ EXCEEDED"
+          fi
+
+          ARB_GUI_STATUS="✅"
+          if [ "$ARB_GUI_SIZE" -gt "$SIZE_THRESHOLD_ARB_GUI" ]; then
+            ARB_GUI_STATUS="❌ EXCEEDED"
+          fi
+
+          printf '| arb | %s | %s | %s |\n' \
+            "$(numfmt --to=iec-i --suffix=B "$ARB_SIZE")" \
+            "$(numfmt --to=iec-i --suffix=B "$SIZE_THRESHOLD_ARB")" \
+            "$ARB_STATUS" >> "$GITHUB_STEP_SUMMARY"
+
+          printf '| arb-gui | %s | %s | %s |\n' \
+            "$(numfmt --to=iec-i --suffix=B "$ARB_GUI_SIZE")" \
+            "$(numfmt --to=iec-i --suffix=B "$SIZE_THRESHOLD_ARB_GUI")" \
+            "$ARB_GUI_STATUS" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Run cargo-bloat analysis
+        run: |
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Top Size Contributors (arb)" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          cargo bloat --release --target aarch64-apple-darwin -p arb --crates 2>/dev/null | head -30 >> "$GITHUB_STEP_SUMMARY" || true
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Top Size Contributors (arb-gui)" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          cargo bloat --release --target aarch64-apple-darwin -p arb-gui --crates 2>/dev/null | head -30 >> "$GITHUB_STEP_SUMMARY" || true
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Check size thresholds
+        run: |
+          ARB_SIZE="${{ steps.sizes.outputs.arb_bytes }}"
+          ARB_GUI_SIZE="${{ steps.sizes.outputs.arb_gui_bytes }}"
+
+          FAILED=0
+
+          if [ "$ARB_SIZE" -gt "$SIZE_THRESHOLD_ARB" ]; then
+            echo "❌ arb binary ($ARB_SIZE bytes) exceeds threshold ($SIZE_THRESHOLD_ARB bytes)"
+            FAILED=1
+          fi
+
+          if [ "$ARB_GUI_SIZE" -gt "$SIZE_THRESHOLD_ARB_GUI" ]; then
+            echo "❌ arb-gui binary ($ARB_GUI_SIZE bytes) exceeds threshold ($SIZE_THRESHOLD_ARB_GUI bytes)"
+            FAILED=1
+          fi
+
+          exit $FAILED
+
+      - name: Upload size artifacts
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: binary-sizes-main-${{ github.run_id }}
+          path: |
+            target/universal/release/arb
+            target/universal/release/arb-gui
+          retention-days: 30
