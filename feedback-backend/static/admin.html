@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>arb Feedback Admin</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        h1 { color: #58a6ff; margin-bottom: 20px; }
+        .filters { margin-bottom: 20px; }
+        .filters button {
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            padding: 8px 16px;
+            margin-right: 8px;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+        .filters button.active {
+            background: #1f6feb;
+            border-color: #388bfd;
+        }
+        .feedback-list { display: grid; gap: 16px; }
+        .feedback-item {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px;
+        }
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .category {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .category.bug { background: #da3633; color: white; }
+        .category.feature { background: #1f6feb; color: white; }
+        .category.praise { background: #238636; color: white; }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            background: #21262d;
+        }
+        .status.new { color: #79c0ff; }
+        .status.acknowledged { color: #d29922; }
+        .status.fixed { color: #3fb950; }
+        .status.closed { color: #8b949e; }
+        .content { margin-bottom: 12px; white-space: pre-wrap; }
+        .meta {
+            color: #8b949e;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+        .actions { display: flex; gap: 8px; }
+        .actions button {
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            padding: 6px 12px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+        .actions button:hover { background: #30363d; }
+        .loading { text-align: center; padding: 40px; color: #8b949e; }
+        .empty { text-align: center; padding: 40px; color: #8b949e; }
+    </style>
+</head>
+<body>
+    <h1>arb Feedback Admin</h1>
+    <div class="filters">
+        <button class="active" data-filter="all">All</button>
+        <button data-filter="new">New</button>
+        <button data-filter="bug">Bugs</button>
+        <button data-filter="feature">Features</button>
+    </div>
+    <div id="feedback-list" class="feedback-list">
+        <div class="loading">Loading...</div>
+    </div>
+
+    <script>
+        let allFeedback = [];
+        let currentFilter = 'all';
+
+        async function loadFeedback() {
+            try {
+                const res = await fetch('/admin/api/feedback');
+                allFeedback = await res.json();
+                render();
+            } catch (e) {
+                const list = document.getElementById('feedback-list');
+                list.innerHTML = '';
+                const empty = document.createElement('div');
+                empty.className = 'empty';
+                empty.textContent = 'Error loading feedback';
+                list.appendChild(empty);
+            }
+        }
+
+        function render() {
+            const list = document.getElementById('feedback-list');
+            list.innerHTML = '';
+
+            let filtered = allFeedback;
+            if (currentFilter === 'new') {
+                filtered = allFeedback.filter(f => f.status === 'new');
+            } else if (currentFilter !== 'all') {
+                filtered = allFeedback.filter(f => f.category === currentFilter);
+            }
+
+            if (filtered.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'empty';
+                empty.textContent = 'No feedback found';
+                list.appendChild(empty);
+                return;
+            }
+
+            filtered.forEach(f => {
+                const item = document.createElement('div');
+                item.className = 'feedback-item';
+
+                const header = document.createElement('div');
+                header.className = 'feedback-header';
+
+                const category = document.createElement('span');
+                category.className = 'category ' + f.category;
+                category.textContent = f.category;
+
+                const status = document.createElement('span');
+                status.className = 'status ' + f.status;
+                status.textContent = f.status;
+
+                header.appendChild(category);
+                header.appendChild(status);
+
+                const content = document.createElement('div');
+                content.className = 'content';
+                content.textContent = f.content;
+
+                const meta = document.createElement('div');
+                meta.className = 'meta';
+                let metaText = '';
+                if (f.contact) metaText += f.contact + ' · ';
+                metaText += f.os + ' · ' + f.version + ' · ' + new Date(f.created_at).toLocaleString();
+                meta.textContent = metaText;
+
+                const actions = document.createElement('div');
+                actions.className = 'actions';
+
+                if (f.status !== 'acknowledged') {
+                    const btn = document.createElement('button');
+                    btn.textContent = 'Mark Acknowledged';
+                    btn.onclick = () => updateStatus(f.id, 'acknowledged');
+                    actions.appendChild(btn);
+                }
+                if (f.status !== 'fixed') {
+                    const btn = document.createElement('button');
+                    btn.textContent = 'Mark Fixed';
+                    btn.onclick = () => updateStatus(f.id, 'fixed');
+                    actions.appendChild(btn);
+                }
+                const closeBtn = document.createElement('button');
+                closeBtn.textContent = 'Close';
+                closeBtn.onclick = () => updateStatus(f.id, 'closed');
+                actions.appendChild(closeBtn);
+
+                item.appendChild(header);
+                item.appendChild(content);
+                item.appendChild(meta);
+                item.appendChild(actions);
+                list.appendChild(item);
+            });
+        }
+
+        async function updateStatus(id, status) {
+            try {
+                await fetch('/admin/api/feedback/' + id + '/status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                loadFeedback();
+            } catch (e) {
+                alert('Failed to update status');
+            }
+        }
+
+        document.querySelectorAll('.filters button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filters button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                render();
+            });
+        });
+
+        loadFeedback();
+        setInterval(loadFeedback, 30000);
+    </script>
+</body>
+</html>
