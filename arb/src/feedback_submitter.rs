@@ -121,10 +121,8 @@ impl FeedbackSubmitter {
             .context("Failed to send feedback request")?;
 
         if response.status().is_success() {
-            let submission: SubmissionResponse = response
-                .json()
-                .await
-                .context("Failed to parse response")?;
+            let submission: SubmissionResponse =
+                response.json().await.context("Failed to parse response")?;
             Ok(submission)
         } else {
             let status = response.status();

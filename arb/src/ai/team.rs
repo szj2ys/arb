@@ -163,11 +163,17 @@ pub enum TeamEvent {
     /// Message sent
     MessageSent { message: TeamMessage },
     /// Member status changed
-    MemberStatusChanged { member_id: String, status: AgentStatus },
+    MemberStatusChanged {
+        member_id: String,
+        status: AgentStatus,
+    },
     /// Task assigned to member
     TaskAssigned { member_id: String, task: String },
     /// Task completed by member
-    TaskCompleted { member_id: String, result: AgentResult },
+    TaskCompleted {
+        member_id: String,
+        result: AgentResult,
+    },
     /// Team completed
     Completed { result: TeamResult },
     /// Team failed
@@ -296,7 +302,10 @@ impl Team {
             bus.push(message.clone());
         }
 
-        self.send_event(TeamEvent::MessageSent { message: message.clone() }).await;
+        self.send_event(TeamEvent::MessageSent {
+            message: message.clone(),
+        })
+        .await;
 
         Ok(message.id)
     }
@@ -308,7 +317,8 @@ impl Team {
         from: impl Into<String>,
         content: impl Into<String>,
     ) -> Result<String> {
-        self.send_message(from, None::<String>, MessageType::Broadcast, content).await
+        self.send_message(from, None::<String>, MessageType::Broadcast, content)
+            .await
     }
 
     /// Assign a task to a specific member
@@ -398,7 +408,10 @@ impl Team {
 
         *self.running.write().await = true;
 
-        self.send_event(TeamEvent::Started { mission: mission.clone() }).await;
+        self.send_event(TeamEvent::Started {
+            mission: mission.clone(),
+        })
+        .await;
 
         // Get all members
         let members = self.get_members().await;
@@ -446,7 +459,10 @@ impl Team {
         };
 
         if success {
-            self.send_event(TeamEvent::Completed { result: result.clone() }).await;
+            self.send_event(TeamEvent::Completed {
+                result: result.clone(),
+            })
+            .await;
         } else {
             self.send_event(TeamEvent::Failed {
                 error: "Some tasks failed".to_string(),
@@ -677,26 +693,17 @@ pub mod command {
                         let team = Team::new(config);
 
                         // Add default team members
-                        let _architect = team.add_member(
-                            AgentRole::Architect,
-                            "Architect",
-                            "kimi-k2.5",
-                            None,
-                        ).await?;
+                        let _architect = team
+                            .add_member(AgentRole::Architect, "Architect", "kimi-k2.5", None)
+                            .await?;
 
-                        let _implementer = team.add_member(
-                            AgentRole::Implementer,
-                            "Implementer",
-                            "kimi-k2.5",
-                            None,
-                        ).await?;
+                        let _implementer = team
+                            .add_member(AgentRole::Implementer, "Implementer", "kimi-k2.5", None)
+                            .await?;
 
-                        let _reviewer = team.add_member(
-                            AgentRole::CodeReviewer,
-                            "Reviewer",
-                            "kimi-k2.5",
-                            None,
-                        ).await?;
+                        let _reviewer = team
+                            .add_member(AgentRole::CodeReviewer, "Reviewer", "kimi-k2.5", None)
+                            .await?;
 
                         // Run the mission
                         let result = team.run(mission).await?;
@@ -718,8 +725,16 @@ pub mod command {
                             println!("   Success: {}", member_result.success);
                             println!("   Iterations: {}", member_result.total_iterations);
                             if !member_result.output.is_empty() {
-                                println!("   Output preview: {}",
-                                    member_result.output.lines().next().unwrap_or("").chars().take(100).collect::<String>()
+                                println!(
+                                    "   Output preview: {}",
+                                    member_result
+                                        .output
+                                        .lines()
+                                        .next()
+                                        .unwrap_or("")
+                                        .chars()
+                                        .take(100)
+                                        .collect::<String>()
                                 );
                             }
                         }
@@ -778,7 +793,10 @@ mod tests {
     fn test_agent_role_display() {
         assert_eq!(AgentRole::Architect.to_string(), "architect");
         assert_eq!(AgentRole::CodeReviewer.to_string(), "code-reviewer");
-        assert_eq!(AgentRole::Custom("specialist".to_string()).to_string(), "specialist");
+        assert_eq!(
+            AgentRole::Custom("specialist".to_string()).to_string(),
+            "specialist"
+        );
     }
 
     #[test]

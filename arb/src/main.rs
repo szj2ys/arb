@@ -26,9 +26,9 @@ pub(crate) mod paths;
 mod reset;
 pub mod stats;
 pub use stats::StatsCommand;
+pub mod feedback_submitter;
 pub mod telemetry;
 pub mod telemetry_client;
-pub mod feedback_submitter;
 pub mod update;
 
 mod ai;
@@ -400,7 +400,9 @@ impl WhoamiCommand {
         } else {
             println!("Terminal: arb");
             println!("Version: {}", version);
-            println!("Features: gpu-accelerated, builtin-shell-suite, lua-scripting, ai-integration");
+            println!(
+                "Features: gpu-accelerated, builtin-shell-suite, lua-scripting, ai-integration"
+            );
             println!("Website: https://szj2ys.github.io/arb/");
             println!("LLMs.txt: https://szj2ys.github.io/arb/llms.txt");
         }
@@ -821,7 +823,7 @@ fn terminate_with_error(err: anyhow::Error) -> ! {
 
 /// Print welcome message for first-time users
 fn print_welcome_message() {
-    use crate::paths::{BOLD, GREEN, RESET, GRAY, YELLOW};
+    use crate::paths::{BOLD, GRAY, GREEN, RESET, YELLOW};
 
     println!();
     println!("  {GREEN}{BOLD}Welcome to Arb!{RESET}");
@@ -938,9 +940,7 @@ fn should_show_main_menu(opts: &Opt) -> bool {
 }
 
 fn is_shell_integration_initialized() -> bool {
-    config::HOME_DIR
-        .join(".config/arb/zsh/arb.zsh")
-        .exists()
+    config::HOME_DIR.join(".config/arb/zsh/arb.zsh").exists()
 }
 
 fn select_main_menu_command() -> anyhow::Result<SubCommand> {

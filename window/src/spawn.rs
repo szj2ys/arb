@@ -12,7 +12,8 @@ use {
     std::os::unix::io::AsRawFd,
 };
 
-pub(crate) static SPAWN_QUEUE: LazyLock<Arc<SpawnQueue>> = LazyLock::new(|| Arc::new(SpawnQueue::new().expect("failed to create SpawnQueue")));
+pub(crate) static SPAWN_QUEUE: LazyLock<Arc<SpawnQueue>> =
+    LazyLock::new(|| Arc::new(SpawnQueue::new().expect("failed to create SpawnQueue")));
 
 struct InstrumentedSpawnFunc {
     func: SpawnFunc,

@@ -145,7 +145,9 @@ where
                     unknown_fields: UnknownFieldAction::Deny,
                     deprecated_fields: UnknownFieldAction::Ignore,
                 },
-            ).is_ok() {
+            )
+            .is_ok()
+            {
                 return field.into_lua(lua);
             }
 

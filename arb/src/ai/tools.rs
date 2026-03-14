@@ -89,7 +89,10 @@ pub fn with_parameter(
     );
 
     if let Some(obj) = def.parameters.as_object_mut() {
-        obj.insert("properties".to_string(), serde_json::Value::Object(properties));
+        obj.insert(
+            "properties".to_string(),
+            serde_json::Value::Object(properties),
+        );
 
         if required {
             let required = obj
@@ -123,13 +126,22 @@ impl Tool for FileReadTool {
     }
 
     fn definition(&self) -> ToolDefinition {
-        let def = tool_def(
-            "file_read",
-            "Read the contents of a file at the given path",
-        );
+        let def = tool_def("file_read", "Read the contents of a file at the given path");
         let def = with_parameter(def, "path", "string", "The path to the file to read", true);
-        let def = with_parameter(def, "limit", "integer", "Maximum number of lines to read (optional)", false);
-        with_parameter(def, "offset", "integer", "Line number to start reading from (optional)", false)
+        let def = with_parameter(
+            def,
+            "limit",
+            "integer",
+            "Maximum number of lines to read (optional)",
+            false,
+        );
+        with_parameter(
+            def,
+            "offset",
+            "integer",
+            "Line number to start reading from (optional)",
+            false,
+        )
     }
 
     async fn execute(&self, args: Value) -> ToolResult {
@@ -154,7 +166,10 @@ impl Tool for FileReadTool {
             Ok(content) => {
                 // Apply offset and limit if specified
                 let offset = args.get("offset").and_then(|o| o.as_u64()).unwrap_or(0) as usize;
-                let limit = args.get("limit").and_then(|l| l.as_u64()).unwrap_or(u64::MAX) as usize;
+                let limit = args
+                    .get("limit")
+                    .and_then(|l| l.as_u64())
+                    .unwrap_or(u64::MAX) as usize;
 
                 if offset > 0 || limit < usize::MAX {
                     let lines: Vec<&str> = content.lines().collect();
@@ -196,7 +211,13 @@ impl Tool for FileWriteTool {
             "Write content to a file at the given path. Creates the file if it doesn't exist.",
         );
         let def = with_parameter(def, "path", "string", "The path to the file to write", true);
-        with_parameter(def, "content", "string", "The content to write to the file", true)
+        with_parameter(
+            def,
+            "content",
+            "string",
+            "The content to write to the file",
+            true,
+        )
     }
 
     async fn execute(&self, args: Value) -> ToolResult {
@@ -262,10 +283,34 @@ impl Tool for FileSearchTool {
             "file_search",
             "Search for files matching a pattern, or search file contents for text",
         );
-        let def = with_parameter(def, "pattern", "string", "The search pattern (regex for content, glob for files)", true);
-        let def = with_parameter(def, "path", "string", "The directory or file to search in (default: working directory)", false);
-        let def = with_parameter(def, "search_type", "string", "Type of search: 'content' (grep) or 'files' (find/glob). Default: 'content'", false);
-        with_parameter(def, "glob", "string", "File glob pattern to filter files (e.g., '*.rs'). Only for content search.", false)
+        let def = with_parameter(
+            def,
+            "pattern",
+            "string",
+            "The search pattern (regex for content, glob for files)",
+            true,
+        );
+        let def = with_parameter(
+            def,
+            "path",
+            "string",
+            "The directory or file to search in (default: working directory)",
+            false,
+        );
+        let def = with_parameter(
+            def,
+            "search_type",
+            "string",
+            "Type of search: 'content' (grep) or 'files' (find/glob). Default: 'content'",
+            false,
+        );
+        with_parameter(
+            def,
+            "glob",
+            "string",
+            "File glob pattern to filter files (e.g., '*.rs'). Only for content search.",
+            false,
+        )
     }
 
     async fn execute(&self, args: Value) -> ToolResult {
@@ -295,7 +340,12 @@ impl Tool for FileSearchTool {
                     Ok(entries) => {
                         let files: Vec<String> = entries
                             .filter_map(|e| e.ok())
-                            .map(|p| p.strip_prefix(&self.working_dir).unwrap_or(&p).display().to_string())
+                            .map(|p| {
+                                p.strip_prefix(&self.working_dir)
+                                    .unwrap_or(&p)
+                                    .display()
+                                    .to_string()
+                            })
                             .collect();
 
                         if files.is_empty() {
@@ -309,10 +359,7 @@ impl Tool for FileSearchTool {
             }
             "content" => {
                 // Use grep-like search
-                let glob_pattern = args
-                    .get("glob")
-                    .and_then(|g| g.as_str())
-                    .unwrap_or("*");
+                let glob_pattern = args.get("glob").and_then(|g| g.as_str()).unwrap_or("*");
 
                 // Use ripgrep if available, otherwise fall back to grep
                 let output = Command::new("rg")
@@ -321,7 +368,8 @@ impl Tool for FileSearchTool {
                         "--with-filename",
                         "--fixed-strings",
                         "--color=never",
-                        "-g", glob_pattern,
+                        "-g",
+                        glob_pattern,
                         pattern,
                     ])
                     .current_dir(&self.working_dir)
@@ -425,13 +473,28 @@ impl Tool for ShellTool {
     }
 
     fn definition(&self) -> ToolDefinition {
-        let def = tool_def(
-            "shell",
-            "Execute a shell command and return the output",
+        let def = tool_def("shell", "Execute a shell command and return the output");
+        let def = with_parameter(
+            def,
+            "command",
+            "string",
+            "The shell command to execute",
+            true,
         );
-        let def = with_parameter(def, "command", "string", "The shell command to execute", true);
-        let def = with_parameter(def, "timeout", "integer", "Timeout in seconds (default: 60)", false);
-        with_parameter(def, "working_dir", "string", "Working directory for the command (default: current)", false)
+        let def = with_parameter(
+            def,
+            "timeout",
+            "integer",
+            "Timeout in seconds (default: 60)",
+            false,
+        );
+        with_parameter(
+            def,
+            "working_dir",
+            "string",
+            "Working directory for the command (default: current)",
+            false,
+        )
     }
 
     async fn execute(&self, args: Value) -> ToolResult {
@@ -448,10 +511,7 @@ impl Tool for ShellTool {
             ));
         }
 
-        let timeout_secs = args
-            .get("timeout")
-            .and_then(|t| t.as_u64())
-            .unwrap_or(60) as u64;
+        let timeout_secs = args.get("timeout").and_then(|t| t.as_u64()).unwrap_or(60) as u64;
 
         let working_dir = args
             .get("working_dir")
@@ -488,7 +548,11 @@ impl Tool for ShellTool {
                 if output.status.success() {
                     ToolResult::success(result_text)
                 } else {
-                    let exit_code = output.status.code().map(|c| c.to_string()).unwrap_or_else(|| "signal".to_string());
+                    let exit_code = output
+                        .status
+                        .code()
+                        .map(|c| c.to_string())
+                        .unwrap_or_else(|| "signal".to_string());
                     result_text.push_str(&format!("Exit code: {}\n", exit_code));
                     ToolResult {
                         success: false,
@@ -498,7 +562,9 @@ impl Tool for ShellTool {
                 }
             }
             Ok(Err(e)) => ToolResult::error(format!("Failed to execute command: {}", e)),
-            Err(_) => ToolResult::error(format!("Command timed out after {} seconds", timeout_secs)),
+            Err(_) => {
+                ToolResult::error(format!("Command timed out after {} seconds", timeout_secs))
+            }
         }
     }
 }
@@ -524,8 +590,20 @@ impl Tool for GitTool {
 
     fn definition(&self) -> ToolDefinition {
         let def = tool_def("git", "Execute git commands");
-        let def = with_parameter(def, "subcommand", "string", "The git subcommand to run (status, log, diff, branch, etc.)", true);
-        with_parameter(def, "args", "array", "Additional arguments for the git command", false)
+        let def = with_parameter(
+            def,
+            "subcommand",
+            "string",
+            "The git subcommand to run (status, log, diff, branch, etc.)",
+            true,
+        );
+        with_parameter(
+            def,
+            "args",
+            "array",
+            "Additional arguments for the git command",
+            false,
+        )
     }
 
     async fn execute(&self, args: Value) -> ToolResult {
@@ -596,12 +674,21 @@ impl Tool for ListDirectoryTool {
     }
 
     fn definition(&self) -> ToolDefinition {
-        let def = tool_def(
-            "list_directory",
-            "List the contents of a directory",
+        let def = tool_def("list_directory", "List the contents of a directory");
+        let def = with_parameter(
+            def,
+            "path",
+            "string",
+            "The directory path to list (default: current)",
+            false,
         );
-        let def = with_parameter(def, "path", "string", "The directory path to list (default: current)", false);
-        with_parameter(def, "recursive", "boolean", "Whether to list recursively", false)
+        with_parameter(
+            def,
+            "recursive",
+            "boolean",
+            "Whether to list recursively",
+            false,
+        )
     }
 
     async fn execute(&self, args: Value) -> ToolResult {
@@ -769,8 +856,18 @@ mod tests {
 
         assert_eq!(def.name, "test_tool");
         assert_eq!(def.description, "A test tool");
-        assert!(def.parameters.get("properties").unwrap().get("param1").is_some());
-        assert!(def.parameters.get("properties").unwrap().get("param2").is_some());
+        assert!(def
+            .parameters
+            .get("properties")
+            .unwrap()
+            .get("param1")
+            .is_some());
+        assert!(def
+            .parameters
+            .get("properties")
+            .unwrap()
+            .get("param2")
+            .is_some());
     }
 
     #[test]

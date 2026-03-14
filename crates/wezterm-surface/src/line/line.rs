@@ -224,8 +224,9 @@ impl Line {
                     .map(|line| line.len() + cell.width() > width)
                     .unwrap_or(true);
                 if need_new_line {
-                    if let Some(line) = lines
-                        .last_mut() { line.set_last_cell_was_wrapped(true, seqno) }
+                    if let Some(line) = lines.last_mut() {
+                        line.set_last_cell_was_wrapped(true, seqno)
+                    }
                     lines.push(Line::new(seqno));
                     delta = cell.cell_index();
                 }

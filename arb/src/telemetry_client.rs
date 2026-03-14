@@ -240,7 +240,10 @@ impl TelemetryClient {
             {
                 Ok(response) => {
                     if response.status().is_success() {
-                        log::debug!("Telemetry batch sent successfully ({} events)", batch.events.len());
+                        log::debug!(
+                            "Telemetry batch sent successfully ({} events)",
+                            batch.events.len()
+                        );
                         return Ok(());
                     } else {
                         let status = response.status();

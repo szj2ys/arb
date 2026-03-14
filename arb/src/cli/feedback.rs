@@ -2,7 +2,9 @@ use anyhow::{Context, Result};
 use clap::Parser;
 use dialoguer::{theme::ColorfulTheme, Confirm, Input, Select};
 
-use crate::feedback_submitter::{FeedbackCategory, FeedbackData, FeedbackMetadata, FeedbackSubmitter};
+use crate::feedback_submitter::{
+    FeedbackCategory, FeedbackData, FeedbackMetadata, FeedbackSubmitter,
+};
 
 const BASE_URL: &str = "https://github.com/szj2ys/arb/issues/new";
 const DISCUSSIONS_URL: &str = "https://github.com/szj2ys/arb/discussions";

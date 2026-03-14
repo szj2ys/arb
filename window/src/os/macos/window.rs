@@ -20,18 +20,18 @@ use async_trait::async_trait;
 use cocoa::appkit::{
     self, CGFloat, NSApplication, NSApplicationActivateIgnoringOtherApps,
     NSApplicationPresentationOptions, NSBackingStoreBuffered, NSEvent, NSEventModifierFlags,
-    NSPasteboard, NSRunningApplication, NSScreen, NSView,
-    NSViewHeightSizable, NSViewWidthSizable, NSWindow, NSWindowStyleMask,
+    NSPasteboard, NSRunningApplication, NSScreen, NSView, NSViewHeightSizable, NSViewWidthSizable,
+    NSWindow, NSWindowStyleMask,
 };
 #[cfg(feature = "opengl")]
 use cocoa::appkit::{NSOpenGLContext, NSOpenGLPixelFormat};
 use cocoa::base::*;
-use cocoa::foundation::{
-    NSArray, NSFastEnumeration, NSInteger, NSNotFound, NSPoint, NSRect, NSSize,
-    NSString, NSUInteger,
-};
 #[cfg(feature = "opengl")]
 use cocoa::foundation::NSAutoreleasePool;
+use cocoa::foundation::{
+    NSArray, NSFastEnumeration, NSInteger, NSNotFound, NSPoint, NSRect, NSSize, NSString,
+    NSUInteger,
+};
 use config::window::WindowLevel;
 use config::{ConfigHandle, RgbaColor, SrgbaTuple};
 use core_foundation::base::{CFTypeID, TCFType};
@@ -657,8 +657,7 @@ pub(crate) fn on_app_terminating() {
         });
 
         if let Some(window) = preferred {
-            if persist_window_size(window) {
-            }
+            if persist_window_size(window) {}
         }
     }
 }
@@ -2976,9 +2975,7 @@ impl WindowView {
                             // `Acted`, we will assume that we're safe to replay
                             // that last action.
                             if is_a_repeat {
-                                if let Some(event) =
-                                    inner.ime_last_event.clone()
-                                {
+                                if let Some(event) = inner.ime_last_event.clone() {
                                     inner.events.dispatch(WindowEvent::KeyEvent(event));
                                     return;
                                 }
@@ -3411,8 +3408,7 @@ impl WindowView {
                 let window_id = inner.window_id;
                 let max_fps = inner.config.max_fps;
                 promise::spawn::spawn(async move {
-                    async_io::Timer::after(std::time::Duration::from_millis(1000 / max_fps))
-                        .await;
+                    async_io::Timer::after(std::time::Duration::from_millis(1000 / max_fps)).await;
                     Connection::with_window_inner(window_id, move |inner| {
                         if let Some(window_view) = WindowView::get_this(unsafe { &**inner.view }) {
                             let mut state = window_view.inner.borrow_mut();

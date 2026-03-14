@@ -172,7 +172,10 @@ impl Telemetry {
                     }
                 }
                 EventType::Feedback { ref category } => {
-                    *stats.feedback_categories.entry(category.clone()).or_insert(0) += 1;
+                    *stats
+                        .feedback_categories
+                        .entry(category.clone())
+                        .or_insert(0) += 1;
                 }
                 EventType::Diagnostic { issues_found } => {
                     stats.diagnostics_run += 1;
@@ -317,7 +320,10 @@ mod tests {
 
         let events = telemetry.get_events().unwrap();
         assert_eq!(events.len(), 1);
-        assert!(matches!(events[0].event_type, EventType::FirstLaunch { .. }));
+        assert!(matches!(
+            events[0].event_type,
+            EventType::FirstLaunch { .. }
+        ));
     }
 
     #[test]

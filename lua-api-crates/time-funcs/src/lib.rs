@@ -9,7 +9,8 @@ use config::ConfigSubscription;
 use std::rc::Rc;
 use std::sync::{LazyLock, Mutex};
 
-static CONFIG_SUBSCRIPTION: LazyLock<Mutex<Option<ConfigSubscription>>> = LazyLock::new(|| Mutex::new(None));
+static CONFIG_SUBSCRIPTION: LazyLock<Mutex<Option<ConfigSubscription>>> =
+    LazyLock::new(|| Mutex::new(None));
 
 /// We contrive to call this from the main thread in response to the
 /// config being reloaded.

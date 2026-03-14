@@ -122,9 +122,7 @@ static CENTER: LazyLock<NotifCenter> = LazyLock::new(|| {
         log::debug!("No bundle identifier – notification center unavailable (test binary?)");
         return NotifCenter(None);
     }
-    NotifCenter(Some(
-        UNUserNotificationCenter::currentNotificationCenter(),
-    ))
+    NotifCenter(Some(UNUserNotificationCenter::currentNotificationCenter()))
 });
 
 pub fn initialize() {

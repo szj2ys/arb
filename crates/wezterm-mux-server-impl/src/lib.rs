@@ -108,4 +108,5 @@ fn update_mux_domains_impl(config: &ConfigHandle, is_standalone_mux: bool) -> an
     Ok(())
 }
 
-pub static PKI: LazyLock<pki::Pki> = LazyLock::new(|| pki::Pki::init().expect("failed to initialize PKI"));
+pub static PKI: LazyLock<pki::Pki> =
+    LazyLock::new(|| pki::Pki::init().expect("failed to initialize PKI"));

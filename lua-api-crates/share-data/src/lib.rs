@@ -237,7 +237,11 @@ fn lua_value_to_gvalue_impl(value: LuaValue, visited: &mut HashSet<usize>) -> ml
     })
 }
 
-static GLOBALS: LazyLock<Value> = LazyLock::new(|| Value::Object(Object{inner:Arc::new(Mutex::new(BTreeMap::new()))}));
+static GLOBALS: LazyLock<Value> = LazyLock::new(|| {
+    Value::Object(Object {
+        inner: Arc::new(Mutex::new(BTreeMap::new())),
+    })
+});
 
 fn gvalue_to_lua<'lua>(lua: &'lua Lua, value: &Value) -> mlua::Result<LuaValue<'lua>> {
     match value {

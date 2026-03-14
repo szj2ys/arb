@@ -38,7 +38,6 @@ pub enum ParagraphDirectionHint {
     AutoRightToLeft,
 }
 
-
 impl ParagraphDirectionHint {
     /// Returns just the direction portion of the hint, independent
     /// of the auto-detection state.
@@ -1460,8 +1459,7 @@ impl BidiContext {
                         // Do nothing
                     } else if overflow_embedding > 0 {
                         overflow_embedding -= 1;
-                    } else if !stack.isolate_status()
-                    && stack.depth() >= 2 {
+                    } else if !stack.isolate_status() && stack.depth() >= 2 {
                         stack.pop();
                     }
                 }
@@ -1708,16 +1706,22 @@ impl BidiContext {
 
 impl BidiClass {
     pub fn is_iso_init(self) -> bool {
-        matches!(self, BidiClass::RightToLeftIsolate
-            | BidiClass::LeftToRightIsolate
-            | BidiClass::FirstStrongIsolate)
+        matches!(
+            self,
+            BidiClass::RightToLeftIsolate
+                | BidiClass::LeftToRightIsolate
+                | BidiClass::FirstStrongIsolate
+        )
     }
 
     pub fn is_iso_control(self) -> bool {
-        matches!(self, BidiClass::RightToLeftIsolate
-            | BidiClass::LeftToRightIsolate
-            | BidiClass::PopDirectionalIsolate
-            | BidiClass::FirstStrongIsolate)
+        matches!(
+            self,
+            BidiClass::RightToLeftIsolate
+                | BidiClass::LeftToRightIsolate
+                | BidiClass::PopDirectionalIsolate
+                | BidiClass::FirstStrongIsolate
+        )
     }
 
     pub fn is_neutral(self) -> bool {

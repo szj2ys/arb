@@ -48,6 +48,5 @@ fn battery_info(_: &Lua, _: ()) -> mlua::Result<Vec<BatteryInfo>> {
 }
 
 fn opt_string(s: Option<&str>) -> String {
-    s.unwrap_or("unknown")
-    .to_string()
+    s.unwrap_or("unknown").to_string()
 }
