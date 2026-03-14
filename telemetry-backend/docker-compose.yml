@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  telemetry:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=sqlite:///data/telemetry.db
+      - PORT=8080
+      - RUST_LOG=info
+    volumes:
+      - telemetry-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  telemetry-data:
