@@ -1,0 +1,63 @@
+name: Deploy Backends
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'telemetry-backend/**'
+      - 'feedback-backend/**'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-backends
+  cancel-in-progress: false
+
+jobs:
+  deploy-telemetry:
+    name: Deploy Telemetry Backend
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Fly CLI
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy Telemetry Backend
+        working-directory: ./telemetry-backend
+        run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+  deploy-feedback:
+    name: Deploy Feedback Backend
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Fly CLI
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy Feedback Backend
+        working-directory: ./feedback-backend
+        run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+  health-check:
+    name: Health Check
+    runs-on: ubuntu-latest
+    needs: [deploy-telemetry, deploy-feedback]
+    steps:
+      - name: Check Telemetry Health
+        run: |
+          curl -sSf https://arb-telemetry.fly.dev/health || exit 1
+          echo "Telemetry backend healthy ✅"
+
+      - name: Check Feedback Health
+        run: |
+          curl -sSf https://arb-feedback.fly.dev/health || exit 1
+          echo "Feedback backend healthy ✅"
