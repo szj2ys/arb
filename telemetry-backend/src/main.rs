@@ -62,8 +62,8 @@ struct HealthResponse {
 async fn main() -> anyhow::Result<()> {
     tracing_subscriber::fmt::init();
 
-    let database_url = std::env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "sqlite:telemetry.db".to_string());
+    let database_url =
+        std::env::var("DATABASE_URL").unwrap_or_else(|_| "sqlite:telemetry.db".to_string());
 
     let db = SqlitePoolOptions::new()
         .max_connections(5)

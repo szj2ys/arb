@@ -21,10 +21,7 @@ pub async fn init(db: &Pool<Sqlite>) -> anyhow::Result<()> {
     Ok(())
 }
 
-pub async fn insert_event(
-    db: &Pool<Sqlite>,
-    event: &crate::TelemetryEvent,
-) -> anyhow::Result<()> {
+pub async fn insert_event(db: &Pool<Sqlite>, event: &crate::TelemetryEvent) -> anyhow::Result<()> {
     let event_type = match &event.event_type {
         crate::EventType::Install { .. } => "install",
         crate::EventType::FirstLaunch { .. } => "first_launch",
