@@ -107,9 +107,7 @@ impl FeedbackCommand {
             .with_prompt("Your email (optional, for follow-up)")
             .allow_empty(true)
             .validate_with(|input: &String| {
-                if input.is_empty() {
-                    Ok(())
-                } else if input.contains('@') {
+                if input.is_empty() || input.contains('@') {
                     Ok(())
                 } else {
                     Err("Please enter a valid email or leave empty".to_string())

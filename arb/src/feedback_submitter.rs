@@ -43,6 +43,12 @@ pub struct FeedbackMetadata {
     pub shell: String,
 }
 
+impl Default for FeedbackMetadata {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl FeedbackMetadata {
     /// Create metadata from current system
     pub fn new() -> Self {
