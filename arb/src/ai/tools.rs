@@ -363,7 +363,7 @@ impl Tool for FileSearchTool {
 
                 // Use ripgrep if available, otherwise fall back to grep
                 let output = Command::new("rg")
-                    .args(&[
+                    .args([
                         "--line-number",
                         "--with-filename",
                         "--fixed-strings",
@@ -390,7 +390,7 @@ impl Tool for FileSearchTool {
                         } else {
                             // Try with grep as fallback
                             let grep_output = Command::new("grep")
-                                .args(&["-r", "-n", "--include", glob_pattern, pattern, "."])
+                                .args(["-r", "-n", "--include", glob_pattern, pattern, "."])
                                 .current_dir(&self.working_dir)
                                 .output()
                                 .await;
@@ -411,7 +411,7 @@ impl Tool for FileSearchTool {
                     Err(_) => {
                         // Fall back to grep
                         let grep_output = Command::new("grep")
-                            .args(&["-r", "-n", "--include", glob_pattern, pattern, "."])
+                            .args(["-r", "-n", "--include", glob_pattern, pattern, "."])
                             .current_dir(&self.working_dir)
                             .output()
                             .await;
@@ -461,7 +461,7 @@ impl ShellTool {
             return true;
         }
 
-        let cmd = command.trim().split_whitespace().next().unwrap_or("");
+        let cmd = command.split_whitespace().next().unwrap_or("");
         self.allowed_commands.iter().any(|allowed| allowed == cmd)
     }
 }
@@ -511,7 +511,7 @@ impl Tool for ShellTool {
             ));
         }
 
-        let timeout_secs = args.get("timeout").and_then(|t| t.as_u64()).unwrap_or(60) as u64;
+        let timeout_secs = args.get("timeout").and_then(|t| t.as_u64()).unwrap_or(60);
 
         let working_dir = args
             .get("working_dir")

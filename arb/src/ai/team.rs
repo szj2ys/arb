@@ -184,6 +184,7 @@ pub enum TeamEvent {
 #[allow(dead_code)]
 pub struct Team {
     config: TeamConfig,
+    #[allow(clippy::type_complexity)]
     members: Arc<RwLock<HashMap<String, (TeamMember, Arc<dyn LLMProvider>)>>>,
     message_bus: Arc<RwLock<Vec<TeamMessage>>>,
     shared_context: Arc<RwLock<SharedContext>>,
