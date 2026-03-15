@@ -1,6 +1,7 @@
 use anyhow::{Context, Result};
 use clap::Parser;
-use dialoguer::{theme::ColorfulTheme, Confirm, Input, Select};
+use dialoguer::theme::ColorfulTheme;
+use dialoguer::{Confirm, Input, Select};
 
 use crate::feedback_submitter::{
     FeedbackCategory, FeedbackData, FeedbackMetadata, FeedbackSubmitter,
