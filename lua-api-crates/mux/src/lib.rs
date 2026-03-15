@@ -207,7 +207,6 @@ enum HandySplitDirection {
 }
 impl_lua_conversion_dynamic!(HandySplitDirection);
 
-
 #[derive(Debug, FromDynamic, ToDynamic)]
 struct SpawnWindow {
     #[dynamic(default = "spawn_tab_default_domain")]

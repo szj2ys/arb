@@ -11,7 +11,7 @@ const DEFAULT_ENDPOINT: &str = "https://arb-feedback.fly.dev";
 const REQUEST_TIMEOUT_SECS: u64 = 30;
 
 /// Feedback category
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub enum FeedbackCategory {
     /// Bug report
@@ -41,6 +41,12 @@ pub struct FeedbackMetadata {
     pub os: String,
     /// Current shell
     pub shell: String,
+}
+
+impl Default for FeedbackMetadata {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl FeedbackMetadata {
@@ -121,10 +127,8 @@ impl FeedbackSubmitter {
             .context("Failed to send feedback request")?;
 
         if response.status().is_success() {
-            let submission: SubmissionResponse = response
-                .json()
-                .await
-                .context("Failed to parse response")?;
+            let submission: SubmissionResponse =
+                response.json().await.context("Failed to parse response")?;
             Ok(submission)
         } else {
             let status = response.status();
@@ -160,7 +164,7 @@ fn get_os_info() -> String {
 fn get_shell_info() -> String {
     std::env::var("SHELL")
         .ok()
-        .and_then(|s| s.split('/').last().map(|s| s.to_string()))
+        .and_then(|s| s.split('/').next_back().map(|s| s.to_string()))
         .unwrap_or_else(|| "unknown".to_string())
 }
 

@@ -223,8 +223,7 @@ pub type PaletteIndex = u8;
 /// This differs from `ColorAttribute` in that this type can only
 /// specify one of the possible color types at once, whereas the
 /// `ColorAttribute` type can specify a TrueColor value and a fallback.
-#[derive(Debug, Clone, Copy, Eq, PartialEq)]
-#[derive(Default)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Default)]
 pub enum ColorSpec {
     #[default]
     Default,
@@ -232,7 +231,6 @@ pub enum ColorSpec {
     PaletteIndex(PaletteIndex),
     TrueColor(SrgbaTuple),
 }
-
 
 impl From<AnsiColor> for ColorSpec {
     fn from(col: AnsiColor) -> Self {

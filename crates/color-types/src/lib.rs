@@ -1086,10 +1086,9 @@ impl LinearRgba {
         let increased_ratio = reduced_col.contrast_ratio(other);
 
         // Prefer the reduced luminance version if the fg is dimmer than bg
-        if fg_lum < bg_lum
-            && reduced_ratio >= min_ratio {
-                return Some(reduced_col);
-            }
+        if fg_lum < bg_lum && reduced_ratio >= min_ratio {
+            return Some(reduced_col);
+        }
         // Otherwise, let's find a satisfactory alternative
         if increased_ratio >= min_ratio {
             return Some(increased_col);

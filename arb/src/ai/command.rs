@@ -1,6 +1,8 @@
 //! AI command handling for Arb Terminal
 
-use crate::ai::provider::{ChatRequest, LLMProvider, Message, ProviderConfig, ProviderFactory, Role};
+use crate::ai::provider::{
+    ChatRequest, LLMProvider, Message, ProviderConfig, ProviderFactory, Role,
+};
 use anyhow::Result;
 use clap::{Parser, Subcommand};
 
@@ -145,7 +147,14 @@ impl AiConfigCommand {
                 println!("  Provider: {}", config.name);
                 println!("  API URL: {}", config.api_url);
                 println!("  Model: {}", config.model);
-                println!("  API Key: {}", if has_api_key().await? { "✓ Set" } else { "✗ Not set" });
+                println!(
+                    "  API Key: {}",
+                    if has_api_key().await? {
+                        "✓ Set"
+                    } else {
+                        "✗ Not set"
+                    }
+                );
             }
         }
 
@@ -294,7 +303,9 @@ async fn explain_command(text: &str) -> Result<()> {
         messages: vec![
             Message {
                 role: Role::System,
-                content: "You are a terminal expert. Explain shell commands and error messages clearly.".to_string(),
+                content:
+                    "You are a terminal expert. Explain shell commands and error messages clearly."
+                        .to_string(),
                 name: None,
             },
             Message {
@@ -339,12 +350,16 @@ async fn fix_last_error() -> Result<()> {
         messages: vec![
             Message {
                 role: Role::System,
-                content: "You are a debugging expert. Analyze command errors and suggest fixes.".to_string(),
+                content: "You are a debugging expert. Analyze command errors and suggest fixes."
+                    .to_string(),
                 name: None,
             },
             Message {
                 role: Role::User,
-                content: format!("Command: {}\nError: {}\n\nWhat's wrong and how do I fix it?", last_command, last_error),
+                content: format!(
+                    "Command: {}\nError: {}\n\nWhat's wrong and how do I fix it?",
+                    last_command, last_error
+                ),
                 name: None,
             },
         ],
@@ -503,7 +518,7 @@ fn get_last_command() -> Result<String> {
     let last_line = content.lines().last().unwrap_or("");
 
     // Parse zsh history format
-    if let Some(cmd) = last_line.splitn(2, ';').nth(1) {
+    if let Some((_, cmd)) = last_line.split_once(';') {
         Ok(cmd.to_string())
     } else {
         Ok(last_line.to_string())

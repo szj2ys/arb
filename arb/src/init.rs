@@ -190,18 +190,27 @@ mod imp {
 
         // Perform restoration
         if zshrc.exists() {
-            fs::copy(&zshrc, format!("{}.arb-pre-restore-{}", zshrc.display(),
-                std::time::SystemTime::now()
-                    .duration_since(std::time::UNIX_EPOCH)
-                    .unwrap_or_default()
-                    .as_secs()
-            )).ok();
+            fs::copy(
+                &zshrc,
+                format!(
+                    "{}.arb-pre-restore-{}",
+                    zshrc.display(),
+                    std::time::SystemTime::now()
+                        .duration_since(std::time::UNIX_EPOCH)
+                        .unwrap_or_default()
+                        .as_secs()
+                ),
+            )
+            .ok();
         }
 
         fs::copy(latest_backup, &zshrc)
             .with_context(|| format!("Failed to restore backup to {}", zshrc.display()))?;
 
-        eprintln!("✓ Restored shell configuration from {}", latest_backup.display());
+        eprintln!(
+            "✓ Restored shell configuration from {}",
+            latest_backup.display()
+        );
         eprintln!("  Open a new terminal tab to apply changes.");
 
         Ok(())
@@ -401,17 +410,16 @@ exit 127
         }
 
         if let Ok(exe) = std::env::current_exe() {
-        if let Some(contents_dir) = exe.parent().and_then(|p| p.parent()) {
-            candidates.push(contents_dir.join("Resources/setup_zsh.sh"));
-        }
+            if let Some(contents_dir) = exe.parent().and_then(|p| p.parent()) {
+                candidates.push(contents_dir.join("Resources/setup_zsh.sh"));
+            }
         }
 
         candidates.push(PathBuf::from(
             "/Applications/Arb.app/Contents/Resources/setup_zsh.sh",
         ));
-        candidates.push(
-            config::HOME_DIR.join("Applications/Arb.app/Contents/Resources/setup_zsh.sh"),
-        );
+        candidates
+            .push(config::HOME_DIR.join("Applications/Arb.app/Contents/Resources/setup_zsh.sh"));
 
         candidates
     }
@@ -532,10 +540,16 @@ exit 127
             // We verify this by confirming the function signature accepts update_only
             // and that the guard exists. Since we cannot easily run the full init
             // (it requires shell scripts), we test the guard at the API level.
-            let cmd_update = super::super::InitCommand { update_only: true };
+            let cmd_update = super::super::InitCommand {
+                update_only: true,
+                restore: false,
+            };
             assert!(cmd_update.update_only, "update_only flag should be true");
 
-            let cmd_normal = super::super::InitCommand { update_only: false };
+            let cmd_normal = super::super::InitCommand {
+                update_only: false,
+                restore: false,
+            };
             assert!(
                 !cmd_normal.update_only,
                 "update_only flag should be false for normal init"

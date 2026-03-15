@@ -146,7 +146,10 @@ pub trait LLMProvider: Send + Sync {
     async fn chat(&self, request: ChatRequest) -> Result<ChatResponse>;
 
     /// Send a streaming chat completion request
-    async fn chat_stream(&self, request: ChatRequest) -> Result<BoxStream<'static, Result<StreamChunk>>>;
+    async fn chat_stream(
+        &self,
+        request: ChatRequest,
+    ) -> Result<BoxStream<'static, Result<StreamChunk>>>;
 
     /// Test the connection to the provider
     async fn test_connection(&self) -> Result<()>;
@@ -196,7 +199,10 @@ impl OpenAIProvider {
 #[async_trait]
 impl LLMProvider for OpenAIProvider {
     async fn chat(&self, request: ChatRequest) -> Result<ChatResponse> {
-        let url = format!("{}/chat/completions", self.config.api_url.trim_end_matches('/'));
+        let url = format!(
+            "{}/chat/completions",
+            self.config.api_url.trim_end_matches('/')
+        );
 
         let response = self
             .client
@@ -216,10 +222,16 @@ impl LLMProvider for OpenAIProvider {
         Ok(chat_response)
     }
 
-    async fn chat_stream(&self, mut request: ChatRequest) -> Result<BoxStream<'static, Result<StreamChunk>>> {
+    async fn chat_stream(
+        &self,
+        mut request: ChatRequest,
+    ) -> Result<BoxStream<'static, Result<StreamChunk>>> {
         request.stream = Some(true);
 
-        let url = format!("{}/chat/completions", self.config.api_url.trim_end_matches('/'));
+        let url = format!(
+            "{}/chat/completions",
+            self.config.api_url.trim_end_matches('/')
+        );
 
         let response = self
             .client
@@ -237,13 +249,13 @@ impl LLMProvider for OpenAIProvider {
 
         let stream = response.bytes_stream();
         let mapped = stream.map(|result| {
-            result.map_err(|e| anyhow!("Stream error: {}", e))
+            result
+                .map_err(|e| anyhow!("Stream error: {}", e))
                 .and_then(|bytes| {
                     let text = String::from_utf8_lossy(&bytes);
                     // Parse SSE format
                     for line in text.lines() {
-                        if line.starts_with("data: ") {
-                            let data = &line[6..];
+                        if let Some(data) = line.strip_prefix("data: ") {
                             if data == "[DONE]" {
                                 continue;
                             }
@@ -288,9 +300,7 @@ pub struct ProviderFactory;
 impl ProviderFactory {
     pub fn create(config: ProviderConfig) -> Result<Box<dyn LLMProvider>> {
         match config.name.as_str() {
-            "openai" | "dashscope" | "custom" => {
-                Ok(Box::new(OpenAIProvider::new(config)?))
-            }
+            "openai" | "dashscope" | "custom" => Ok(Box::new(OpenAIProvider::new(config)?)),
             _ => Err(anyhow!("Unknown provider: {}", config.name)),
         }
     }

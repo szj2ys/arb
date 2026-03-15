@@ -157,7 +157,9 @@ impl crate::sessioninner::SessionInner {
         });
 
         use libssh_rs::{AuthMethods, AuthStatus};
-        if sess.userauth_none(None)? == AuthStatus::Success { return Ok(()) }
+        if sess.userauth_none(None)? == AuthStatus::Success {
+            return Ok(());
+        }
 
         loop {
             let auth_methods = sess.userauth_list(None)?;

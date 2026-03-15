@@ -222,5 +222,6 @@ pub fn resolve_relative_cwd(cwd: Option<OsString>) -> anyhow::Result<Option<Stri
             .to_str()
             .map(|s| s.to_string())
             .ok_or_else(|| anyhow!("path is not representable as String"))
-    }).transpose()
+    })
+    .transpose()
 }

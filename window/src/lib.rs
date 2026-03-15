@@ -59,7 +59,6 @@ pub enum Clipboard {
     PrimarySelection,
 }
 
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Dimensions {
     pub pixel_width: usize,

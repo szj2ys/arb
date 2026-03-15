@@ -262,7 +262,10 @@ mod tests {
     #[test]
     fn should_compare_two_date_versions() {
         // Both are date versions; guard does not fire, numeric compare succeeds
-        assert!(is_newer_version("20240204-110000-abc", "20240203-110000-abc"));
+        assert!(is_newer_version(
+            "20240204-110000-abc",
+            "20240203-110000-abc"
+        ));
     }
 
     // ── fallback when unparseable ──────────────────────────────

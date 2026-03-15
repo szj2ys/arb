@@ -128,7 +128,8 @@ struct CachedAnalysis {
     colors: Vec<ColorWrap>,
 }
 
-static IMG_COLOR_CACHE: LazyLock<Mutex<LruCache<(String, ExtractColorParams), CachedAnalysis>>> = LazyLock::new(|| Mutex::new(LruCache::new(NonZeroUsize::new(16).unwrap())));
+static IMG_COLOR_CACHE: LazyLock<Mutex<LruCache<(String, ExtractColorParams), CachedAnalysis>>> =
+    LazyLock::new(|| Mutex::new(LruCache::new(NonZeroUsize::new(16).unwrap())));
 
 fn color_diff_lab(a: &LabValue, b: &LabValue) -> f32 {
     *deltae::DeltaE::new(a, b, deltae::DEMethod::DE2000).value()

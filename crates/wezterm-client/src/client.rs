@@ -1317,8 +1317,8 @@ impl Client {
         let pane_id: PaneId = match pane_id {
             Some(p) => p,
             None => {
-                if let Ok(pane) = std::env::var("ARB_PANE")
-                    .or_else(|_| std::env::var("WEZTERM_PANE"))
+                if let Ok(pane) =
+                    std::env::var("ARB_PANE").or_else(|_| std::env::var("WEZTERM_PANE"))
                 {
                     pane.parse()?
                 } else {

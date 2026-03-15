@@ -8,9 +8,11 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs::{self, OpenOptions};
 use std::io::Write;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::sync::OnceLock;
 use std::time::{SystemTime, UNIX_EPOCH};
+
+use crate::telemetry_client::TelemetryClient;
 
 /// Telemetry event types
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -60,6 +62,7 @@ pub struct Telemetry {
     device_id: String,
     data_dir: PathBuf,
     enabled: bool,
+    remote_client: Option<TelemetryClient>,
 }
 
 impl Telemetry {
@@ -73,12 +76,29 @@ impl Telemetry {
         fs::create_dir_all(&data_dir)?;
 
         let device_id = Self::get_or_create_device_id(&data_dir)?;
-        let enabled = !std::env::var("ARB_DISABLE_TELEMETRY").is_ok();
+        let enabled = std::env::var("ARB_DISABLE_TELEMETRY").is_err();
+
+        // Initialize remote telemetry client
+        let remote_client = if enabled {
+            match TelemetryClient::new(device_id.clone()) {
+                Ok(mut client) => {
+                    client.start_batch_sender();
+                    Some(client)
+                }
+                Err(e) => {
+                    log::debug!("Failed to initialize telemetry client: {}", e);
+                    None
+                }
+            }
+        } else {
+            None
+        };
 
         Ok(Self {
             device_id,
             data_dir,
             enabled,
+            remote_client,
         })
     }
 
@@ -102,7 +122,15 @@ impl Telemetry {
             event_type,
         };
 
-        self.persist_event(&event)
+        // Persist locally (always do this first)
+        self.persist_event(&event)?;
+
+        // Send to remote backend (non-blocking)
+        if let Some(ref client) = self.remote_client {
+            let _ = client.send_event(event);
+        }
+
+        Ok(())
     }
 
     /// Get all recorded events
@@ -144,7 +172,10 @@ impl Telemetry {
                     }
                 }
                 EventType::Feedback { ref category } => {
-                    *stats.feedback_categories.entry(category.clone()).or_insert(0) += 1;
+                    *stats
+                        .feedback_categories
+                        .entry(category.clone())
+                        .or_insert(0) += 1;
                 }
                 EventType::Diagnostic { issues_found } => {
                     stats.diagnostics_run += 1;
@@ -166,7 +197,7 @@ impl Telemetry {
         Ok(())
     }
 
-    fn get_or_create_device_id(data_dir: &PathBuf) -> Result<String> {
+    fn get_or_create_device_id(data_dir: &Path) -> Result<String> {
         let id_file = data_dir.join("device_id");
         if id_file.exists() {
             return Ok(fs::read_to_string(&id_file)?.trim().to_string());
@@ -278,6 +309,7 @@ mod tests {
             device_id: "test_device".to_string(),
             data_dir: temp_dir.path().to_path_buf(),
             enabled: true,
+            remote_client: None,
         };
 
         telemetry
@@ -288,7 +320,10 @@ mod tests {
 
         let events = telemetry.get_events().unwrap();
         assert_eq!(events.len(), 1);
-        assert!(matches!(events[0].event_type, EventType::FirstLaunch { .. }));
+        assert!(matches!(
+            events[0].event_type,
+            EventType::FirstLaunch { .. }
+        ));
     }
 
     #[test]
@@ -298,6 +333,7 @@ mod tests {
             device_id: "test_device".to_string(),
             data_dir: temp_dir.path().to_path_buf(),
             enabled: false,
+            remote_client: None,
         };
 
         telemetry
@@ -317,6 +353,7 @@ mod tests {
             device_id: "test_device".to_string(),
             data_dir: temp_dir.path().to_path_buf(),
             enabled: true,
+            remote_client: None,
         };
 
         telemetry

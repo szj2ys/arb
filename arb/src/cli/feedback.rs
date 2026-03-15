@@ -1,8 +1,11 @@
 use anyhow::{Context, Result};
 use clap::Parser;
-use dialoguer::{theme::ColorfulTheme, Confirm, Input, Select};
+use dialoguer::theme::ColorfulTheme;
+use dialoguer::{Confirm, Input, Select};
 
-use crate::feedback_submitter::{FeedbackCategory, FeedbackData, FeedbackMetadata, FeedbackSubmitter};
+use crate::feedback_submitter::{
+    FeedbackCategory, FeedbackData, FeedbackMetadata, FeedbackSubmitter,
+};
 
 const BASE_URL: &str = "https://github.com/szj2ys/arb/issues/new";
 const DISCUSSIONS_URL: &str = "https://github.com/szj2ys/arb/discussions";
@@ -87,11 +90,11 @@ impl FeedbackCommand {
 
         let content: String = Input::with_theme(&ColorfulTheme::default())
             .with_prompt(prompt)
-            .validate(|input: &String| {
+            .validate_with(|input: &String| {
                 if input.trim().len() < 5 {
-                    Err("Please provide at least 5 characters")
+                    Err("Please provide at least 5 characters".to_string())
                 } else if input.trim().len() > 2000 {
-                    Err("Please keep it under 2000 characters")
+                    Err("Please keep it under 2000 characters".to_string())
                 } else {
                     Ok(())
                 }
@@ -103,13 +106,11 @@ impl FeedbackCommand {
         let contact: String = Input::with_theme(&ColorfulTheme::default())
             .with_prompt("Your email (optional, for follow-up)")
             .allow_empty(true)
-            .validate(|input: &String| {
-                if input.is_empty() {
-                    Ok(())
-                } else if input.contains('@') {
+            .validate_with(|input: &String| {
+                if input.is_empty() || input.contains('@') {
                     Ok(())
                 } else {
-                    Err("Please enter a valid email or leave empty")
+                    Err("Please enter a valid email or leave empty".to_string())
                 }
             })
             .interact_text()

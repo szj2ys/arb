@@ -14,9 +14,12 @@ fn no_scheduler_configured(_: Runnable) {
     panic!("no scheduler has been configured");
 }
 
-static ON_MAIN_THREAD: LazyLock<Mutex<ScheduleFunc>> = LazyLock::new(|| Mutex::new(Box::new(no_scheduler_configured)));
-static ON_MAIN_THREAD_LOW_PRI: LazyLock<Mutex<ScheduleFunc>> = LazyLock::new(|| Mutex::new(Box::new(no_scheduler_configured)));
-static SCOPED_EXECUTOR: LazyLock<Mutex<Option<Arc<Executor<'static>>>>> = LazyLock::new(|| Mutex::new(None));
+static ON_MAIN_THREAD: LazyLock<Mutex<ScheduleFunc>> =
+    LazyLock::new(|| Mutex::new(Box::new(no_scheduler_configured)));
+static ON_MAIN_THREAD_LOW_PRI: LazyLock<Mutex<ScheduleFunc>> =
+    LazyLock::new(|| Mutex::new(Box::new(no_scheduler_configured)));
+static SCOPED_EXECUTOR: LazyLock<Mutex<Option<Arc<Executor<'static>>>>> =
+    LazyLock::new(|| Mutex::new(None));
 
 static SCHEDULER_CONFIGURED: AtomicBool = AtomicBool::new(false);
 

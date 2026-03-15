@@ -487,7 +487,9 @@ impl Config {
             // it is convenient and sufficient at the time of writing
             "localhost".to_string()
         } else {
-            hostname::get().map(|h| h.to_string_lossy().to_string()).unwrap_or_else(|_| "localhost".to_string())
+            hostname::get()
+                .map(|h| h.to_string_lossy().to_string())
+                .unwrap_or_else(|_| "localhost".to_string())
         };
 
         if include_domain_name {
@@ -616,8 +618,16 @@ impl Config {
     /// Return true if a given option name is subject to environment variable
     /// expansion.
     fn should_expand_environment(&self, key: &str) -> bool {
-        matches!(key, "certificatefile" | "controlpath" | "identityagent" | "identityfile"
-            | "userknownhostsfile" | "localforward" | "remoteforward")
+        matches!(
+            key,
+            "certificatefile"
+                | "controlpath"
+                | "identityagent"
+                | "identityfile"
+                | "userknownhostsfile"
+                | "localforward"
+                | "remoteforward"
+        )
     }
 
     /// Returns a set of tokens that should be expanded for a given option name
@@ -786,10 +796,12 @@ impl Config {
                 for c in &group.criteria {
                     if let Criteria::Host(patterns) = c {
                         for pattern in patterns {
-                            if pattern.is_literal && !pattern.negated
-                                && !hosts.contains(&pattern.original) {
-                                    hosts.push(pattern.original.clone());
-                                }
+                            if pattern.is_literal
+                                && !pattern.negated
+                                && !hosts.contains(&pattern.original)
+                            {
+                                hosts.push(pattern.original.clone());
+                            }
                         }
                     }
                 }

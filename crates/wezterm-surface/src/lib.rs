@@ -48,18 +48,15 @@ pub enum Position {
 }
 
 #[cfg_attr(feature = "use_serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, Hash, Copy, PartialEq, Eq, FromDynamic, ToDynamic)]
-#[derive(Default)]
+#[derive(Debug, Clone, Hash, Copy, PartialEq, Eq, FromDynamic, ToDynamic, Default)]
 pub enum CursorVisibility {
     Hidden,
     #[default]
     Visible,
 }
 
-
 #[cfg_attr(feature = "use_serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, FromDynamic, ToDynamic)]
-#[derive(Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, FromDynamic, ToDynamic, Default)]
 pub enum CursorShape {
     #[default]
     Default,
@@ -70,7 +67,6 @@ pub enum CursorShape {
     BlinkingBar,
     SteadyBar,
 }
-
 
 impl CursorShape {
     pub fn is_blinking(self) -> bool {

@@ -1227,65 +1227,74 @@ impl ITermProprietary {
             )?));
         }
 
-        if osc.len() == 3 && keyword == "ReportCellSize" && p1.is_some()
-            && let Some(p1) = p1 {
-                return Ok(ITermProprietary::ReportCellSize {
-                    height_pixels: NotNan::new(p1.parse()?).map_err(not_nan_err)?,
-                    width_pixels: NotNan::new(String::from_utf8_lossy(osc[2]).parse()?)
-                        .map_err(not_nan_err)?,
-                    scale: None,
+        if osc.len() == 3
+            && keyword == "ReportCellSize"
+            && p1.is_some()
+            && let Some(p1) = p1
+        {
+            return Ok(ITermProprietary::ReportCellSize {
+                height_pixels: NotNan::new(p1.parse()?).map_err(not_nan_err)?,
+                width_pixels: NotNan::new(String::from_utf8_lossy(osc[2]).parse()?)
+                    .map_err(not_nan_err)?,
+                scale: None,
+            });
+        }
+        if osc.len() == 4
+            && keyword == "ReportCellSize"
+            && p1.is_some()
+            && let Some(p1) = p1
+        {
+            return Ok(ITermProprietary::ReportCellSize {
+                height_pixels: NotNan::new(p1.parse()?).map_err(not_nan_err)?,
+                width_pixels: NotNan::new(String::from_utf8_lossy(osc[2]).parse()?)
+                    .map_err(not_nan_err)?,
+                scale: Some(
+                    NotNan::new(String::from_utf8_lossy(osc[3]).parse()?).map_err(not_nan_err)?,
+                ),
+            });
+        }
+
+        if osc.len() == 2
+            && keyword == "SetUserVar"
+            && let Some(p1) = p1
+        {
+            let mut iter = p1.splitn(2, '=');
+            let p1 = iter.next();
+            let p2 = iter.next();
+
+            if let (Some(k), Some(v)) = (p1, p2) {
+                return Ok(ITermProprietary::SetUserVar {
+                    name: k.to_string(),
+                    value: String::from_utf8(base64_decode(v)?)?,
                 });
             }
-        if osc.len() == 4 && keyword == "ReportCellSize" && p1.is_some()
-            && let Some(p1) = p1 {
-                return Ok(ITermProprietary::ReportCellSize {
-                    height_pixels: NotNan::new(p1.parse()?).map_err(not_nan_err)?,
-                    width_pixels: NotNan::new(String::from_utf8_lossy(osc[2]).parse()?)
-                        .map_err(not_nan_err)?,
-                    scale: Some(
-                        NotNan::new(String::from_utf8_lossy(osc[3]).parse()?)
-                            .map_err(not_nan_err)?,
-                    ),
-                });
+        }
+
+        if osc.len() == 2
+            && keyword == "UnicodeVersion"
+            && let Some(p1) = p1
+        {
+            let mut iter = p1.splitn(2, ' ');
+            let keyword = iter.next();
+            let label = iter.next();
+
+            if let Some("push") = keyword {
+                return Ok(ITermProprietary::UnicodeVersion(
+                    ITermUnicodeVersionOp::Push(label.map(|s| s.to_string())),
+                ));
+            }
+            if let Some("pop") = keyword {
+                return Ok(ITermProprietary::UnicodeVersion(
+                    ITermUnicodeVersionOp::Pop(label.map(|s| s.to_string())),
+                ));
             }
 
-        if osc.len() == 2 && keyword == "SetUserVar"
-            && let Some(p1) = p1 {
-                let mut iter = p1.splitn(2, '=');
-                let p1 = iter.next();
-                let p2 = iter.next();
-
-                if let (Some(k), Some(v)) = (p1, p2) {
-                    return Ok(ITermProprietary::SetUserVar {
-                        name: k.to_string(),
-                        value: String::from_utf8(base64_decode(v)?)?,
-                    });
-                }
+            if let Ok(n) = p1.parse::<u8>() {
+                return Ok(ITermProprietary::UnicodeVersion(
+                    ITermUnicodeVersionOp::Set(n),
+                ));
             }
-
-        if osc.len() == 2 && keyword == "UnicodeVersion"
-            && let Some(p1) = p1 {
-                let mut iter = p1.splitn(2, ' ');
-                let keyword = iter.next();
-                let label = iter.next();
-
-                if let Some("push") = keyword {
-                    return Ok(ITermProprietary::UnicodeVersion(
-                        ITermUnicodeVersionOp::Push(label.map(|s| s.to_string())),
-                    ));
-                }
-                if let Some("pop") = keyword {
-                    return Ok(ITermProprietary::UnicodeVersion(
-                        ITermUnicodeVersionOp::Pop(label.map(|s| s.to_string())),
-                    ));
-                }
-
-                if let Ok(n) = p1.parse::<u8>() {
-                    return Ok(ITermProprietary::UnicodeVersion(
-                        ITermUnicodeVersionOp::Set(n),
-                    ));
-                }
-            }
+        }
 
         if keyword == "File" {
             return Ok(ITermProprietary::File(Box::new(ITermFileData::parse(osc)?)));

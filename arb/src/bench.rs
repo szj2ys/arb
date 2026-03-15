@@ -281,7 +281,10 @@ mod imp {
             }).collect::<Vec<_>>(),
         });
 
-        println!("{}", serde_json::to_string_pretty(&json).unwrap_or_default());
+        println!(
+            "{}",
+            serde_json::to_string_pretty(&json).unwrap_or_default()
+        );
     }
 
     /// Format benchmark results as a Markdown table.

@@ -83,13 +83,31 @@ pub struct AgentResult {
 /// Agent event for progress reporting
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum AgentEvent {
-    Started { task: String },
-    Thinking { iteration: u32, thought: String },
-    ToolCalling { iteration: u32, tool_name: String, arguments: Value },
-    ToolResult { iteration: u32, result: ToolResult },
-    Completed { result: AgentResult },
-    Failed { error: String },
-    StatusChanged { status: AgentStatus },
+    Started {
+        task: String,
+    },
+    Thinking {
+        iteration: u32,
+        thought: String,
+    },
+    ToolCalling {
+        iteration: u32,
+        tool_name: String,
+        arguments: Value,
+    },
+    ToolResult {
+        iteration: u32,
+        result: ToolResult,
+    },
+    Completed {
+        result: AgentResult,
+    },
+    Failed {
+        error: String,
+    },
+    StatusChanged {
+        status: AgentStatus,
+    },
 }
 
 /// The Agent that can execute tasks autonomously
@@ -104,10 +122,7 @@ pub struct Agent {
 
 impl Agent {
     /// Create a new agent with the given configuration
-    pub fn new(
-        config: AgentConfig,
-        provider: Arc<dyn LLMProvider>,
-    ) -> Result<Self> {
+    pub fn new(config: AgentConfig, provider: Arc<dyn LLMProvider>) -> Result<Self> {
         let tool_registry = Arc::new(ToolRegistry::new(&config.working_dir));
 
         Ok(Self {
@@ -150,8 +165,12 @@ impl Agent {
             *status = AgentStatus::Running;
         }
 
-        self.send_event(AgentEvent::Started { task: task.clone() }).await;
-        self.send_event(AgentEvent::StatusChanged { status: AgentStatus::Running }).await;
+        self.send_event(AgentEvent::Started { task: task.clone() })
+            .await;
+        self.send_event(AgentEvent::StatusChanged {
+            status: AgentStatus::Running,
+        })
+        .await;
 
         // Build the system prompt
         let system_prompt = self.build_system_prompt();
@@ -219,7 +238,9 @@ impl Agent {
                 }
             };
 
-            let assistant_message = response.choices.first()
+            let assistant_message = response
+                .choices
+                .first()
                 .map(|c| c.message.content.clone())
                 .unwrap_or_default();
 
@@ -244,7 +265,8 @@ impl Agent {
 
                 // Check for shell command confirmation
                 if tool_call.name == "shell" && self.config.confirm_shell_commands {
-                    let command = tool_call.arguments
+                    let command = tool_call
+                        .arguments
                         .get("command")
                         .and_then(|c| c.as_str())
                         .unwrap_or("");
@@ -255,7 +277,8 @@ impl Agent {
                     }
                 }
 
-                let result = self.tool_registry
+                let result = self
+                    .tool_registry
                     .execute(&tool_call.name, tool_call.arguments.clone())
                     .await;
 
@@ -298,7 +321,10 @@ impl Agent {
                     next_content.push_str(&format!(
                         "\n[Tool {}]: {}\nSuccess: {}\nOutput: {}\n",
                         i + 1,
-                        tool_calls.get(i).map(|t| t.name.as_str()).unwrap_or("unknown"),
+                        tool_calls
+                            .get(i)
+                            .map(|t| t.name.as_str())
+                            .unwrap_or("unknown"),
                         result.success,
                         result.output
                     ));
@@ -336,7 +362,10 @@ impl Agent {
             *status = final_status;
         }
 
-        self.send_event(AgentEvent::StatusChanged { status: final_status }).await;
+        self.send_event(AgentEvent::StatusChanged {
+            status: final_status,
+        })
+        .await;
 
         let total_iterations = steps.len() as u32;
 
@@ -348,7 +377,10 @@ impl Agent {
             duration_secs: start_time.elapsed().as_secs(),
         };
 
-        self.send_event(AgentEvent::Completed { result: result.clone() }).await;
+        self.send_event(AgentEvent::Completed {
+            result: result.clone(),
+        })
+        .await;
 
         Ok(result)
     }
@@ -463,7 +495,11 @@ impl Agent {
         if self.config.verbose {
             match &event {
                 AgentEvent::Thinking { iteration, thought } => {
-                    println!("\n🤔 Iteration {}: {}", iteration, thought.lines().next().unwrap_or(""));
+                    println!(
+                        "\n🤔 Iteration {}: {}",
+                        iteration,
+                        thought.lines().next().unwrap_or("")
+                    );
                 }
                 AgentEvent::ToolCalling { tool_name, .. } => {
                     println!("   🔧 Using tool: {}", tool_name);
@@ -472,7 +508,10 @@ impl Agent {
                     if result.success {
                         println!("   ✅ Tool succeeded");
                     } else {
-                        println!("   ❌ Tool failed: {}", result.error.as_deref().unwrap_or("unknown error"));
+                        println!(
+                            "   ❌ Tool failed: {}",
+                            result.error.as_deref().unwrap_or("unknown error")
+                        );
                     }
                 }
                 _ => {}
@@ -572,8 +611,9 @@ pub mod command {
                 max_iterations: self.max_iterations,
                 max_tokens: 4096,
                 temperature: 0.7,
-                working_dir: self.working_dir.clone()
-                    .unwrap_or_else(|| std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."))),
+                working_dir: self.working_dir.clone().unwrap_or_else(|| {
+                    std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."))
+                }),
                 confirm_shell_commands: !self.auto_confirm,
                 verbose: self.verbose,
             };
