@@ -76,7 +76,7 @@ impl Telemetry {
         fs::create_dir_all(&data_dir)?;
 
         let device_id = Self::get_or_create_device_id(&data_dir)?;
-        let enabled = !std::env::var("ARB_DISABLE_TELEMETRY").is_ok();
+        let enabled = std::env::var("ARB_DISABLE_TELEMETRY").is_err();
 
         // Initialize remote telemetry client
         let remote_client = if enabled {
@@ -197,7 +197,7 @@ impl Telemetry {
         Ok(())
     }
 
-    fn get_or_create_device_id(data_dir: &PathBuf) -> Result<String> {
+    fn get_or_create_device_id(data_dir: &Path) -> Result<String> {
         let id_file = data_dir.join("device_id");
         if id_file.exists() {
             return Ok(fs::read_to_string(&id_file)?.trim().to_string());

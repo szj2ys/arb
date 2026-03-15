@@ -518,7 +518,7 @@ fn get_last_command() -> Result<String> {
     let last_line = content.lines().last().unwrap_or("");
 
     // Parse zsh history format
-    if let Some(cmd) = last_line.splitn(2, ';').nth(1) {
+    if let Some((_, cmd)) = last_line.split_once(';') {
         Ok(cmd.to_string())
     } else {
         Ok(last_line.to_string())

@@ -164,7 +164,7 @@ fn get_os_info() -> String {
 fn get_shell_info() -> String {
     std::env::var("SHELL")
         .ok()
-        .and_then(|s| s.split('/').last().map(|s| s.to_string()))
+        .and_then(|s| s.split('/').next_back().map(|s| s.to_string()))
         .unwrap_or_else(|| "unknown".to_string())
 }
 

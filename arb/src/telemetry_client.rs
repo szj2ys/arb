@@ -36,7 +36,7 @@ impl Default for TelemetryClientConfig {
     fn default() -> Self {
         Self {
             endpoint: DEFAULT_ENDPOINT.to_string(),
-            enabled: !std::env::var("ARB_DISABLE_TELEMETRY").is_ok(),
+            enabled: std::env::var("ARB_DISABLE_TELEMETRY").is_err(),
             offline_mode: std::env::var("ARB_TELEMETRY_OFFLINE").is_ok(),
             batch_size: DEFAULT_BATCH_SIZE,
             flush_interval_secs: DEFAULT_FLUSH_INTERVAL_SECS,
